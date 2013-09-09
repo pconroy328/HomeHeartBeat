@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="89">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>database.h</itemPath>
+      <itemPath>device.h</itemPath>
+      <itemPath>helpers.h</itemPath>
+      <itemPath>homeheartbeat.h</itemPath>
+      <itemPath>mqtt.h</itemPath>
+      <itemPath>openclose_sensor.h</itemPath>
+      <itemPath>serialport.h</itemPath>
+      <itemPath>utlist.h</itemPath>
+      <itemPath>waterleak_sensor.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>database.c</itemPath>
+      <itemPath>device.c</itemPath>
+      <itemPath>helpers.c</itemPath>
+      <itemPath>hhb_system.c</itemPath>
+      <itemPath>inifile.c</itemPath>
+      <itemPath>main.c</itemPath>
+      <itemPath>mqtt.c</itemPath>
+      <itemPath>openclose_sensor.c</itemPath>
+      <itemPath>serialport.c</itemPath>
+      <itemPath>waterleak_sensor.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibLibItem>mysqlclient</linkerLibLibItem>
+            <linkerLibLibItem>mosquitto</linkerLibLibItem>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../IniFiler"
+                            CT="3"
+                            CN="Debug"
+                            AC="false"
+                            BL="true"
+                            WD="../IniFiler"
+                            BC="${MAKE}  -f Makefile CONF=Debug"
+                            CC="${MAKE}  -f Makefile CONF=Debug clean"
+                            OP="${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libinifiler.a">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="database.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="database.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="device.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="device.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="helpers.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="helpers.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hhb_system.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="homeheartbeat.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inifile.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="mqtt.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="mqtt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="openclose_sensor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="openclose_sensor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="serialport.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="serialport.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="utlist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="waterleak_sensor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="waterleak_sensor.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="database.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="database.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="device.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="device.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="helpers.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="helpers.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hhb_system.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="homeheartbeat.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inifile.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="mqtt.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="mqtt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="openclose_sensor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="openclose_sensor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="serialport.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="serialport.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="utlist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="waterleak_sensor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="waterleak_sensor.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

@@ -3,13 +3,14 @@
 //
 //
 
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include <mysql/mysql.h>
+
 #include "homeheartbeat.h"
 #include "helpers.h"
 #include "database.h"
-
-#include <stdlib.h>
-#include <string.h>
-#include <mysql/mysql.h>
 
 //
 // We can keep a log of all device readings

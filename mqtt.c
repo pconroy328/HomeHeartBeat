@@ -9,10 +9,12 @@
 #include <mosquitto.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
+#include <errno.h>
+
 
 #include "helpers.h"
 #include "homeheartbeat.h"
-#include <errno.h>
 
 static     struct mosquitto *mosq = NULL;
 
@@ -67,7 +69,7 @@ void my_log_callback(struct mosquitto *mosq, void *userdata, int level, const ch
 void    MQTT_setDefaults (HomeHeartBeatSystem_t *aSystem, char *brokerHostName)
 {
     assert( brokerHostName != NULL );
-    aSystem->mqttBrokerHost = brokerHostName;
+    strncpy( aSystem->mqttBrokerHost, brokerHostName, sizeof aSystem->mqttBrokerHost );
     if (aSystem->mqttPortNumber == 0)
         aSystem->mqttPortNumber = 1883;
     if (aSystem->mqttKeepAliveValue == 0)

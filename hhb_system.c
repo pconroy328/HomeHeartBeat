@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <assert.h>
+
 
 #include "homeheartbeat.h"
 #include "mqtt.h"
@@ -15,7 +17,6 @@
 #include "serialport.h"
 #include "openclose_sensor.h"
 #include "waterleak_sensor.h"
-// #include "utlist.h"
 
 
 //
@@ -45,23 +46,24 @@ void    HomeHeartBeatSystem_Initialize ()
     aSystem->deviceListHead = NULL;                 // utlist says always set this to NULL
     
     aSystem->systemID = 0;
-    aSystem->name = "UNNAMED SYSTEM";
+    strncpy( aSystem->name, "UNNAMED SYSTEM", sizeof aSystem->name );
     
-    aSystem->addressLine1 = "No Address Set";
-    aSystem->addressLin2 = "";
-    aSystem->city = "";
-    aSystem->stateOrProvinceCode = "";
-    aSystem->postalCode = "";
+    strncpy( aSystem->addressLine1,"No Address Set", sizeof aSystem->addressLine1 );
+    strncpy( aSystem->addressLine2, "", sizeof aSystem->addressLine2 );
+    strncpy( aSystem->city, "", sizeof aSystem->city );
+    strncpy( aSystem->stateOrProvinceCode, "", sizeof aSystem->stateOrProvinceCode );
+    strncpy( aSystem->postalCode, "", sizeof aSystem->postalCode );
     
     aSystem->latitude = 0.0;
     aSystem->longitude = 0.0;
     
-    aSystem->sleepBetweenEventLoops = 1;           // seconds
+    aSystem->sleepSecsBetweenEventLoops = 1;           // seconds
     //
     //  Read in data from an IniFile if it exists
     // readIniFileValues( aSystem );
     //
-    
+    IniFile_readIniFile( aSystem );
+
     
     // 
     // Database Logging if enabled
@@ -71,7 +73,7 @@ void    HomeHeartBeatSystem_Initialize ()
     // MQTT Stuff
     aSystem->logEventsToMQTT = TRUE;
     if (aSystem->logEventsToMQTT) {
-        aSystem->mqttBrokerHost = "192.168.0.11";
+        strncpy( aSystem->mqttBrokerHost, "192.168.0.11", sizeof aSystem->mqttBrokerHost );
         MQTT_setDefaults( aSystem, aSystem->mqttBrokerHost );
         MQTT_initialize( aSystem );
     }
@@ -98,7 +100,7 @@ void    HomeHeartBeatSystem_Shutdown ()
 void    HomeHeartBeatSystem_SetPortName (char *portName)
 {
     debug_print( "entering. portName: %s\n", portName );
-    aSystem->portName = portName;
+    strncpy( aSystem->portName, portName, sizeof aSystem->portName );
 }
 
 // -----------------------------------------------------------------------------
@@ -144,11 +146,16 @@ void    HomeHeartBeatSystem_EventLoop ()
         if (1)
             MQTT_SendReceive();
         
-        sleep( aSystem->sleepBetweenEventLoops );
+        sleep( aSystem->sleepSecsBetweenEventLoops );
     }
 }
 
 // -----------------------------------------------------------------------------
+void    HomeHeartBeat_ReadIniFile ()
+{
+    
+}
+
 // ----------------------------------------------------------------------------
 static int  getOneStateRecord (char *rawStateRecord, int bufSize)
 {
@@ -233,7 +240,7 @@ static  int parseOneStateRecord (char *receiveBuf, int numRead)
         
         //
         // What we do next depends on what device is reporting in.
-        int deviceType = HomeHeartBeat_parseDeviceType( token[ 3 ] );
+        int deviceType = Device_parseDeviceType( token[ 3 ] );
         switch (deviceType) {
             case DT_BASE_STATION:   
                 break;
@@ -278,29 +285,9 @@ void    HomeHeartBeat_ReleaseMemory()
         free( elementPtr1->ocSensor );
         LL_DELETE( aSystem->deviceListHead, elementPtr1 );
     }
-}   // 
-
-// ----------------------------------------------------------------------------
-
-/*
-        int deviceStateTimer = parseDeviceStateTimer( token[ 5 ] );
-        int deviceAlerts = parseDeviceAlerts( token[ 6 ] );
-        int deviceNameIndex = parseDeviceNameIndex( token[ 7 ] );
-        int deviceConfiguration = parseDeviceConfiguration( token[ 8 ] );
-        int deviceAliveUpdateTimer = parseAliveUpdateTimer( token[ 9 ] );
-        int updateFlags = parseUpdateFlags( token[ 10 ] );
-        // No one has figured what the 12th token does yet
-        int deviceParameter = parseDeviceParameter( token[ 12 ] );
-        // No one has figured what the 14th token does yet
-        int pendingUpdateTimer = parsePendingUpdateTimer( token[ 14 ] );
-        int macAddress = parseMacAddress( token[ 15 ] );
-        char    *deviceName = parseDeviceName( token[ 16 ] );
-
-*/
+} 
 
 // -----------------------------------------------------------------------------
-
-
 // -----------------------------------------------------------------------------
 //
 //  A Little Documentation on Troy Hanson's Linked List stuff

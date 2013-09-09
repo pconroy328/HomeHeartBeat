@@ -1,9 +1,12 @@
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
+
 
 #include "homeheartbeat.h"
 #include "helpers.h"
 #include "openclose_sensor.h"
+#include "utlist.h"
 
 
 // -----------------------------------------------------------------------------
@@ -109,70 +112,6 @@ HomeHeartBeatDevice_t   *OpenClose_newDeviceRecord (OpenCloseSensor_t *newOCRec)
     return recPtr;
 }
 
-// -----------------------------------------------------------------------------
-static
-HomeHeartBeatDevice_t  *OpenClose_updateOCSensorRecord ( HomeHeartBeatDevice_t *recPtr,
-                                                int stateRecordID, 
-                                                int zigbeeBindingID)
-{
-    //
-    //  The device/sensor record is already in the list - just update it with the new values
-    //
-    assert( recPtr != NULL );
-    /*
-    recPtr->stateRecordID = stateRecordID;
-    recPtr->zigbeeBindingID = zigbeeBindingID;
-    recPtr->deviceNameIndex = deviceNameIndex;
-    // strncpy( recPtr->macAddress, macAddress, sizeof recPtr->macAddress );
-    // recPtr->deviceName = deviceName;
-    recPtr->stateTimerSecs = deviceStateTimer;
-    recPtr->aliveUpdateTimerSecs = deviceAliveTimer;
-    recPtr->pendingUpdateTimer = pendingUpdateTimer;
-
-    // debug_print( "---------------- sensor state: %d, currentState: %d, isOpen: %d\n", sensorState, recPtr->currentState, recPtr->isOpen );
-
-*/
-    
-    return recPtr;
-}
-
-// -----------------------------------------------------------------------------
-static
-HomeHeartBeatDevice_t       *findThisDevice (HomeHeartBeatDevice_t *deviceListHead, char *macAddress)
-{
-    assert( macAddress != NULL );
-    
-    //
-    // scan thru the list of sensors and see if it's in there
-    //  if not, return null
-    if (deviceListHead == NULL)
-        return NULL;
-
-    //
-    //  Recall - we're using Troy's UTLIST code to manage our linked list
-    //  His stuff takes some getting used to.  Everything is implemented as a
-    //  'C' macro (#define) so you'll see we're not passing in a reference
-    //
-    int                         numDevices = 0;
-    HomeHeartBeatDevice_t       *elementPtr = NULL;
-    LL_COUNT( deviceListHead, elementPtr, numDevices );             // numDevices is not passed by reference here
-    debug_print( "There are %d devices in the device list\n", numDevices );
-            
-    //
-    // The top call was just for fun.  Iterate over the list looking for a macAdress Match
-    LL_FOREACH( deviceListHead, elementPtr) {
-        if (strncmp( elementPtr->macAddress, macAddress, sizeof elementPtr->macAddress ) == 0) {
-            debug_print( "Found a matching ocSensor. RecordID: %d\n", elementPtr->ocSensor->stateRecordID );
-            return elementPtr;
-        }
-    }
-    
-    //
-    // If we made it here - we didn't find it...
-    debug_print( "No matching ocSensor was found. macAddress [%s] -must be a new device!\n", macAddress );
-    return NULL;
-}
-
 //------------------------------------------------------------------------------
 void    OpenClose_parseOneStateRecord (HomeHeartBeatSystem_t *aSystem, char *token[] )
 {
@@ -184,41 +123,41 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatSystem_t *aSystem, char *tok
     
     //
     // Now let's parse the tokens we've got 
-    int stateRecordID = HomeHeartBeat_parseStateRecordID( token[ 0 ] );
-    int zigbeeBindingID = HomeHeartBeat_parseZigbeeBindingID( token[ 1 ] );
-    int deviceCapabilties = HomeHeartBeat_parseDeviceCapabilties( token[ 2 ] );
+    int stateRecordID = Device_parseStateRecordID( token[ 0 ] );
+    int zigbeeBindingID = Device_parseZigbeeBindingID( token[ 1 ] );
+    int deviceCapabilties = Device_parseDeviceCapabilties( token[ 2 ] );
     //
     // 4th token (token[3]) is the device type - we already know we're an Open/Close sensor
     //
     int deviceState = OpenClose_getOpenCloseState( token[ 4 ] );  
-    long deviceStateTimer = HomeHeartBeat_parseDeviceStateTimer( token[ 5 ] );
-    int deviceAlerts = HomeHeartBeat_parseDeviceAlerts( token[ 6 ] );
-    int deviceNameIndex = HomeHeartBeat_parseDeviceNameIndex( token[ 7 ] );
+    long deviceStateTimer = Device_parseDeviceStateTimer( token[ 5 ] );
+    int deviceAlerts = Device_parseDeviceAlerts( token[ 6 ] );
+    int deviceNameIndex = Device_parseDeviceNameIndex( token[ 7 ] );
 
     //
     // Four bit values stashed in this one field
     int deviceConfiguration = OpenClose_parseDeviceConfiguration( token[ 8 ] );
     
-    long aliveUpdateTimer = HomeHeartBeat_parseAliveUpdateTimer( token[ 9 ] );
-    int updateFlags = HomeHeartBeat_parseUpdateFlags( token[ 10 ] );
+    long aliveUpdateTimer = Device_parseAliveUpdateTimer( token[ 9 ] );
+    int updateFlags = Device_parseUpdateFlags( token[ 10 ] );
     
     // No one has figured what the 12th token does yet
     
-    int deviceParameter = HomeHeartBeat_parseDeviceParameter( token[ 12 ] );
+    int deviceParameter = Device_parseDeviceParameter( token[ 12 ] );
     
     // No one has figured what the 14th token does yet
     
-    long pendingUpdateTimer = HomeHeartBeat_parsePendingUpdateTimer( token[ 14 ] );
+    long pendingUpdateTimer = Device_parsePendingUpdateTimer( token[ 14 ] );
         
-    char *macAddress = HomeHeartBeat_parseMacAddress( token[ 15 ] );
-    char *deviceName = HomeHeartBeat_parseDeviceName( token[ 16 ] );
+    char *macAddress = Device_parseMacAddress( token[ 15 ] );
+    char *deviceName = Device_parseDeviceName( token[ 16 ] );
     
     debug_print( "Device Name: [%s], MAC: [%s]\n", deviceName, macAddress );
     
     
     //
     // Now we look to see if we can find this device (by it's MAC address) already in our list of devices
-    HomeHeartBeatDevice_t   *deviceRecPtr = findThisDevice( aSystem->deviceListHead, macAddress );
+    HomeHeartBeatDevice_t   *deviceRecPtr = Device_findThisDevice( aSystem->deviceListHead, macAddress );
 
     int     firstTimeDeviceSeen = FALSE;
     if (deviceRecPtr == NULL) {

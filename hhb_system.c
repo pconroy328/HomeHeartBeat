@@ -12,17 +12,18 @@
 
 #include "homeheartbeat.h"
 #include "mqtt.h"
-
 #include "helpers.h"
 #include "serialport.h"
 #include "openclose_sensor.h"
+#include "utlist.h"
 #include "waterleak_sensor.h"
 
 
 //
 // Forward declarations
 static  int     getOneStateRecord( char *, int );
-static  int     parseOneStateRecord( char *receiveBuf, int numRead );
+static  HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead);
+static  int     tokenizeStateData (char *receiveBuf, int numRead, char *token[]);
 
 
 //
@@ -58,25 +59,19 @@ void    HomeHeartBeatSystem_Initialize ()
     aSystem->longitude = 0.0;
     
     aSystem->sleepSecsBetweenEventLoops = 1;           // seconds
-    //
-    //  Read in data from an IniFile if it exists
-    // readIniFileValues( aSystem );
-    //
-    IniFile_readIniFile( aSystem );
-
-    
     // 
     // Database Logging if enabled
     aSystem->logEventsToDatabase = FALSE;
     
     //
     // MQTT Stuff
-    aSystem->logEventsToMQTT = TRUE;
-    if (aSystem->logEventsToMQTT) {
-        strncpy( aSystem->mqttBrokerHost, "192.168.0.11", sizeof aSystem->mqttBrokerHost );
-        MQTT_setDefaults( aSystem, aSystem->mqttBrokerHost );
-        MQTT_initialize( aSystem );
-    }
+    aSystem->logEventsToMQTT = FALSE;
+
+    //
+    //  Read in data from an IniFile if it exists
+    // readIniFileValues( aSystem );
+    //
+    IniFile_readIniFile( aSystem );    
 }
 
 // -----------------------------------------------------------------------------
@@ -90,9 +85,9 @@ void    HomeHeartBeatSystem_Shutdown ()
         MQTT_teardown();
     }
     
-    if (aSystem->logEventsToDatabase)
-        
-    
+    if (aSystem->logEventsToDatabase) {
+        ;
+    }
     free( aSystem );
 }
 
@@ -123,6 +118,8 @@ void    HomeHeartBeatSystem_EventLoop ()
     int     numBytesRead = 0;
     char    rawStateRecord[ 256 ];                  // should be 4x bigger than what we need for one state record
     long    numLoops = 0;
+    HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
+    
     
     debug_print( "entering\n", 0 );
 
@@ -134,7 +131,7 @@ void    HomeHeartBeatSystem_EventLoop ()
     aSystem->pollForEvents = TRUE;
     while (aSystem->pollForEvents) {
         numBytesRead = getOneStateRecord( rawStateRecord, sizeof rawStateRecord );
-        parseOneStateRecord( rawStateRecord, numBytesRead );
+        deviceRecPtr = parseOneStateRecord( rawStateRecord, numBytesRead );
         
         //
         // debugging for valgrind
@@ -142,9 +139,19 @@ void    HomeHeartBeatSystem_EventLoop ()
         if (numLoops > 6000L) {
             return;
         }
-        
-        if (1)
-            MQTT_SendReceive();
+
+        if (deviceRecPtr != NULL) {
+    
+            if (aSystem->logEventsToDatabase) {
+                Database_insertDeviceStateLogRecord( deviceRecPtr );
+                Database_updateDeviceStateCurrentRecord( deviceRecPtr );
+            }
+    
+            if (aSystem->logEventsToMQTT) {
+                MQTT_CreateDeviceEvent( deviceRecPtr );
+                MQTT_SendReceive();
+            }
+        }
         
         sleep( aSystem->sleepSecsBetweenEventLoops );
     }
@@ -181,23 +188,114 @@ static int  getOneStateRecord (char *rawStateRecord, int bufSize)
     
     //
     // Get the data back from the HHB
-    // numRead = RS232_ReadData( receiveBuf, sizeof( receiveBuf ) );
     numRead = SerialPort_ReadLine( aSystem->hhbFD, rawStateRecord, bufSize );
     // debug_print( "read returned %d bytes. Data [%s]\n", numRead, rawStateRecord );
-    
-    //if (numRead > 0)
-    //    parseOneStateRecord( cPtr, numRead );
     
     return numRead;
 }   // getOneStateRecord
 
 
 // ----------------------------------------------------------------------------
-static  int parseOneStateRecord (char *receiveBuf, int numRead)
+static  
+HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
 {
-    assert( receiveBuf != NULL );
+    char    *token[ 17 ];
+    HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
     
-    //debug_print( "entering. recieveBuf[%s], numRead: %d\n", receiveBuf, numRead );
+    
+    assert( receiveBuf != NULL );
+
+    int numTokensParsed = tokenizeStateData( receiveBuf, numRead, token );
+    if (numTokensParsed != 17)
+        return NULL;
+    
+    
+    int     deviceType = Device_parseDeviceType( token[ 3 ] );
+    char    *macAddress = Device_parseMacAddress( token[ 15 ] );
+ 
+    //
+    //  We are going to use a device's MAC address to uniquely identify it.  That's fine
+    //  except the Base Station (Type 1, Record ID = 0) and the Modem (Type 16, Record ID= 2)
+    //  don't have MAC Addresses!  So - I could add alot of checking for device type of 1 or 16
+    //  or I could jus6t create a MAC address for them. :)
+    if (deviceType == 1 || deviceType == 16) {
+        debug_print( "Received a state record for the Base Station or Modem. Ignoring.\n", 0 );
+        return NULL;
+    }
+   
+    //
+    // Now we look to see if we can find this device (by it's MAC address) already in our list of devices
+    deviceRecPtr = Device_findThisDevice( aSystem->deviceListHead, macAddress );
+    //
+    // Have we found this device already or is it the first time we've seen it?
+    int     firstTimeDeviceSeen = FALSE;
+    if (deviceRecPtr == NULL) {
+        firstTimeDeviceSeen = TRUE;
+        deviceRecPtr = Device_newDeviceRecord( macAddress );
+        assert( deviceRecPtr != NULL );
+
+        debug_print( "FIRST TIME DEVICE [%s]\n", macAddress );
+        //
+        // Add it to the linked list
+        deviceRecPtr->next = NULL;
+        LL_APPEND( aSystem->deviceListHead, deviceRecPtr );
+
+        //
+        // Something we need to do just once and that's initialize the State Changed fields
+        deviceRecPtr->stateHasChanged = FALSE;
+        deviceRecPtr->lastDeviceState = deviceRecPtr->deviceState;
+        deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
+    }
+
+    deviceType = Device_parseTokens( deviceRecPtr, token );
+    debug_print( "After calling find - this is what we found: %s", Device_dumpDeviceRecord( deviceRecPtr ) );
+
+    //
+    // What we do next depends on what device is reporting in.
+    switch (deviceType) {
+        case DT_BASE_STATION:   
+            break;
+        case DT_HOME_KEY:
+            break; 
+        case DT_OPEN_CLOSE_SENSOR:  OpenClose_parseOneStateRecord( deviceRecPtr );
+                                    break;
+        case DT_POWER_SENSOR:     
+            break;
+        case DT_WATER_LEAK_SENSOR:  WaterLeak_parseOneStateRecord( deviceRecPtr );
+                                    break;
+        case DT_REMINDER_DEVICE:
+        case DT_ATTENTION_DEVICE:
+        case DT_MODEM:
+        case DT_MOTION_SENSOR:
+        case DT_TILT_SENSOR:
+            break;
+
+        default:
+            warnAndKeepGoing( "Unrecognized device type just came through" );
+            break;
+    }
+
+    return deviceRecPtr;
+}
+
+// #include "utlist.h"
+// -----------------------------------------------------------------------------
+void    HomeHeartBeat_ReleaseMemory()
+{
+    HomeHeartBeatDevice_t   *elementPtr1;
+    HomeHeartBeatDevice_t   *elementPtr2;
+    
+    LL_FOREACH_SAFE( aSystem->deviceListHead, elementPtr1, elementPtr2 ) {
+        free( elementPtr1->ocSensor );
+        LL_DELETE( aSystem->deviceListHead, elementPtr1 );
+    }
+} 
+
+// -----------------------------------------------------------------------------
+static
+int    tokenizeStateData (char *receiveBuf, int numRead, char *token[])
+{
+   //debug_print( "entering. recieveBuf[%s], numRead: %d\n", receiveBuf, numRead );
     
     /*
      *  A retrieved state record has the following format:
@@ -218,7 +316,6 @@ static  int parseOneStateRecord (char *receiveBuf, int numRead)
         //
         // These functions modify the buffer, that's why we made a copy.
         // I'm OK with putting a hard 17 in here. The HHB is dead and unlikely to change :)
-        char    *token[ 17 ];
         int     i;
         for (i = 0; i < 17; i += 1) {
             token[ i ] = strsep( &dataCopy, delimiters );
@@ -230,64 +327,22 @@ static  int parseOneStateRecord (char *receiveBuf, int numRead)
         int numTokensFound = i;
         //debug_print( "Total number of tokens in data: %d\n", numTokensFound );
         
+        free( dataCopy );
         //for (i = 0; i < numTokensFound; i += 1)
             //debug_print( "After parsing token[ %d ] is [%s]\n", i, (token[ i ] != NULL ? token[ i ] : "NULL" ) );
                 
         if (numTokensFound != 17) {
             fprintf( stderr, "Less than 17 tokens found in the data stream. Considering it corrupt and discarding it all\n" );
-            return FALSE;
+            return numTokensFound;
         }
-        
-        //
-        // What we do next depends on what device is reporting in.
-        int deviceType = Device_parseDeviceType( token[ 3 ] );
-        switch (deviceType) {
-            case DT_BASE_STATION:   
-                break;
-            case DT_HOME_KEY:
-                break; 
-            case DT_OPEN_CLOSE_SENSOR:  OpenClose_parseOneStateRecord( aSystem, token );
-                                        break;
-            case DT_POWER_SENSOR:     
-                break;
-            case DT_WATER_LEAK_SENSOR:  WaterLeak_parseOneStateRecord( aSystem, token );
-                                        break;
-            case DT_REMINDER_DEVICE:
-            case DT_ATTENTION_DEVICE:
-            case DT_MODEM:
-            case DT_MOTION_SENSOR:
-            case DT_TILT_SENSOR:
-                break;
-                
-            default:
-                warnAndKeepGoing( "Unrecognized device type just came through" );
-                break;
-        }
-        
-        
-        free( dataCopy );
     } else {
-        perror( "malloc for a data copy ran out of room. No memory left!" );
-        return FALSE;
+        haltAndCatchFire( "Out of memory trying to allocate space for the token's data copy buffer." );
     }
     
-    return TRUE;;
+    return 17;
 }
 
-#include "utlist.h"
-// -----------------------------------------------------------------------------
-void    HomeHeartBeat_ReleaseMemory()
-{
-    HomeHeartBeatDevice_t   *elementPtr1;
-    HomeHeartBeatDevice_t   *elementPtr2;
-    
-    LL_FOREACH_SAFE( aSystem->deviceListHead, elementPtr1, elementPtr2 ) {
-        free( elementPtr1->ocSensor );
-        LL_DELETE( aSystem->deviceListHead, elementPtr1 );
-    }
-} 
 
-// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 //
 //  A Little Documentation on Troy Hanson's Linked List stuff

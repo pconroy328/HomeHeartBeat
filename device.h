@@ -133,11 +133,14 @@ typedef  struct  HomeHeartBeatDevice {
 
 //
 //
+extern  char    *Device_dumpDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr);
+
 extern  int     Device_parseStateRecordID (char *token);
 extern  int     Device_parseZigbeeBindingID (char *token);
+extern  int     Device_parseDeviceState( char *token );
 extern  int     Device_parseDeviceCapabilties (char *token);
 extern  int     Device_parseDeviceType (char *token);
-extern  int     Device_parseDeviceState( char *token, int deviceType );
+//extern  int     Device_parseDeviceState( char *token, int deviceType );
 extern  int     Device_parseDeviceStateTimer (char *token);
 extern  int     Device_parseDeviceAlerts (char *token);
 extern  int     Device_parseDeviceNameIndex( char * );
@@ -145,6 +148,7 @@ extern  int     Device_deviceAliveUpdateTimer( char * );
 extern  char    *Device_parseMacAddress( char *token );
 extern  char    *Device_parseDeviceName( char *token );
 
+extern  HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress);
 extern  HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceListHead, char *macAddress);
 
 

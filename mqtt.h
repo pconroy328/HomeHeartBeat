@@ -28,7 +28,7 @@ extern  void    MQTT_setDefaults (HomeHeartBeatSystem_t *aSystem, char *brokerHo
 extern  void    MQTT_initialize (HomeHeartBeatSystem_t *aSystem);
 extern  void    MQTT_teardown( void );
 extern  int     MQTT_SendReceive ( void );
-extern  void    MQTT_CreateDeviceEvent( HomeHeartBeatDevice_t deviceRecPtr );
+extern  void    MQTT_CreateDeviceEvent( HomeHeartBeatDevice_t *deviceRecPtr );
 
 
 #ifdef	__cplusplus

@@ -56,7 +56,6 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibLibItem>mysqlclient</linkerLibLibItem>
             <linkerLibLibItem>mosquitto</linkerLibLibItem>
             <linkerLibProjectItem>
               <makeArtifact PL="../IniFiler"
@@ -70,6 +69,7 @@
                             OP="${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libinifiler.a">
               </makeArtifact>
             </linkerLibProjectItem>
+            <linkerLibLibItem>mysqlclient</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>

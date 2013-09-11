@@ -61,7 +61,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lmysqlclient -lmosquitto ../IniFiler/dist/Debug/GNU-Linux-x86/libinifiler.a
+LDLIBSOPTIONS=-lmosquitto ../IniFiler/dist/Debug/GNU-Linux-x86/libinifiler.a -lmysqlclient
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}

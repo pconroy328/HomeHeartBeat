@@ -12,8 +12,8 @@
 // -----------------------------------------------------------------------------
 //
 // Forward Declarations
-static HomeHeartBeatDevice_t  *OpenClose_updateOCDeviceRecord( HomeHeartBeatDevice_t *recPtr, int stateRecordID, int zigbeeBindingID);
-static OpenCloseSensor_t      *OpenClose_newOCSensorRecord( int stateRecordID,int zigbeeBindingID );
+//static HomeHeartBeatDevice_t  *OpenClose_updateOCDeviceRecord( HomeHeartBeatDevice_t *recPtr, int stateRecordID, int zigbeeBindingID);
+static OpenCloseSensor_t      *OpenClose_newOCSensorRecord( void );
 
 static  HomeHeartBeatDevice_t   *findThisDevice( HomeHeartBeatDevice_t *deviceListHead, char *macAddress );
 static  HomeHeartBeatDevice_t   *OpenClose_newDeviceRecord( OpenCloseSensor_t *newOCRec );
@@ -43,6 +43,7 @@ static  char    *deviceNames[] = {
 
 
 static  char    sensorRecordDumpBuffer[ 8192 ];
+
 // ----------------------------------------------------------------------------
 char    *dumpOCSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
 {
@@ -73,7 +74,7 @@ char    *dumpOCSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
 
 // -----------------------------------------------------------------------------
 static
-OpenCloseSensor_t  *OpenClose_newOCSensorRecord (int stateRecordID, int zigbeeBindingID)           
+OpenCloseSensor_t  *OpenClose_newOCSensorRecord ()           
 {
     OpenCloseSensor_t   *recPtr = NULL;
     
@@ -82,10 +83,8 @@ OpenCloseSensor_t  *OpenClose_newOCSensorRecord (int stateRecordID, int zigbeeBi
     //  Create a new record for it
     //
     recPtr = malloc( sizeof ( OpenCloseSensor_t ) );
-    if (recPtr != NULL) {
-        
-        recPtr->stateRecordID = stateRecordID;
-        recPtr->zigbeeBindingID = zigbeeBindingID;
+    if (recPtr == NULL) {
+        haltAndCatchFire( "Insufficient memory to allocate space for an Open/Close Sensor!" );
     }
     
     return recPtr;
@@ -104,189 +103,77 @@ HomeHeartBeatDevice_t   *OpenClose_newDeviceRecord (OpenCloseSensor_t *newOCRec)
     //
     recPtr = malloc( sizeof ( HomeHeartBeatDevice_t ) );
     if (recPtr != NULL) {  
-        recPtr->deviceType = DT_OPEN_CLOSE_SENSOR;
-        recPtr->ocSensor = newOCRec;
-        recPtr->next = NULL;
     }
     
     return recPtr;
 }
 
 //------------------------------------------------------------------------------
-void    OpenClose_parseOneStateRecord (HomeHeartBeatSystem_t *aSystem, char *token[] )
+void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
 {
     debug_print( "Entering\n", 0 );
     
-    assert( aSystem != NULL );
-    assert( token[ 3 ] != NULL );                   // 4th token is the Device Type
-    
-    
-    //
-    // Now let's parse the tokens we've got 
-    int stateRecordID = Device_parseStateRecordID( token[ 0 ] );
-    int zigbeeBindingID = Device_parseZigbeeBindingID( token[ 1 ] );
-    int deviceCapabilties = Device_parseDeviceCapabilties( token[ 2 ] );
-    //
-    // 4th token (token[3]) is the device type - we already know we're an Open/Close sensor
-    //
-    int deviceState = OpenClose_getOpenCloseState( token[ 4 ] );  
-    long deviceStateTimer = Device_parseDeviceStateTimer( token[ 5 ] );
-    int deviceAlerts = Device_parseDeviceAlerts( token[ 6 ] );
-    int deviceNameIndex = Device_parseDeviceNameIndex( token[ 7 ] );
-
-    //
-    // Four bit values stashed in this one field
-    int deviceConfiguration = OpenClose_parseDeviceConfiguration( token[ 8 ] );
-    
-    long aliveUpdateTimer = Device_parseAliveUpdateTimer( token[ 9 ] );
-    int updateFlags = Device_parseUpdateFlags( token[ 10 ] );
-    
-    // No one has figured what the 12th token does yet
-    
-    int deviceParameter = Device_parseDeviceParameter( token[ 12 ] );
-    
-    // No one has figured what the 14th token does yet
-    
-    long pendingUpdateTimer = Device_parsePendingUpdateTimer( token[ 14 ] );
-        
-    char *macAddress = Device_parseMacAddress( token[ 15 ] );
-    char *deviceName = Device_parseDeviceName( token[ 16 ] );
-    
-    debug_print( "Device Name: [%s], MAC: [%s]\n", deviceName, macAddress );
-    
-    
-    //
-    // Now we look to see if we can find this device (by it's MAC address) already in our list of devices
-    HomeHeartBeatDevice_t   *deviceRecPtr = Device_findThisDevice( aSystem->deviceListHead, macAddress );
-
-    int     firstTimeDeviceSeen = FALSE;
-    if (deviceRecPtr == NULL) {
-        //
-        // Not found! -- easy peasy - this is the first device. Time to add it
-        //
-        firstTimeDeviceSeen = TRUE;
-        
-        // Start with a new OC Sensor record
-        OpenCloseSensor_t       *newSensorRecPtr = OpenClose_newOCSensorRecord( stateRecordID, zigbeeBindingID );
-        assert( newSensorRecPtr != NULL );
-        
-        //
-        // Now make a new device record and link in the OC Sensor
-        deviceRecPtr = OpenClose_newDeviceRecord( newSensorRecPtr );
-        assert( deviceRecPtr != NULL );
-        
-        //
-        // Add it to the linked list
-        LL_APPEND( aSystem->deviceListHead, deviceRecPtr );
-
-    } else {
-        debug_print( "Found this device in the list. Just going to update the values\n", 0 );
-        // OpenClose_updateOCSensorRecord( deviceRecPtr, stateRecordID, zigbeeBindingID       );
-    }
-    
-    
-    //
-    // Whether we created a new device or found the old one - time to update it!
-    //
-    // Set values in the Supertype Device
     assert( deviceRecPtr != NULL );
 
-    deviceRecPtr->deviceName = deviceName;
-    deviceRecPtr->macAddress = macAddress;
-    deviceRecPtr->deviceRawData[ 0 ] = stateRecordID;                  // Field 1
-    deviceRecPtr->deviceRawData[ 1 ] = zigbeeBindingID;                // Field 2
-    deviceRecPtr->deviceRawData[ 2 ] = deviceCapabilties;              // Field 3       
-    deviceRecPtr->deviceRawData[ 3 ] = DT_OPEN_CLOSE_SENSOR;           // Field 4
-    deviceRecPtr->deviceRawData[ 4 ] = deviceState;                    // Field 5
-    deviceRecPtr->deviceRawData[ 5 ] = deviceStateTimer;               // Field 6  -- oops I made this a long!
-    deviceRecPtr->deviceRawData[ 6 ] = deviceAlerts;                   // Field 7
-    deviceRecPtr->deviceRawData[ 7 ] = deviceNameIndex;                // Field 8
-    deviceRecPtr->deviceRawData[ 8 ] = deviceConfiguration;            // Field 9
-    deviceRecPtr->deviceRawData[ 9 ] = aliveUpdateTimer;               // Field 10 -- another long/int mismatch
-    deviceRecPtr->deviceRawData[ 10 ] = updateFlags;                   // Field 11
-    deviceRecPtr->deviceRawData[ 11 ] = 0;                             // Field 12 - unknown function so far
-    deviceRecPtr->deviceRawData[ 12 ] = deviceParameter;               // Field 13 
-    deviceRecPtr->deviceRawData[ 13 ] = 0;                             // Field 14 - unknown function so far
-    deviceRecPtr->deviceRawData[ 14 ] = pendingUpdateTimer;            // Field 15 -- third long/int mismatch
+    //
+    // Do we have an existing OC Sensor attached?
+    if (deviceRecPtr->ocSensor == NULL) {
+        // Start with a new OC Sensor record
+        deviceRecPtr->ocSensor = OpenClose_newOCSensorRecord();
+        assert( deviceRecPtr->ocSensor != NULL );
+        
+   } else {
+        debug_print( "Found this Open Close Sensor in the list. Just going to update the values\n", 0 );
+    }
     
-    deviceRecPtr->stateRecordID = stateRecordID;
-    deviceRecPtr->zigbeeBindingID = zigbeeBindingID;
-    deviceRecPtr->deviceCapabilities = deviceCapabilties;
-    deviceRecPtr->deviceType = DT_OPEN_CLOSE_SENSOR;
-    deviceRecPtr->deviceState = deviceState;
-    deviceRecPtr->deviceStateTimer = deviceStateTimer;
-    deviceRecPtr->deviceAlerts = deviceAlerts;
-    deviceRecPtr->deviceNameIndex = deviceNameIndex;
-    deviceRecPtr->deviceConfiguration = deviceConfiguration;
-    deviceRecPtr->aliveUpdateTimer = aliveUpdateTimer;
-    deviceRecPtr->updateFlags = updateFlags;
-    deviceRecPtr->deviceParameter = deviceParameter;
-    deviceRecPtr->pendingUpdateTimer = pendingUpdateTimer;
-
     //
     // Set Values in the subclass - ocSensor
     // These should be values that are specific to an Open / Close Sensor
     assert( deviceRecPtr->ocSensor != NULL );
     
-    deviceRecPtr->ocSensor->alarmOnOpen = OpenClose_getAlarmEnabledCondition2( deviceConfiguration );
-    deviceRecPtr->ocSensor->alarmOnClose = OpenClose_getAlarmEnabledCondition1( deviceConfiguration );
-    deviceRecPtr->ocSensor->callOnOpen =  OpenClose_getCallMeEnabledCondition2( deviceConfiguration );
-    deviceRecPtr->ocSensor->callOnClose =  OpenClose_getCallMeEnabledCondition1( deviceConfiguration );
+    deviceRecPtr->ocSensor->alarmOnOpen = OpenClose_getAlarmEnabledCondition2( deviceRecPtr->deviceConfiguration );
+    deviceRecPtr->ocSensor->alarmOnClose = OpenClose_getAlarmEnabledCondition1( deviceRecPtr->deviceConfiguration );
+    deviceRecPtr->ocSensor->callOnOpen =  OpenClose_getCallMeEnabledCondition2( deviceRecPtr->deviceConfiguration );
+    deviceRecPtr->ocSensor->callOnClose =  OpenClose_getCallMeEnabledCondition1( deviceRecPtr->deviceConfiguration );
     //
     //  Are we open of closed?
-    deviceRecPtr->ocSensor->currentState = OpenClose_getOpenCloseStateFromInt( deviceState );
+    deviceRecPtr->ocSensor->currentState = OpenClose_getOpenCloseStateFromInt( deviceRecPtr->deviceState );
     deviceRecPtr->ocSensor->isOpen = (deviceRecPtr->ocSensor->currentState == ocOpen);
     
     //
     // Now - check to see if we've changed state?
-    if (firstTimeDeviceSeen) {
-        deviceRecPtr->stateHasChanged = FALSE;
-        deviceRecPtr->lastDeviceState = deviceRecPtr->ocSensor->currentState;
-        deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
-    } else {
-        //
-        //  Let's assume it's just the same as the last time we looked and reset it...
-        deviceRecPtr->stateHasChanged = FALSE;
-        
-        //
-        // Is the current state different? Then yes - the state has changed
-        if (deviceRecPtr->ocSensor->currentState != deviceRecPtr->lastDeviceState) {
-            deviceRecPtr->stateHasChanged = TRUE;
-            debug_print( "Detected state change on the device: %s. current state: %d, last state: %d\n", 
-                    deviceRecPtr->macAddress,
-                    deviceRecPtr->ocSensor->currentState, deviceRecPtr->lastDeviceState);
-        }
-        //
-        //  Or has the state timer gotten smaller (or stayed the same)?  Then we had a fast state 
-        //  change between poll intervals. Eg. Closed -> Opened -> Closed.   Well it turns out we cannot use "<=" because
-        //  the resolution of the timer changes to minutes after 60 seconds
-        if (deviceRecPtr->deviceStateTimer < deviceRecPtr->lastDeviceStateTimer) {
-            deviceRecPtr->stateHasChanged = TRUE;
-            debug_print( "Detected TIME BASED state change on the device: %s. current Time: %d, last time: %d\n", deviceRecPtr->macAddress,
-                    deviceRecPtr->deviceStateTimer, deviceRecPtr->lastDeviceStateTimer);
-        }
+    //
+    //
+    //  Let's assume it has NOT changed and reset it...
+    deviceRecPtr->stateHasChanged = FALSE;
 
-        //debug_print( ">>>>>>>>>>>> state stateChaned: %d, current Timer: %d, lastTimer: %d\n", deviceRecPtr->stateHasChanged,
-        //                deviceRecPtr->deviceStateTimer, deviceRecPtr->lastDeviceStateTimer);
-        
-        //
-        //  Ok we've marked that the state has changed. Reset the counters so the next time thru
-        //  we can recheck!
-        deviceRecPtr->lastDeviceState = deviceRecPtr->ocSensor->currentState;
-        deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
-        
+    //
+    // Is the current state different? Then yes - the state has changed
+    if (deviceRecPtr->ocSensor->currentState != deviceRecPtr->lastDeviceState) {
+        deviceRecPtr->stateHasChanged = TRUE;
+        debug_print( "Detected state change on the device: %s. current state: %d, last state: %d\n", 
+                deviceRecPtr->macAddress,
+                deviceRecPtr->ocSensor->currentState, deviceRecPtr->lastDeviceState);
     }
-    
-    
-    if (aSystem->logEventsToDatabase) {
-        Database_insertDeviceStateLogRecord( deviceRecPtr );
-        Database_updateDeviceStateCurrentRecord( deviceRecPtr );
+    //
+    //  Or has the state timer gotten smaller (or stayed the same)?  Then we had a fast state 
+    //  change between poll intervals. Eg. Closed -> Opened -> Closed.   Well it turns out we cannot use "<=" because
+    //  the resolution of the timer changes to minutes after 60 seconds
+    if (deviceRecPtr->deviceStateTimer < deviceRecPtr->lastDeviceStateTimer) {
+        deviceRecPtr->stateHasChanged = TRUE;
+        debug_print( "Detected TIME BASED state change on the device: %s. current Time: %d, last time: %d\n", deviceRecPtr->macAddress,
+                deviceRecPtr->deviceStateTimer, deviceRecPtr->lastDeviceStateTimer);
     }
-    
-    if (aSystem->logEventsToMQTT) {
-        MQTT_CreateDeviceEvent( deviceRecPtr );
-    }
-        
+
+    //debug_print( ">>>>>>>>>>>> state stateChaned: %d, current Timer: %d, lastTimer: %d\n", deviceRecPtr->stateHasChanged,
+    //                deviceRecPtr->deviceStateTimer, deviceRecPtr->lastDeviceStateTimer);
+
+    //
+    //  Ok we've marked that the state has changed. Reset the counters so the next time thru
+    //  we can recheck!
+    deviceRecPtr->lastDeviceState = deviceRecPtr->ocSensor->currentState;
+    deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
+            
     debug_print( "After parse. \nOC Sensor: %s\n\n", dumpOCSensorDeviceRecord( deviceRecPtr ) );
 }
 

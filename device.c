@@ -22,6 +22,83 @@
 #include "utlist.h"
 
 
+static  char    deviceRecordDumpBuffer[ 8192 ];
+
+// ----------------------------------------------------------------------------
+char    *Device_dumpDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
+{
+    assert( deviceRecPtr != NULL );
+    
+    //
+    // Always handy to have a way to dump am entire sensor record
+    memset( deviceRecordDumpBuffer, '\0', sizeof deviceRecordDumpBuffer );
+    snprintf( deviceRecordDumpBuffer,
+             sizeof deviceRecordDumpBuffer,
+"\n---------------------------------------------------------------------------\n\
+Device: Name [%s]   MAC [%s]\n\
+  Record ID: %d   Zigbee ID: %d  Capabilities: %d  Type: %d  State: %d   State Timer: %d  Alerts: %d  Name Index: %d Config:%d   Alive Timer: %d  Update Flags: %d  DParam: %d  Pending Timer: %d \n\
+---------------------------------------------------------------------------\n",
+            deviceRecPtr->deviceName, deviceRecPtr->macAddress,
+            deviceRecPtr->stateRecordID, deviceRecPtr->zigbeeBindingID, deviceRecPtr->deviceCapabilities, deviceRecPtr->deviceType,
+            deviceRecPtr->deviceState, deviceRecPtr->deviceStateTimer, deviceRecPtr->deviceAlerts, deviceRecPtr->deviceNameIndex,
+            deviceRecPtr->deviceConfiguration, deviceRecPtr->aliveUpdateTimer, deviceRecPtr->updateFlags,
+            deviceRecPtr->deviceParameter, deviceRecPtr->pendingUpdateTimer );
+    
+    return &deviceRecordDumpBuffer[ 0 ];
+}
+
+// -----------------------------------------------------------------------------
+HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress)
+{
+    HomeHeartBeatDevice_t   *recPtr = NULL;
+    
+    //
+    //  We've discovered a new Open/Close Sensor attached to our system. After we allocate
+    //  a record for the O/C Sensor, we call this function which allocates space for
+    //  what is essentially the Device Superclass
+    //
+    recPtr = malloc( sizeof ( HomeHeartBeatDevice_t ) );
+    if (recPtr != NULL) {  
+        recPtr->macAddress = macAddress;
+    }
+    
+    return recPtr;
+}
+
+// -----------------------------------------------------------------------------
+int Device_parseTokens (HomeHeartBeatDevice_t *deviceRecPtr, char *token[])
+{
+        //
+    // Now let's parse the tokens we've got 
+    deviceRecPtr->stateRecordID = Device_parseStateRecordID( token[ 0 ] );
+    deviceRecPtr->zigbeeBindingID = Device_parseZigbeeBindingID( token[ 1 ] );
+    deviceRecPtr->deviceCapabilities = Device_parseDeviceCapabilties( token[ 2 ] );
+    deviceRecPtr->deviceType = Device_parseDeviceType( token[ 3 ] );
+    deviceRecPtr->deviceState = Device_parseDeviceState( token[ 4 ] );  
+    deviceRecPtr->deviceStateTimer = Device_parseDeviceStateTimer( token[ 5 ] );
+    deviceRecPtr->deviceAlerts = Device_parseDeviceAlerts( token[ 6 ] );
+    deviceRecPtr->deviceNameIndex = Device_parseDeviceNameIndex( token[ 7 ] );
+    deviceRecPtr->deviceConfiguration = Device_parseDeviceConfiguration( token[ 8 ] );
+    deviceRecPtr->aliveUpdateTimer = Device_parseAliveUpdateTimer( token[ 9 ] );
+    deviceRecPtr->updateFlags = Device_parseUpdateFlags( token[ 10 ] );
+    
+    // No one has figured what the 12th token does yet
+    
+    deviceRecPtr->deviceParameter = Device_parseDeviceParameter( token[ 12 ] );
+    
+    // No one has figured what the 14th token does yet
+    
+    deviceRecPtr->pendingUpdateTimer = Device_parsePendingUpdateTimer( token[ 14 ] );
+        
+    //
+    // We've already parsed out and assigned the Mac Address
+    // char *macAddress = Device_parseMacAddress( token[ 15 ] );
+    deviceRecPtr->deviceName = Device_parseDeviceName( token[ 16 ] );
+
+    //
+    // Just for giggles we return the device type
+    return deviceRecPtr->deviceType;
+}
 
 // -----------------------------------------------------------------------------
 int     Device_parseStateRecordID (char *token)
@@ -48,6 +125,16 @@ int Device_parseZigbeeBindingID (char *token)
     
     int zigbeeID = hexStringToInt( token );
     return zigbeeID;
+}
+
+// ----------------------------------------------------------------------------
+int Device_parseDeviceState (char *token)
+{
+    assert( token != NULL );
+    //debug_print( "Entering. Token [%s]\n", token );
+    
+    int deviceState = hexStringToInt( token );
+    return deviceState;
 }
 
 // ----------------------------------------------------------------------------
@@ -388,20 +475,27 @@ HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceLis
     int                         numDevices = 0;
     HomeHeartBeatDevice_t       *elementPtr = NULL;
     LL_COUNT( deviceListHead, elementPtr, numDevices );             // numDevices is not passed by reference here
-    debug_print( "There are %d devices in the device list\n", numDevices );
+    debug_print( "Looking for [%s]. here are %d devices in the device list.\n", macAddress, numDevices );
             
     //
     // The top call was just for fun.  Iterate over the list looking for a macAdress Match
-    LL_FOREACH( deviceListHead, elementPtr) {
+    elementPtr = NULL;
+    LL_FOREACH( deviceListHead, elementPtr ) {
         if (strncmp( elementPtr->macAddress, macAddress, sizeof elementPtr->macAddress ) == 0) {
-            debug_print( "Found a matching ocSensor. RecordID: %d\n", elementPtr->ocSensor->stateRecordID );
+            
+            HomeHeartBeatDevice_t   *tmpPtr = elementPtr;
+            
+            debug_print( "Found a matching device matching this MAC address [%s]. State Record ID: %d\n", 
+                    tmpPtr->macAddress,
+                    tmpPtr->stateRecordID );
+            
             return elementPtr;
         }
     }
     
     //
     // If we made it here - we didn't find it...
-    debug_print( "No matching ocSensor was found. macAddress [%s] -must be a new device!\n", macAddress );
+    debug_print( "No matching Device was found. macAddress [%s] -must be a new device!\n", macAddress );
     return NULL;
 }
 

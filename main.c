@@ -30,18 +30,7 @@ int main(int argc, char** argv)
     assert( sizeof( int ) >= 4 );
     assert( (long) INT_MAX > 9000000L);
     
-    if (useDatabase) {
-        Database_setDatabaseHost( "amhq-webdev-04" );
-        Database_setDatabaseUserName( "otterbox" );
-        Database_setDatabasePassword( "otterbox" );
-        Database_setDatabaseSchema( "Conroy" );
-        Database_setFailOnDatabaseErrors( 1 );
-        Database_openDatabase();
-        Database_dropDeviceStateLogTable(); Database_createDeviceStateLogTable();
-        Database_dropDeviceStateCurrentTable(); Database_createDeviceStateCurrentTable();
-    }
-    
-    ;
+
     
     HomeHeartBeatSystem_Initialize();
     // HomeHeartBeatSystem_SetPortName );
@@ -50,11 +39,6 @@ int main(int argc, char** argv)
     HomeHeartBeatSystem_Shutdown();
     HomeHeartBeat_ReleaseMemory();
 
-    
-    
-    if (useDatabase) {
-        Database_closeDatabase();
-    }
 
     return (EXIT_SUCCESS);
 }

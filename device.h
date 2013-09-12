@@ -27,6 +27,11 @@ extern "C" {
     
 // -----------------------------------------------------------------------------
 //  Definitions relevant to all devices
+//
+// What's a good maximum value for the length of a device name?
+#define MAX_DEVICE_NAME_LEN     80              // Just taking a conservative guess
+#define MAX_MAC_ADDRESS_SIZE    18              // sixteen plus room for nulls
+#define MAX_DEVICES_IN_SYSTEM   32
 
 // ----------------------------------------------------------------------------
 //
@@ -43,9 +48,6 @@ extern "C" {
 #define DT_MOTION_SENSOR        0x0017
 #define DT_TILT_SENSOR          0x0018
 
-//
-// What's a good maximum value for the length of a device name?
-#define MAX_DEVICE_NAME_LEN     80              // Just taking a conservative guess
     
     
 //
@@ -66,9 +68,10 @@ typedef enum    deviceAlert { AlarmTriggered, DeviceOffline, LowBattery, daUnkno
 
 
 
+
 #include "openclose_sensor.h"
 #include "waterleak_sensor.h"
-
+#include "motion_sensor.h"
 
 
 // -----------------------------------------------------------------------------
@@ -84,8 +87,8 @@ typedef  struct  HomeHeartBeatDevice {
     //
     // every device sends back 17 fields of data - the last two are strings, the first 15 are ints
     int         deviceRawData[ 15 ];
-    char        *macAddress;                        // field 16
-    char        *deviceName;                        // field 17
+    char        macAddress[ MAX_MAC_ADDRESS_SIZE ]; // field 16
+    char        deviceName[ MAX_DEVICE_NAME_LEN ];  // field 17
     
     int         stateRecordID;                      // field 1
     int         zigbeeBindingID;                    // Field 2
@@ -116,6 +119,7 @@ typedef  struct  HomeHeartBeatDevice {
     union {
         OpenCloseSensor_t   *ocSensor;
         WaterLeakSensor_t   *wlSensor;
+        MotionSensor_t      *motSensor;
     };
     
 

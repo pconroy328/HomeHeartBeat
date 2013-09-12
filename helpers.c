@@ -26,7 +26,10 @@ int     hexStringToInt (char *hexChars)
     assert( hexChars != NULL );
     
     int len = strlen( hexChars );
-    assert( (len == 2) || (len == 4) );
+    
+    if (len != 2 && len != 4)
+        printf( "!!!!!!!!! LENGHT %d [%s]\n", len, hexChars );
+    //assert( (len == 2) || (len == 4) );
     
     int intValue = -1;
     

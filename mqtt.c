@@ -80,9 +80,9 @@ void    MQTT_initialize (HomeHeartBeatSystem_t *aSystem)
 {
     char id[30];
     int i;
-    char *host = "192.168.0.11";
-    int port = 1883;
-    int keepalive = 60;
+    //char *host = "192.168.0.11";
+    //int port = 1883;
+    //int keepalive = 60;
     bool clean_session = true;
 
     //
@@ -135,8 +135,69 @@ int MQTT_SendReceive ()
 }
 
 // -----------------------------------------------------------------------------
+void    MQTT_CreateDeviceAlarm( HomeHeartBeatDevice_t *deviceRecPtr )
+{
+    //
+    // We've noticed that the state has changed on one of our devices - send a new message!
+    
+    char    payload[ 1024 ];
+    memset( payload, '\0', sizeof payload );
+    int     length = 0;
+    char    *topic = "HHB";
+    
+    //
+    // What I send depends on the device type...
+    if (deviceRecPtr->deviceType == DT_OPEN_CLOSE_SENSOR) {
+        
+        //
+        // Are we open and alarm on open?
+        if (deviceRecPtr->ocSensor->isOpen && deviceRecPtr->ocSensor->alarmOnOpen)
+            length = snprintf( payload, sizeof payload, "*HHB ALARM* OPEN-CLOSE SENSOR, Name %s, State: OPEN, Duration: %d",
+                    deviceRecPtr->deviceName, deviceRecPtr->deviceStateTimer );
+                    
+        //
+        // Are we Closed and alarm on closed?
+        if (!deviceRecPtr->ocSensor->isOpen && deviceRecPtr->ocSensor->alarmOnClose)
+            length = snprintf( payload, sizeof payload, "*HHB ALARM* OPEN-CLOSE SENSOR, Name %s, State: CLOSED, Duration: %d",
+                    deviceRecPtr->deviceName, deviceRecPtr->deviceStateTimer );
+
+        if (length > 0)
+            topic = "HHB/ALARM/OCSENSOR";
+
+    } if (deviceRecPtr->deviceType == DT_MOTION_SENSOR) {
+        
+        //
+        // Are we moving and alarm on motion?
+        if (deviceRecPtr->motSensor->motionDetected && deviceRecPtr->motSensor->alarmOnMotion)
+            length = snprintf( payload, sizeof payload, "*HHB ALARM* MOTION SENSOR, Name %s, State: MOTION, Duration: %d",
+                    deviceRecPtr->deviceName, deviceRecPtr->deviceStateTimer );
+                    
+        //
+        // Are we not moving and alarm on no motion?
+        if (!deviceRecPtr->motSensor->motionDetected && deviceRecPtr->motSensor->alarmOnNoMotion)
+            length = snprintf( payload, sizeof payload, "*HHB ALARM* MOTION SENSOR, Name %s, State: NO MOTION, Duration: %d",
+                    deviceRecPtr->deviceName, deviceRecPtr->deviceStateTimer );
+
+        if (length > 0)
+            topic = "HHB/ALARM/MOTIONSENSOR";
+    }
+    
+    if (payload[ 0 ] == '\0')
+        return;
+      
+    int     messageID;
+    int     QoS = 0;
+
+    int result = mosquitto_publish( mosq, &messageID, topic, length, payload, QoS, false );
+}
+
+
+// -----------------------------------------------------------------------------
 void    MQTT_CreateDeviceEvent( HomeHeartBeatDevice_t *deviceRecPtr )
 {
+    
+    //
+    // All we know is that we have a state event
     /*
             int mosquitto_publish(    struct     mosquitto     *mosq,
                                             int         *mid,
@@ -163,15 +224,44 @@ void    MQTT_CreateDeviceEvent( HomeHeartBeatDevice_t *deviceRecPtr )
             retain    set to true to make the message retained.
      */
     
+    int length = 0;
     char    payload[ 1024 ];
-    memset( payload, '\0', sizeof payload );
-    int payLoadLen = snprintf( payload, sizeof payload, "*HHB EVENT* Type: %d Name: %s State: %d",
-            deviceRecPtr->deviceType,
-            deviceRecPtr->deviceName,
-            deviceRecPtr->deviceState );
-    
     int     messageID;
-    char    *topic = "HHB";
+    char    *topic = "HHB/STATUS";
+
+    memset( payload, '\0', sizeof payload );
+
+
+    if (deviceRecPtr->deviceType == DT_OPEN_CLOSE_SENSOR) {
+        length = snprintf( payload, sizeof payload, "*HHB STATUS* OPEN-CLOSE SENSOR, Name %s, State: %s, Duration: %d. Alive: %d, Alarm On Open: %s, Alerts: %d",
+                    deviceRecPtr->deviceName, 
+                    (deviceRecPtr->ocSensor->isOpen ? "OPEN" : "CLOSED" ),
+                    deviceRecPtr->deviceStateTimer,
+                    deviceRecPtr->aliveUpdateTimer,
+                    (deviceRecPtr->ocSensor->alarmOnOpen ? "YES" : "NO" ),
+                    deviceRecPtr->deviceAlerts );
+                   
+
+    } else if (deviceRecPtr->deviceType == DT_WATER_LEAK_SENSOR) {
+        length = snprintf( payload, sizeof payload, "*HHB STATUS* WATER LEAK SENSOR, Name %s, State: %s, Duration: %d. Alive: %d, Alarm On Wet: %s, Alerts: %d",
+                    deviceRecPtr->deviceName, 
+                    (deviceRecPtr->deviceState == 1 ? "DRY" : "WET" ),
+                    deviceRecPtr->deviceStateTimer,
+                    deviceRecPtr->aliveUpdateTimer,
+                    "YES",
+                    deviceRecPtr->deviceAlerts );
+        
+    } else if (deviceRecPtr->deviceType == DT_MOTION_SENSOR) {
+        length = snprintf( payload, sizeof payload, "*HHB STATUS* MOTION SENSOR, Name %s, State: %s, Duration: %d. Alive: %d, Alarm On Motion: %s, Alerts: %d",
+                    deviceRecPtr->deviceName, 
+                    (deviceRecPtr->motSensor->motionDetected ? "MOTION" : "NO MOTION"),
+                    deviceRecPtr->deviceStateTimer,
+                    deviceRecPtr->aliveUpdateTimer,
+                    (deviceRecPtr->motSensor->alarmOnMotion ? "YES" : "NO" ),
+                    deviceRecPtr->deviceAlerts );
+    } else {
+        debug_print( "Unknown device type status: type: %d, name: [%s]\n", deviceRecPtr->deviceType, deviceRecPtr->deviceName );
+    }
     
     //
     //   MQTT defines three levels of Quality of Service (QoS). The QoS defines how hard the broker/client will try 
@@ -186,9 +276,12 @@ void    MQTT_CreateDeviceEvent( HomeHeartBeatDevice_t *deviceRecPtr )
     //      0: The broker/client will deliver the message once, with no confirmation.
     //      1: The broker/client will deliver the message at least once, with confirmation required.
     //      2: The broker/client will deliver the message exactly once by using a four step handshake.
-    int     QoS = 0;
-
-    int result = mosquitto_publish( mosq, &messageID, topic, payLoadLen, payload, QoS, false );
     
-    debug_print( "MQTT Publish. Result: %d\n", result );
+    int     QoS = 0;
+    int     result = 0;
+    if (length > 0)
+        result = mosquitto_publish( mosq, &messageID, topic, length, payload, QoS, false );
+    
+    if (result != 0)
+        warnAndKeepGoing( "MQTT Publish. Non zero result\n" );
 }

@@ -16,10 +16,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "device.h"
 #include "helpers.h"
-#include "utlist.h"
+// #include "utlist.h"
 
 
 static  char    deviceRecordDumpBuffer[ 8192 ];
@@ -59,16 +60,67 @@ HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress)
     //
     recPtr = malloc( sizeof ( HomeHeartBeatDevice_t ) );
     if (recPtr != NULL) {  
-        recPtr->macAddress = macAddress;
+        strncpy( recPtr->macAddress, macAddress, MAX_MAC_ADDRESS_SIZE );
     }
     
     return recPtr;
 }
 
+/*
+// -----------------------------------------------------------------------------
+HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceListHead, char *macAddress)
+{
+    assert( macAddress != NULL );
+    
+    //
+    // scan thru the list of sensors and see if it's in there
+    //  if not, return null
+    if (deviceListHead == NULL)
+        return NULL;
+
+    //
+    //  Recall - we're using Troy's UTLIST code to manage our linked list
+    //  His stuff takes some getting used to.  Everything is implemented as a
+    //  'C' macro (#define) so you'll see we're not passing in a reference
+    //
+    int                         numDevices = 0;
+    HomeHeartBeatDevice_t       *elementPtr = NULL;
+    LL_COUNT( deviceListHead, elementPtr, numDevices );             // numDevices is not passed by reference here
+    debug_print( "Looking for [%s]. here are %d devices in the device list.\n", macAddress, numDevices );
+            
+    //
+    // The top call was just for fun.  Iterate over the list looking for a macAdress Match
+    elementPtr = NULL;
+    LL_FOREACH( deviceListHead, elementPtr ) {
+        if (strncmp( elementPtr->macAddress, macAddress, sizeof elementPtr->macAddress ) == 0) {
+            
+            HomeHeartBeatDevice_t   *tmpPtr = elementPtr;
+            
+            if (1) {
+            debug_print( "Found a matching device matching this MAC address [%s]. State Record ID: %d\n", 
+                    tmpPtr->macAddress,
+                    tmpPtr->stateRecordID );
+            }
+            return elementPtr;
+        }
+    }
+    
+    //
+    // If we made it here - we didn't find it...
+    debug_print( "No matching Device was found. macAddress [%s] -must be a new device!\n", macAddress );
+    return NULL;
+}
+
+*/
+
 // -----------------------------------------------------------------------------
 int Device_parseTokens (HomeHeartBeatDevice_t *deviceRecPtr, char *token[])
 {
-        //
+    int j;
+    for (j = 0; j < 17; j +=1)
+        printf( ">>>>*** >[%d] [%s]\n", j+1, token[j] );
+
+    //
     // Now let's parse the tokens we've got 
     deviceRecPtr->stateRecordID = Device_parseStateRecordID( token[ 0 ] );
     deviceRecPtr->zigbeeBindingID = Device_parseZigbeeBindingID( token[ 1 ] );
@@ -93,7 +145,7 @@ int Device_parseTokens (HomeHeartBeatDevice_t *deviceRecPtr, char *token[])
     //
     // We've already parsed out and assigned the Mac Address
     // char *macAddress = Device_parseMacAddress( token[ 15 ] );
-    deviceRecPtr->deviceName = Device_parseDeviceName( token[ 16 ] );
+    strncpy( deviceRecPtr->deviceName, Device_parseDeviceName( token[ 16 ] ), MAX_DEVICE_NAME_LEN );
 
     //
     // Just for giggles we return the device type
@@ -454,48 +506,5 @@ int     Device_parseAnyTimerValue (char *token)
     //debug_print( "----------totalSeconds: %ld    days %d , hours %d, minutes: %d, seconds: %d\n", timerValue, days, hours, minutes, seconds );
     
     return timerValue;
-}
-
-// -----------------------------------------------------------------------------
-HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceListHead, char *macAddress)
-{
-    assert( macAddress != NULL );
-    
-    //
-    // scan thru the list of sensors and see if it's in there
-    //  if not, return null
-    if (deviceListHead == NULL)
-        return NULL;
-
-    //
-    //  Recall - we're using Troy's UTLIST code to manage our linked list
-    //  His stuff takes some getting used to.  Everything is implemented as a
-    //  'C' macro (#define) so you'll see we're not passing in a reference
-    //
-    int                         numDevices = 0;
-    HomeHeartBeatDevice_t       *elementPtr = NULL;
-    LL_COUNT( deviceListHead, elementPtr, numDevices );             // numDevices is not passed by reference here
-    debug_print( "Looking for [%s]. here are %d devices in the device list.\n", macAddress, numDevices );
-            
-    //
-    // The top call was just for fun.  Iterate over the list looking for a macAdress Match
-    elementPtr = NULL;
-    LL_FOREACH( deviceListHead, elementPtr ) {
-        if (strncmp( elementPtr->macAddress, macAddress, sizeof elementPtr->macAddress ) == 0) {
-            
-            HomeHeartBeatDevice_t   *tmpPtr = elementPtr;
-            
-            debug_print( "Found a matching device matching this MAC address [%s]. State Record ID: %d\n", 
-                    tmpPtr->macAddress,
-                    tmpPtr->stateRecordID );
-            
-            return elementPtr;
-        }
-    }
-    
-    //
-    // If we made it here - we didn't find it...
-    debug_print( "No matching Device was found. macAddress [%s] -must be a new device!\n", macAddress );
-    return NULL;
 }
 

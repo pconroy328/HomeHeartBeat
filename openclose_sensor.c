@@ -89,7 +89,7 @@ OpenCloseSensor_t  *OpenClose_newOCSensorRecord ()
     
     return recPtr;
 }
-
+/*
 // -----------------------------------------------------------------------------
 static
 HomeHeartBeatDevice_t   *OpenClose_newDeviceRecord (OpenCloseSensor_t *newOCRec)
@@ -102,11 +102,9 @@ HomeHeartBeatDevice_t   *OpenClose_newDeviceRecord (OpenCloseSensor_t *newOCRec)
     //  what is essentially the Device Superclass
     //
     recPtr = malloc( sizeof ( HomeHeartBeatDevice_t ) );
-    if (recPtr != NULL) {  
-    }
-    
     return recPtr;
 }
+*/
 
 //------------------------------------------------------------------------------
 void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )

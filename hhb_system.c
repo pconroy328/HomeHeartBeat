@@ -15,14 +15,17 @@
 #include "helpers.h"
 #include "serialport.h"
 #include "openclose_sensor.h"
-#include "utlist.h"
 #include "waterleak_sensor.h"
+#include "motion_sensor.h"
+#include "utlist.h"
 
 
 //
 // Forward declarations
 static  int     getOneStateRecord( char *, int );
 static  HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead);
+static  HomeHeartBeatDevice_t *parseOneStateRecordA (char *receiveBuf, int numRead);
+static  HomeHeartBeatDevice_t *parseOneStateRecordL (char *receiveBuf, int numRead);
 static  int     tokenizeStateData (char *receiveBuf, int numRead, char *token[]);
 
 
@@ -45,6 +48,7 @@ void    HomeHeartBeatSystem_Initialize ()
     //
     // Initialize some necessary fields.
     aSystem->deviceListHead = NULL;                 // utlist says always set this to NULL
+    aSystem->deviceArrayIndex = 0;
     
     aSystem->systemID = 0;
     strncpy( aSystem->name, "UNNAMED SYSTEM", sizeof aSystem->name );
@@ -72,6 +76,22 @@ void    HomeHeartBeatSystem_Initialize ()
     // readIniFileValues( aSystem );
     //
     IniFile_readIniFile( aSystem );    
+    
+    if (aSystem->logEventsToDatabase) {
+        Database_setDatabaseHost( aSystem->databaseHost );
+        Database_setDatabaseUserName( aSystem->databaseUserName );
+        Database_setDatabasePassword( aSystem->databasePassword );
+        Database_setDatabaseSchema( aSystem->databaseSchema );
+        Database_setFailOnDatabaseErrors( 1 );
+        Database_openDatabase();
+        Database_dropDeviceStateLogTable(); Database_createDeviceStateLogTable();
+        Database_dropDeviceStateCurrentTable(); Database_createDeviceStateCurrentTable();
+    }
+    
+    if (aSystem->logEventsToMQTT) {
+        MQTT_setDefaults( aSystem, aSystem->mqttBrokerHost );
+        MQTT_initialize( aSystem );
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -131,7 +151,7 @@ void    HomeHeartBeatSystem_EventLoop ()
     aSystem->pollForEvents = TRUE;
     while (aSystem->pollForEvents) {
         numBytesRead = getOneStateRecord( rawStateRecord, sizeof rawStateRecord );
-        deviceRecPtr = parseOneStateRecord( rawStateRecord, numBytesRead );
+        deviceRecPtr = parseOneStateRecordL( rawStateRecord, numBytesRead );
         
         //
         // debugging for valgrind
@@ -148,6 +168,11 @@ void    HomeHeartBeatSystem_EventLoop ()
             }
     
             if (aSystem->logEventsToMQTT) {
+                //
+                // Have we had a state change???
+                if (deviceRecPtr->stateHasChanged)
+                    MQTT_CreateDeviceAlarm( deviceRecPtr );
+                
                 MQTT_CreateDeviceEvent( deviceRecPtr );
                 MQTT_SendReceive();
             }
@@ -197,7 +222,7 @@ static int  getOneStateRecord (char *rawStateRecord, int bufSize)
 
 // ----------------------------------------------------------------------------
 static  
-HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
+HomeHeartBeatDevice_t *parseOneStateRecord2 (char *receiveBuf, int numRead)
 {
     char    *token[ 17 ];
     HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
@@ -208,7 +233,9 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
     int numTokensParsed = tokenizeStateData( receiveBuf, numRead, token );
     if (numTokensParsed != 17)
         return NULL;
-    
+    int j;
+    for (j = 0; j < 17; j +=1)
+        printf( ">>>>>>>[%d] [%s]\n", j+1, token[j] );
     
     int     deviceType = Device_parseDeviceType( token[ 3 ] );
     char    *macAddress = Device_parseMacAddress( token[ 15 ] );
@@ -225,7 +252,11 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
    
     //
     // Now we look to see if we can find this device (by it's MAC address) already in our list of devices
-    deviceRecPtr = Device_findThisDevice( aSystem->deviceListHead, macAddress );
+    for (j = 0; j < 17; j +=1)
+        printf( ">>555555 >>>>>[%d] [%s]\n", j+1, token[j] );
+    // deviceRecPtr = Device_findThisDevice( aSystem->deviceListHead, macAddress );
+
+    
     //
     // Have we found this device already or is it the first time we've seen it?
     int     firstTimeDeviceSeen = FALSE;
@@ -233,22 +264,83 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
         firstTimeDeviceSeen = TRUE;
         deviceRecPtr = Device_newDeviceRecord( macAddress );
         assert( deviceRecPtr != NULL );
+    for (j = 0; j < 17; j +=1)
+        printf( ">>>>>66666666666>[%d] [%s]\n", j+1, token[j] );
 
-        debug_print( "FIRST TIME DEVICE [%s]\n", macAddress );
+        
+        printf( "FIRST TIME DEVICE [%s]\n", macAddress );
+        printf( "               1. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
+        
+        //
+        // Debugging dump the list
+        puts( "\n====================== BEFORE =========================\n" );
+        HomeHeartBeatDevice_t    *tmpPtr = NULL;
+        int     i = 1;
+        LL_FOREACH( aSystem->deviceListHead, tmpPtr ) {
+            printf( "[[%2d]] %s\n------------------------------------\n", i, Device_dumpDeviceRecord( tmpPtr ));
+            i += 1;
+        }
+        
+    for (j = 0; j < 17; j +=1)
+        printf( ">>>>>777777777777>[%d] [%s]\n", j+1, token[j] );
+        printf( "               2. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
+        
         //
         // Add it to the linked list
         deviceRecPtr->next = NULL;
         LL_APPEND( aSystem->deviceListHead, deviceRecPtr );
+        printf( "               3. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
+    for (j = 0; j < 17; j +=1)
+        printf( ">>>>>88888888888>[%d] [%s]\n", j+1, token[j] );
+
+        
+        
+        
+        ////////////////////
+        /////////// TOKENS OK!!!!!!!!!!
+        puts( "\n====================== AFTER =========================\n" );
+        //tmpPtr = NULL;
+        //i = 1;
+        //LL_FOREACH( aSystem->deviceListHead, tmpPtr ) {
+        //    printf( "[[%2d]] %s\n------------------------------------\n", i, Device_dumpDeviceRecord( tmpPtr ));
+        //    i += 1;
+       // }
+        printf( "               4. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
+
+        ////////////// TOKENS WHACKED!!!
+        
+    for (j = 0; j < 17; j +=1)
+        printf( ">>>>>999999999999>[%d] [%s]\n", j+1, token[j] );
+        
+        int numDevices = 0;
+        HomeHeartBeatDevice_t   *elementPtr;
+        LL_COUNT( aSystem->deviceListHead, elementPtr, numDevices );             // numDevices is not passed by reference here
+        printf( "After addition there are %d devices in the device list.\n", numDevices );
+        printf( "               5. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
+
+    for (j = 0; j < 17; j +=1)
+        printf( ">>>>>AAAAAAAAAAAAAAAAA>[%d] [%s]\n", j+1, token[j] );
 
         //
         // Something we need to do just once and that's initialize the State Changed fields
         deviceRecPtr->stateHasChanged = FALSE;
         deviceRecPtr->lastDeviceState = deviceRecPtr->deviceState;
         deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
+            for (j = 0; j < 17; j +=1)
+        printf( ">>>>>BBBBBBBBBBBBB>[%d] [%s]\n", j+1, token[j] );
+
     }
 
+    printf( "               6. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
+
+    //
+    // TOKENS ARE SCREW UP AT THIS POINT!!!
+    
+    for (j = 0; j < 17; j +=1)
+        printf( ">>22222222222222>>>>>[%d] [%s]\n", j+1, token[j] );
+    
     deviceType = Device_parseTokens( deviceRecPtr, token );
-    debug_print( "After calling find - this is what we found: %s", Device_dumpDeviceRecord( deviceRecPtr ) );
+    printf( "After calling find - this is what we found: %s", Device_dumpDeviceRecord( deviceRecPtr ) );
 
     //
     // What we do next depends on what device is reporting in.
@@ -266,7 +358,8 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
         case DT_REMINDER_DEVICE:
         case DT_ATTENTION_DEVICE:
         case DT_MODEM:
-        case DT_MOTION_SENSOR:
+        case DT_MOTION_SENSOR:      Motion_parseOneStateRecord( deviceRecPtr );
+                                    break;
         case DT_TILT_SENSOR:
             break;
 
@@ -275,10 +368,11 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
             break;
     }
 
+    printf( "exiting \n\n", 0 );
     return deviceRecPtr;
 }
 
-// #include "utlist.h"
+
 // -----------------------------------------------------------------------------
 void    HomeHeartBeat_ReleaseMemory()
 {
@@ -295,7 +389,7 @@ void    HomeHeartBeat_ReleaseMemory()
 static
 int    tokenizeStateData (char *receiveBuf, int numRead, char *token[])
 {
-   //debug_print( "entering. recieveBuf[%s], numRead: %d\n", receiveBuf, numRead );
+   debug_print( "entering. recieveBuf[%s], numRead: %d\n", receiveBuf, numRead );
     
     /*
      *  A retrieved state record has the following format:
@@ -304,42 +398,311 @@ int    tokenizeStateData (char *receiveBuf, int numRead, char *token[])
      *  ASCII text name of the device. All of the remaining fields are numerical and 
      *  are expressed in hexadecimal notation (base 16).
      */
-    const char delimiters[] = ",";
+    const char  delimiters[] = ",";
+    char        dataCopy[ 1024 ];
+    char        *cPtr;
     
     //
     // Since this is my code, I'm going to use "strsep()" instead of strtok_r
-    char    *dataCopy;
-    dataCopy = malloc( numRead + 1 );
-    if (dataCopy != NULL) {
-        memcpy( dataCopy, receiveBuf, numRead );
-    
-        //
-        // These functions modify the buffer, that's why we made a copy.
-        // I'm OK with putting a hard 17 in here. The HHB is dead and unlikely to change :)
-        int     i;
-        for (i = 0; i < 17; i += 1) {
-            token[ i ] = strsep( &dataCopy, delimiters );
-            if (token[ i ] == NULL) {
-                printf( "ERROR:homeheartbeat:parseOneStateRecord(): Hit null token on loop:%d \n", i );
-                break;
-            }
+    memcpy( dataCopy, receiveBuf, numRead );
+    cPtr = &dataCopy[ 0 ];
+    //
+    // These functions modify the buffer, that's why we made a copy.
+    // I'm OK with putting a hard 17 in here. The HHB is dead and unlikely to change :)
+    int     i;
+    for (i = 0; i < 17; i += 1) {
+        token[ i ] = strsep( &cPtr, delimiters );
+        if (token[ i ] == NULL) {
+            warnAndKeepGoing( "ERROR:homeheartbeat:parseOneStateRecord(): Hit null token on loop\n" );
+            break;
         }
-        int numTokensFound = i;
-        //debug_print( "Total number of tokens in data: %d\n", numTokensFound );
-        
-        free( dataCopy );
-        //for (i = 0; i < numTokensFound; i += 1)
-            //debug_print( "After parsing token[ %d ] is [%s]\n", i, (token[ i ] != NULL ? token[ i ] : "NULL" ) );
-                
-        if (numTokensFound != 17) {
-            fprintf( stderr, "Less than 17 tokens found in the data stream. Considering it corrupt and discarding it all\n" );
-            return numTokensFound;
-        }
-    } else {
-        haltAndCatchFire( "Out of memory trying to allocate space for the token's data copy buffer." );
     }
+    int numTokensFound = i;
+    //debug_print( "Total number of tokens in data: %d\n", numTokensFound );
+        
+                
+    if (numTokensFound != 17) {
+       warnAndKeepGoing( "Less than 17 tokens found in the data stream. Considering it corrupt and discarding it all\n" );
+       return numTokensFound;
+    } 
     
     return 17;
+}
+
+
+// -----------------------------------------------------------------------------
+static
+HomeHeartBeatDevice_t   *addNewDevice (HomeHeartBeatDevice_t *deviceRecPtr)
+{
+    //
+    //
+    if (aSystem->deviceArrayIndex >= 0 && aSystem->deviceArrayIndex < MAX_DEVICES_IN_SYSTEM) {
+        aSystem->deviceArray[ aSystem->deviceArrayIndex ] = *deviceRecPtr;
+        aSystem->deviceArrayIndex += 1;
+        return deviceRecPtr;
+    }
+    
+    return NULL;
+}
+
+// -----------------------------------------------------------------------------
+static
+int     updateExistingDevice (int indexPosition, char *token[])
+{
+    //
+    //
+    debug_print( "Updating device at position [%d]\n", indexPosition );
+    return Device_parseTokens( &(aSystem->deviceArray[ indexPosition ]), token );     // fill in the fields!
+}
+
+// -----------------------------------------------------------------------------
+static
+HomeHeartBeatDevice_t   *findDevice (char *macAddress, int *indexPosition)
+{
+    //
+    //
+    *indexPosition = -1;
+    int     i = 0;
+    for (i = 0; i < aSystem->deviceArrayIndex; i += 1) {
+        
+        if (strncmp( macAddress, aSystem->deviceArray[ i ].macAddress, MAX_MAC_ADDRESS_SIZE ) == 0) {
+            *indexPosition = i;
+            debug_print( "Found matching device at position [%d]\n", *indexPosition );
+            return &(aSystem->deviceArray[ i ]);
+        }
+        
+    }
+    
+    debug_print( "Not found!\n", 0 );
+    return NULL;            
+}
+
+// -----------------------------------------------------------------------------
+static
+HomeHeartBeatDevice_t   *findDeviceInList (char *macAddress)
+{
+    debug_print( "Looking for a device with a MAC address of [%s]\n", macAddress );
+    //
+    //
+    int                     i = 0;
+    HomeHeartBeatDevice_t   *elementPtr;
+    
+    
+    elementPtr = NULL;
+    LL_FOREACH( aSystem->deviceListHead, elementPtr ) {
+        char    *listMac = &(elementPtr->macAddress[ 0 ]);
+        
+        debug_print( "   [%d] List has: [%s], looking for: [%s]", i, listMac, macAddress );
+        
+        if (strncmp( listMac, macAddress, MAX_MAC_ADDRESS_SIZE ) == 0) {
+            debug_print( " == FOUND!\n", 0 );
+            return elementPtr;
+        } else {
+            debug_print( "\n", 0 );
+        }
+        
+        i += 1;
+    }
+    
+    debug_print( "Not found! Must be a new device!\n", 0 );
+    return NULL;            
+}
+
+// -----------------------------------------------------------------------------
+static
+HomeHeartBeatDevice_t   *addNewDeviceToList (HomeHeartBeatDevice_t *deviceRecPtr)
+{
+    //
+    //
+    debug_print( "Adding a new device to the list. Mac :[%s]\n", deviceRecPtr->macAddress );
+    
+    LL_APPEND( aSystem->deviceListHead, deviceRecPtr );
+    return NULL;
+}
+
+// -----------------------------------------------------------------------------
+static
+int     updateExistingDeviceInList (HomeHeartBeatDevice_t *deviceRecPtr, char *token[])
+{
+    //
+    //
+    debug_print( "Updating device in the list\n", 0 );
+    return Device_parseTokens( deviceRecPtr, token );     // fill in the fields!
+}
+
+
+// ----------------------------------------------------------------------------
+static  
+HomeHeartBeatDevice_t *parseOneStateRecordA (char *receiveBuf, int numRead)
+{
+    char    *token[ 17 ];
+    HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
+    
+
+    //
+    //  Convert serial port stream into tokens! We know the device sends 17!
+    assert( receiveBuf != NULL );
+    int numTokensParsed = tokenizeStateData( receiveBuf, numRead, token );
+    if (numTokensParsed != 17)
+        return NULL;
+    
+ 
+    //
+    //  We are going to use a device's MAC address to uniquely identify it.  That's fine
+    //  except the Base Station (Type 1, Record ID = 0) and the Modem (Type 16, Record ID= 2)
+    //  don't have MAC Addresses!  So - I could add alot of checking for device type of 1 or 16
+    //  or I could jus6t create a MAC address for them. :)
+    int     deviceType = Device_parseDeviceType( token[ 3 ] );
+    char    *macAddress = Device_parseMacAddress( token[ 15 ] );
+    
+    if (deviceType == 1 || deviceType == 16) {
+        debug_print( "Received a state record for the Base Station or Modem. Ignoring.\n", 0 );
+        return NULL;
+    }
+   
+    int     firstTimeDeviceSeen = FALSE;
+    int     arrayIndex = -1;
+    //
+    // Ok - have we seen this device before?
+    //    deviceRecPtr = Device_findThisDevice( aSystem->deviceListHead, macAddress );
+    deviceRecPtr = findDevice( macAddress, &arrayIndex );
+    if (arrayIndex < 0 || deviceRecPtr == NULL) {
+        
+        //
+        //  Ok - this is the first time we've seen this device!
+        firstTimeDeviceSeen = TRUE;
+        deviceRecPtr = Device_newDeviceRecord( macAddress );        // create a new record
+        
+        deviceType = Device_parseTokens( deviceRecPtr, token );     // fill in the fields!
+        
+        //
+        // Something we need to do just once and that's initialize the State Changed fields
+        deviceRecPtr->stateHasChanged = FALSE;
+        deviceRecPtr->lastDeviceState = deviceRecPtr->deviceState;
+        deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
+        
+        addNewDevice( deviceRecPtr );                               // add it!
+    } else {
+        //
+        // This is not the first time we've seen this device - just update the data
+        updateExistingDevice( arrayIndex, token );
+    }
+
+    //
+    // What we do next depends on what device is reporting in.
+    switch (deviceType) {
+        case DT_BASE_STATION:   
+            break;
+        case DT_HOME_KEY:
+            break; 
+        case DT_OPEN_CLOSE_SENSOR:  OpenClose_parseOneStateRecord( deviceRecPtr );
+                                    break;
+        case DT_POWER_SENSOR:     
+            break;
+        case DT_WATER_LEAK_SENSOR:  WaterLeak_parseOneStateRecord( deviceRecPtr );
+                                    break;
+        case DT_REMINDER_DEVICE:
+        case DT_ATTENTION_DEVICE:
+        case DT_MODEM:
+        case DT_MOTION_SENSOR:      Motion_parseOneStateRecord( deviceRecPtr );
+                                    break;
+        case DT_TILT_SENSOR:
+            break;
+
+        default:
+            warnAndKeepGoing( "Unrecognized device type just came through" );
+            break;
+    }
+
+    printf( "exiting \n\n", 0 );
+    return deviceRecPtr;
+}
+
+
+// ----------------------------------------------------------------------------
+static  
+HomeHeartBeatDevice_t *parseOneStateRecordL (char *receiveBuf, int numRead)
+{
+    char    *token[ 17 ];
+    HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
+    
+
+    //
+    //  Convert serial port stream into tokens! We know the device sends 17!
+    assert( receiveBuf != NULL );
+    int numTokensParsed = tokenizeStateData( receiveBuf, numRead, token );
+    if (numTokensParsed != 17)
+        return NULL;
+    
+ 
+    //
+    //  We are going to use a device's MAC address to uniquely identify it.  That's fine
+    //  except the Base Station (Type 1, Record ID = 0) and the Modem (Type 16, Record ID= 2)
+    //  don't have MAC Addresses!  So - I could add alot of checking for device type of 1 or 16
+    //  or I could jus6t create a MAC address for them. :)
+    int     deviceType = Device_parseDeviceType( token[ 3 ] );
+    char    *macAddress = Device_parseMacAddress( token[ 15 ] );
+    
+    if (deviceType == 1 || deviceType == 16) {
+        debug_print( "Received a state record for the Base Station or Modem. Ignoring.\n", 0 );
+        return NULL;
+    }
+   
+    int     firstTimeDeviceSeen = FALSE;
+    //
+    // Ok - have we seen this device before?
+    //    deviceRecPtr = Device_findThisDevice( aSystem->deviceListHead, macAddress );
+    deviceRecPtr = findDeviceInList( macAddress );
+    if (deviceRecPtr == NULL) {
+        
+        //
+        //  Ok - this is the first time we've seen this device!
+        firstTimeDeviceSeen = TRUE;
+        deviceRecPtr = Device_newDeviceRecord( macAddress );        // create a new record
+        
+        deviceType = Device_parseTokens( deviceRecPtr, token );     // fill in the fields!
+        
+        //
+        // Something we need to do just once and that's initialize the State Changed fields
+        deviceRecPtr->stateHasChanged = FALSE;
+        deviceRecPtr->lastDeviceState = deviceRecPtr->deviceState;
+        deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
+        
+        addNewDeviceToList( deviceRecPtr );                               // add it!
+    } else {
+        //
+        // This is not the first time we've seen this device - just update the data
+        updateExistingDeviceInList( deviceRecPtr, token );
+    }
+
+    //
+    // What we do next depends on what device is reporting in.
+    switch (deviceType) {
+        case DT_BASE_STATION:   
+            break;
+        case DT_HOME_KEY:
+            break; 
+        case DT_OPEN_CLOSE_SENSOR:  OpenClose_parseOneStateRecord( deviceRecPtr );
+                                    break;
+        case DT_POWER_SENSOR:     
+            break;
+        case DT_WATER_LEAK_SENSOR:  WaterLeak_parseOneStateRecord( deviceRecPtr );
+                                    break;
+        case DT_REMINDER_DEVICE:
+        case DT_ATTENTION_DEVICE:
+        case DT_MODEM:
+        case DT_MOTION_SENSOR:      Motion_parseOneStateRecord( deviceRecPtr );
+                                    break;
+        case DT_TILT_SENSOR:
+            break;
+
+        default:
+            warnAndKeepGoing( "Unrecognized device type just came through" );
+            break;
+    }
+
+    printf( "exiting \n\n", 0 );
+    return deviceRecPtr;
 }
 
 

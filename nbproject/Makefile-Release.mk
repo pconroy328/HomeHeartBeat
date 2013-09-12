@@ -41,6 +41,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/hhb_system.o \
 	${OBJECTDIR}/inifile.o \
 	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/motion_sensor.o \
 	${OBJECTDIR}/mqtt.o \
 	${OBJECTDIR}/openclose_sensor.o \
 	${OBJECTDIR}/serialport.o \
@@ -100,6 +101,11 @@ ${OBJECTDIR}/main.o: main.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.c
+
+${OBJECTDIR}/motion_sensor.o: motion_sensor.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/motion_sensor.o motion_sensor.c
 
 ${OBJECTDIR}/mqtt.o: mqtt.c 
 	${MKDIR} -p ${OBJECTDIR}

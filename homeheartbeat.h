@@ -43,6 +43,8 @@ typedef struct  HomeHeartBeatSystem {
     //
     // Now the collection of devices is a linked list, so we need a 'head' pointer
     HomeHeartBeatDevice_t   *deviceListHead;
+    HomeHeartBeatDevice_t   deviceArray[ MAX_DEVICES_IN_SYSTEM ];
+    int                     deviceArrayIndex;
     
     //
     // Port specifics

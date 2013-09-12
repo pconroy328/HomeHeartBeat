@@ -6,7 +6,7 @@
 #include "homeheartbeat.h"
 #include "helpers.h"
 #include "motion_sensor.h"
-#include "utlist.h"
+// #include "utlist.h"
 
 
 // -----------------------------------------------------------------------------
@@ -16,13 +16,14 @@
 static MotionSensor_t      *Motion_newMotionSensorRecord( void );
 
 
-static  int             Motion_getMotionStateFromInt (int sensorState);
-static  int             Motion_getMotionState (char *token);
-static  int             Motion_parseDeviceConfiguration (char *token);
-static  int             Motion_getAlarmEnabledCondition1 (int dcValue);
-static  int             Motion_getAlarmEnabledCondition2 (int dcValue);
-static  int             Motion_getCallMeEnabledCondition1 (int dcValue);
-static  int             Motion_getCallMeEnabledCondition2 (int dcValue);
+static  int         Motion_getMotionStateFromInt( int sensorState );
+static  int         Motion_getMotionState( char *token );
+static  int         Motion_parseDeviceConfiguration( char *token );
+static  int         Motion_getAlarmEnabledCondition1( int dcValue );
+static  int         Motion_getAlarmEnabledCondition2( int dcValue );
+static  int         Motion_getCallMeEnabledCondition1( int dcValue );
+static  int         Motion_getCallMeEnabledCondition2( int dcValue );
+static  int         Motion_parseDeviceParameter( int dpValue );
 
 
 
@@ -116,6 +117,10 @@ void    Motion_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     //  Are we open of closed?
     deviceRecPtr->motSensor->currentState = Motion_getMotionStateFromInt( deviceRecPtr->deviceState );
     deviceRecPtr->motSensor->motionDetected = (deviceRecPtr->motSensor->currentState == motMotion);
+    
+    //
+    // The motion sensor uses the device parameter to set the delay value
+    deviceRecPtr->motSensor->motionDelayValueSecs = Motion_parseDeviceParameter( deviceRecPtr->deviceParameter );
     
     //
     // Now - check to see if we've changed state?
@@ -279,3 +284,31 @@ int     Motion_getCallMeEnabledCondition2 (int dcValue)
     //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
 }
 
+//------------------------------------------------------------------------------
+static
+int     Motion_parseDeviceParameter (int dpValue)
+{
+    //  
+    //  For motion sensors, field 13 has meaning - the delay value
+    //      0 (0x00)  -  10 sec Delay
+    //      1 (0x01)  -  1 min Delay
+    //      2 (0x02)  -  5 min Delay
+    //      3 (0x03)  -  10 min Delay
+    //      4 (0x04)  -  30 min Delay
+    //      5 (0x05)  -  1 hour Delay
+    //      6 (0x06)  -  2 hour Delay
+    
+    int     motionDelayValueSecs = 10;              
+    
+    switch (dpValue) {
+        case    0:      motionDelayValueSecs = 10;          break;
+        case    1:      motionDelayValueSecs = 60;          break;
+        case    2:      motionDelayValueSecs = (5 * 60);    break;
+        case    3:      motionDelayValueSecs = (10 * 60);   break;
+        case    4:      motionDelayValueSecs = (30 * 60);   break;
+        case    5:      motionDelayValueSecs = (60 * 60);   break;
+        case    6:      motionDelayValueSecs = (120 * 60);  break;
+    }
+    
+    return motionDelayValueSecs;
+}

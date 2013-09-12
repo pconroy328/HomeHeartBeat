@@ -89,22 +89,6 @@ OpenCloseSensor_t  *OpenClose_newOCSensorRecord ()
     
     return recPtr;
 }
-/*
-// -----------------------------------------------------------------------------
-static
-HomeHeartBeatDevice_t   *OpenClose_newDeviceRecord (OpenCloseSensor_t *newOCRec)
-{
-    HomeHeartBeatDevice_t   *recPtr = NULL;
-    
-    //
-    //  We've discovered a new Open/Close Sensor attached to our system. After we allocate
-    //  a record for the O/C Sensor, we call this function which allocates space for
-    //  what is essentially the Device Superclass
-    //
-    recPtr = malloc( sizeof ( HomeHeartBeatDevice_t ) );
-    return recPtr;
-}
-*/
 
 //------------------------------------------------------------------------------
 void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
@@ -129,14 +113,21 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     // These should be values that are specific to an Open / Close Sensor
     assert( deviceRecPtr->ocSensor != NULL );
     
+    //
+    //  Now take the Device Configuration field and figure out the four settings:
+    //  Alarm On Open, Alarm On Close, Call on Open, Call on Close
     deviceRecPtr->ocSensor->alarmOnOpen = OpenClose_getAlarmEnabledCondition2( deviceRecPtr->deviceConfiguration );
     deviceRecPtr->ocSensor->alarmOnClose = OpenClose_getAlarmEnabledCondition1( deviceRecPtr->deviceConfiguration );
     deviceRecPtr->ocSensor->callOnOpen =  OpenClose_getCallMeEnabledCondition2( deviceRecPtr->deviceConfiguration );
     deviceRecPtr->ocSensor->callOnClose =  OpenClose_getCallMeEnabledCondition1( deviceRecPtr->deviceConfiguration );
+    
+    
     //
-    //  Are we open of closed?
+    //  Are we open or closed?
     deviceRecPtr->ocSensor->currentState = OpenClose_getOpenCloseStateFromInt( deviceRecPtr->deviceState );
     deviceRecPtr->ocSensor->isOpen = (deviceRecPtr->ocSensor->currentState == ocOpen);
+    
+    
     
     //
     // Now - check to see if we've changed state?
@@ -153,6 +144,7 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
                 deviceRecPtr->macAddress,
                 deviceRecPtr->ocSensor->currentState, deviceRecPtr->lastDeviceState);
     }
+    
     //
     //  Or has the state timer gotten smaller (or stayed the same)?  Then we had a fast state 
     //  change between poll intervals. Eg. Closed -> Opened -> Closed.   Well it turns out we cannot use "<=" because
@@ -172,7 +164,7 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     deviceRecPtr->lastDeviceState = deviceRecPtr->ocSensor->currentState;
     deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
             
-    debug_print( "After parse. \nOC Sensor: %s\n\n", dumpOCSensorDeviceRecord( deviceRecPtr ) );
+    // debug_print( "After parse. \nOC Sensor: %s\n\n", dumpOCSensorDeviceRecord( deviceRecPtr ) );
 }
 
 
@@ -189,13 +181,13 @@ int     OpenClose_getOpenCloseStateFromInt (int sensorState)
     else {
 
         if (isClosed) {
-            debug_print( "Sensor is CLOSED!\n", 0 );
+            // debug_print( "Sensor is CLOSED!\n", 0 );
             return ocClosed;
         } else if (isOpen) {
-            debug_print( "Sensor is OPEN!\n", 0 );
+            // debug_print( "Sensor is OPEN!\n", 0 );
             return ocOpen;
         } else {
-            debug_print( "Sensor is ???\n", 0 );
+            // debug_print( "Sensor is ???\n", 0 );
             return ocUnknown;
         }
     }
@@ -209,8 +201,6 @@ int     OpenClose_getOpenCloseState (char *token)
 {
     assert( token != NULL );
     int tmpValue = hexStringToInt( token );
-    // debug_print( "----------- [%s] %d\n", token, tmpValue );
-
     return tmpValue;
 }
 
@@ -236,7 +226,6 @@ int OpenClose_parseDeviceConfiguration (char *token)
         Bit 9 (0x0200)  -  Call me enabled on condition #2    
       */
     int tmpValue = hexStringToInt( token );
-
     return tmpValue;
 }
 
@@ -244,8 +233,6 @@ int OpenClose_parseDeviceConfiguration (char *token)
 static
 int     OpenClose_getAlarmEnabledCondition1 (int dcValue)
 {
-
-    return (dcValue & 0x0001);
     //int     alarmEnabledCondition2 = (dcValue & 0x0002);
     //int     callMeEnabledCondition1 = (dcValue & 0x0100);
     //int     callMeEnabledCondition2 = (dcValue & 0x0200);
@@ -253,6 +240,8 @@ int     OpenClose_getAlarmEnabledCondition1 (int dcValue)
     
     //debug_print( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
     //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
+
+    return (dcValue & 0x0001);
 }
 
 //------------------------------------------------------------------------------
@@ -260,42 +249,21 @@ static
 int     OpenClose_getAlarmEnabledCondition2 (int dcValue)
 {
 
-    // return (dcValue & 0x0001);
-    return (dcValue & 0x0002);
-    //int     callMeEnabledCondition1 = (dcValue & 0x0100);
-    //int     callMeEnabledCondition2 = (dcValue & 0x0200);
-
-    
     //debug_print( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
     //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
+    return (dcValue & 0x0002);
 }
 
 //------------------------------------------------------------------------------
 static
 int     OpenClose_getCallMeEnabledCondition1 (int dcValue)
 {
-
-    // return (dcValue & 0x0001);
-    //int     alarmEnabledCondition2 = (dcValue & 0x0002);
     return (dcValue & 0x0100);
-    //int     callMeEnabledCondition2 = (dcValue & 0x0200);
-
-    
-    //debug_print( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
-    //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
 }
 
 //------------------------------------------------------------------------------
 static
 int     OpenClose_getCallMeEnabledCondition2 (int dcValue)
 {
-
-    // return (dcValue & 0x0001);
-    //int     alarmEnabledCondition2 = (dcValue & 0x0002);
-    //int     callMeEnabledCondition1 = (dcValue & 0x0100);
     return (dcValue & 0x0200);
-
-    
-    //debug_print( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
-    //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
 }

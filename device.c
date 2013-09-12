@@ -48,6 +48,7 @@ Device: Name [%s]   MAC [%s]\n\
     return &deviceRecordDumpBuffer[ 0 ];
 }
 
+
 // -----------------------------------------------------------------------------
 HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress)
 {
@@ -65,6 +66,7 @@ HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress)
     
     return recPtr;
 }
+
 
 /*
 // -----------------------------------------------------------------------------
@@ -116,9 +118,9 @@ HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceLis
 // -----------------------------------------------------------------------------
 int Device_parseTokens (HomeHeartBeatDevice_t *deviceRecPtr, char *token[])
 {
-    int j;
-    for (j = 0; j < 17; j +=1)
-        printf( ">>>>*** >[%d] [%s]\n", j+1, token[j] );
+    //int j;
+    //for (j = 0; j < 17; j +=1)
+    //    printf( ">>>>*** >[%d] [%s]\n", j+1, token[j] );
 
     //
     // Now let's parse the tokens we've got 
@@ -230,7 +232,6 @@ int     Device_parseDeviceType (char *token)
 
     int deviceType = hexStringToInt( token );
 
-
     /* from Kolinahr
         1 (0x0001)  -  Base Station
         2 (0x0002)  -  Home Key
@@ -242,32 +243,6 @@ int     Device_parseDeviceType (char *token)
         16 (0x0010)  -  Modem
         23 (0x0017)  -  Motion
         24 (0x0018)  -  Tilt
-
-    int isBaseStation   = (deviceType == 0x0001);
-    int isHomeKey       = (deviceType == 0x0002);
-    int isOpenClose     = (deviceType == 0x0003);
-    int isPower         = (deviceType == 0x0004);
-    int isWater         = (deviceType == 0x0005);
-    int isReminder      = (deviceType == 0x0006);
-    int isAttention     = (deviceType == 0x0007);
-    int isModem         = (deviceType == 0x0010);
-    int itMotion        = (deviceType == 0x0017);
-    int isTilt          = (deviceType == 0x0018);
-                
-    char    *cPtr = "???";
-    switch (deviceType) {
-        case    1:  cPtr = "BASE STATION";  break;
-        case    2:  cPtr = "HOME KEY";  break;
-        case    3:  cPtr = "OPEN-CLOSE SENSOR";  break;
-        case    4:  cPtr = "POWER SENSOR";  break;
-        case    5:  cPtr = "WATER LEAK SENSOR";  break;
-        case    6:  cPtr = "REMINDER";  break;
-        case    7:  cPtr = "ATTENTION";  break;
-        case    16:  cPtr = "MODEM";  break;
-        case    23:  cPtr = "MOTION SENSOR";  break;
-        case    24:  cPtr = "TILT SENSOR";  break;
-    }
-    debug_print( "Device Type [%s]\n", cPtr );
     */
 
     return deviceType;

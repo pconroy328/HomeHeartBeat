@@ -25,25 +25,15 @@ typedef enum  ocDeviceState { ocOpen, ocClosed, ocUnknown } ocDeviceState_t;
     
 
 typedef struct  OpenCloseSensor {
-
-    int             stateRecordID;              // Field 1
-    int             zigbeeBindingID;            // Field 2
-    
     ocDeviceState_t currentState;               // Field 5
     int             isOpen;                     // derived
-    // char            *deviceName;                // Field 8  in supertype
     
     int             alarmOnOpen;                // Field 9
     int             alarmOnClose;               // Field 9
     int             callOnOpen;                 // Field 9
     int             callOnClose;                // Field 9
-    
-    long            aliveUpdateTimerSecs;       // Field 10
-    
-    long        pendingUpdateTimer;             // Field 14
-                                                // ....5....0....5.
-    // char            macAddress[ 17 ];           // 000D6F0000011367  Field 16 in supertype
-    char            *usersDeviceName[ MAX_DEVICE_NAME_LEN ];        // Field 17
+                                                    // ....5....0....5.
+    char            usersDeviceName[ MAX_DEVICE_NAME_LEN ];        // Field 17
 } OpenCloseSensor_t;
 
 

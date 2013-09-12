@@ -17,14 +17,13 @@ extern "C" {
 // ----------------------------------------------------------------------------
 //  Device State (Field 5) values specific to an Motion Sensor
 //
-#define     ISNOMOTION_BITMASK      (0x02)
-#define     ISMOTION_BITMASK    (0x01)
+#define     ISNOMOTION_BITMASK    (0x01)
+#define     ISMOTION_BITMASK      (0x02)
+
 typedef enum  motDeviceState { motMotion, motNoMotion, motUnknown } motDeviceState_t;
     
 
 typedef struct  MotionSensor {
-
-   
     motDeviceState_t    currentState;
     int             motionDetected;             // derived
     
@@ -33,7 +32,7 @@ typedef struct  MotionSensor {
     int             callOnMotion;  
     int             callOnNoMotion;
     
-    int             motionDelayValue;           // field 13
+    int             motionDelayValueSecs;       // field 13
     
     char            *usersDeviceName[ MAX_DEVICE_NAME_LEN ];
 } MotionSensor_t;

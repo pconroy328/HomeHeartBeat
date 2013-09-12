@@ -22,11 +22,12 @@
 
 //
 // Forward declarations
-static  int     getOneStateRecord( char *, int );
-static  HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead);
-static  HomeHeartBeatDevice_t *parseOneStateRecordA (char *receiveBuf, int numRead);
-static  HomeHeartBeatDevice_t *parseOneStateRecordL (char *receiveBuf, int numRead);
-static  int     tokenizeStateData (char *receiveBuf, int numRead, char *token[]);
+static  int                     getOneStateRecord( char *, int );
+static  HomeHeartBeatDevice_t   *parseOneStateRecord (char *receiveBuf, int numRead);
+static  HomeHeartBeatDevice_t   *parseOneStateRecordA (char *receiveBuf, int numRead);
+static  HomeHeartBeatDevice_t   *parseOneStateRecordL (char *receiveBuf, int numRead);
+static  int                     tokenizeStateData (char *receiveBuf, int numRead, char *token[]);
+static  void                    releaseMemory( void );
 
 
 //
@@ -106,8 +107,10 @@ void    HomeHeartBeatSystem_Shutdown ()
     }
     
     if (aSystem->logEventsToDatabase) {
-        ;
+        Database_closeDatabase();
     }
+    
+    releaseMemory();
     free( aSystem );
 }
 
@@ -156,9 +159,9 @@ void    HomeHeartBeatSystem_EventLoop ()
         //
         // debugging for valgrind
         numLoops += 1L;
-        if (numLoops > 6000L) {
-            return;
-        }
+        //if (numLoops > 6000L) {
+        //    return;
+        //}
 
         if (deviceRecPtr != NULL) {
     
@@ -180,12 +183,6 @@ void    HomeHeartBeatSystem_EventLoop ()
         
         sleep( aSystem->sleepSecsBetweenEventLoops );
     }
-}
-
-// -----------------------------------------------------------------------------
-void    HomeHeartBeat_ReadIniFile ()
-{
-    
 }
 
 // ----------------------------------------------------------------------------
@@ -219,7 +216,7 @@ static int  getOneStateRecord (char *rawStateRecord, int bufSize)
     return numRead;
 }   // getOneStateRecord
 
-
+/*
 // ----------------------------------------------------------------------------
 static  
 HomeHeartBeatDevice_t *parseOneStateRecord2 (char *receiveBuf, int numRead)
@@ -371,16 +368,35 @@ HomeHeartBeatDevice_t *parseOneStateRecord2 (char *receiveBuf, int numRead)
     printf( "exiting \n\n", 0 );
     return deviceRecPtr;
 }
+*/
 
 
 // -----------------------------------------------------------------------------
-void    HomeHeartBeat_ReleaseMemory()
+static
+void    releaseMemory()
 {
     HomeHeartBeatDevice_t   *elementPtr1;
     HomeHeartBeatDevice_t   *elementPtr2;
     
     LL_FOREACH_SAFE( aSystem->deviceListHead, elementPtr1, elementPtr2 ) {
-        free( elementPtr1->ocSensor );
+        
+        int deviceType = elementPtr1->deviceType;
+        
+        switch (deviceType) {
+            case DT_BASE_STATION:       /* nothing needed */ ;  break;
+            case DT_MODEM:              /* nothing needed */ ;  break;
+            
+            case DT_HOME_KEY:           /* free( elementPtr1->hkDevice ) */ ;  break;
+            case DT_OPEN_CLOSE_SENSOR:  free( elementPtr1->ocSensor );      break;
+            case DT_POWER_SENSOR:       /* free( elementPtr1->powSensor ) */ ;  break;
+            case DT_WATER_LEAK_SENSOR:  free( elementPtr1->wlSensor );      break;
+            case DT_REMINDER_DEVICE:    /* free( elementPtr1->powSensor ) */ ;  break;
+            case DT_ATTENTION_DEVICE:   /* free( elementPtr1->powSensor ) */ ;  break;
+            case DT_MOTION_SENSOR:      free( elementPtr1->motSensor );      break;
+            case DT_TILT_SENSOR:        /* free( elementPtr1->powSensor ) */ ;  break;
+        
+        }
+        
         LL_DELETE( aSystem->deviceListHead, elementPtr1 );
     }
 } 

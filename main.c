@@ -33,12 +33,9 @@ int main(int argc, char** argv)
 
     
     HomeHeartBeatSystem_Initialize();
-    // HomeHeartBeatSystem_SetPortName );
     HomeHeartBeatSystem_OpenPort( NULL );
     HomeHeartBeatSystem_EventLoop( 1 );
     HomeHeartBeatSystem_Shutdown();
-    HomeHeartBeat_ReleaseMemory();
-
 
     return (EXIT_SUCCESS);
 }

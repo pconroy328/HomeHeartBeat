@@ -90,9 +90,15 @@ void    HomeHeartBeatSystem_Initialize ()
     }
     
     if (aSystem->logEventsToMQTT) {
-        MQTT_setDefaults( aSystem, aSystem->mqttBrokerHost );
-        MQTT_initialize( aSystem );
+        MQTT_setDefaults( aSystem, aSystem->MQTTParameters.mqttBrokerHost );
+        MQTT_Initialize( aSystem );
     }
+    
+    //
+    //  Kick Base Unit into NO MODEM and Debug Off
+    //  No Modem - send 'M' until we get "MODEM=0
+    //  Debug Off - send 'a' until we get DBG=0
+    
 }
 
 // -----------------------------------------------------------------------------
@@ -103,7 +109,7 @@ void    HomeHeartBeatSystem_Shutdown ()
     aSystem->portOpen = FALSE;
 
     if (aSystem->logEventsToMQTT) {
-        MQTT_teardown();
+        MQTT_Teardown();
     }
     
     if (aSystem->logEventsToDatabase) {
@@ -174,9 +180,9 @@ void    HomeHeartBeatSystem_EventLoop ()
                 //
                 // Have we had a state change???
                 if (deviceRecPtr->stateHasChanged)
-                    MQTT_CreateDeviceAlarm( deviceRecPtr );
+                    MQTT_CreateDeviceAlarm( aSystem, deviceRecPtr );
                 
-                MQTT_CreateDeviceEvent( deviceRecPtr );
+                MQTT_CreateDeviceEvent( aSystem, deviceRecPtr );
                 MQTT_SendReceive();
             }
         }
@@ -508,7 +514,7 @@ HomeHeartBeatDevice_t   *findDeviceInList (char *macAddress)
     LL_FOREACH( aSystem->deviceListHead, elementPtr ) {
         char    *listMac = &(elementPtr->macAddress[ 0 ]);
         
-        debug_print( "   [%d] List has: [%s], looking for: [%s]", i, listMac, macAddress );
+        debug_print( "   [%d] List has: [%s], looking for: [%s]\n", i, listMac, macAddress );
         
         if (strncmp( listMac, macAddress, MAX_MAC_ADDRESS_SIZE ) == 0) {
             debug_print( " == FOUND!\n", 0 );

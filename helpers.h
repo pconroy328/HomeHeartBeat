@@ -20,7 +20,6 @@ extern "C" {
     
     
 #include <stdio.h>
-#include "homeheartbeat.h"
     
 //
 // Selective (but compile time) debugging 

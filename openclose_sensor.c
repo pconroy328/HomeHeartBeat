@@ -116,6 +116,9 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     //
     //  Now take the Device Configuration field and figure out the four settings:
     //  Alarm On Open, Alarm On Close, Call on Open, Call on Close
+    //
+    //  By the way - I played with the O/C sensor and it seems you can have one or the other but not both Alarm On... conditions
+    //  I'll assume the same for Call On...
     deviceRecPtr->ocSensor->alarmOnOpen = OpenClose_getAlarmEnabledCondition2( deviceRecPtr->deviceConfiguration );
     deviceRecPtr->ocSensor->alarmOnClose = OpenClose_getAlarmEnabledCondition1( deviceRecPtr->deviceConfiguration );
     deviceRecPtr->ocSensor->callOnOpen =  OpenClose_getCallMeEnabledCondition2( deviceRecPtr->deviceConfiguration );
@@ -127,11 +130,18 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     deviceRecPtr->ocSensor->currentState = OpenClose_getOpenCloseStateFromInt( deviceRecPtr->deviceState );
     deviceRecPtr->ocSensor->isOpen = (deviceRecPtr->ocSensor->currentState == ocOpen);
     
+
+
     
+    //
+    //  Now I want to check to see if we should alarm.  You may wonder why I don't just check Bit 0 of field 7?
+    //  Because the device stays in alarm until the system decides to clear it. And that's not the behavior I want.
+    //  I want to alarm once and then not keep alarming!  At least this is what I think I want... :)
     
     //
     // Now - check to see if we've changed state?
     //
+    
     //
     //  Let's assume it has NOT changed and reset it...
     deviceRecPtr->stateHasChanged = FALSE;

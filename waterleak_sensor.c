@@ -107,10 +107,10 @@ void    WaterLeak_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     // Set Values in the subclass - wlSensor
     assert( deviceRecPtr->wlSensor != NULL );
     
-    deviceRecPtr->wlSensor->alarmOnWet = WaterLeak_getAlarmEnabledCondition2( deviceRecPtr->deviceConfiguration );
-    deviceRecPtr->wlSensor->alarmOnDry = WaterLeak_getAlarmEnabledCondition1( deviceRecPtr->deviceConfiguration );
-    deviceRecPtr->wlSensor->callOnWet =  WaterLeak_getCallMeEnabledCondition2( deviceRecPtr->deviceConfiguration );
-    deviceRecPtr->wlSensor->callOnDry =  WaterLeak_getCallMeEnabledCondition1( deviceRecPtr->deviceConfiguration );
+    deviceRecPtr->wlSensor->alarmOnWet = WaterLeak_getAlarmEnabledCondition1( deviceRecPtr->deviceConfiguration );
+    deviceRecPtr->wlSensor->alarmOnDry = WaterLeak_getAlarmEnabledCondition2( deviceRecPtr->deviceConfiguration );
+    deviceRecPtr->wlSensor->callOnWet =  WaterLeak_getCallMeEnabledCondition1( deviceRecPtr->deviceConfiguration );
+    deviceRecPtr->wlSensor->callOnDry =  WaterLeak_getCallMeEnabledCondition2( deviceRecPtr->deviceConfiguration );
     //
     //  Are we wet or dry?
     deviceRecPtr->wlSensor->currentState = WaterLeak_getWaterLeakStateFromInt( deviceRecPtr->deviceState );
@@ -170,10 +170,10 @@ int     WaterLeak_getWaterLeakStateFromInt (int sensorState)
     else {
 
         if (isWet) {
-            // debug_print( "Sensor is wet!\n", 0 );
+            debug_print( " -----------------------[ %d ] ---> Sensor is wet!\n", sensorState );
             return wlWet;
         } else if (isDry) {
-            // debug_print( "Sensor is dry!\n", 0 );
+            debug_print( "------------------------[ %d ] ---> Sensor is dry!\n", sensorState );
             return wlDry;
         } else {
             debug_print( "Sensor is ???\n", 0 );

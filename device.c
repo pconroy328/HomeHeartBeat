@@ -130,7 +130,7 @@ int Device_parseTokens (HomeHeartBeatDevice_t *deviceRecPtr, char *token[])
     deviceRecPtr->deviceType = Device_parseDeviceType( token[ 3 ] );
     deviceRecPtr->deviceState = Device_parseDeviceState( token[ 4 ] );  
     deviceRecPtr->deviceStateTimer = Device_parseDeviceStateTimer( token[ 5 ] );
-    deviceRecPtr->deviceAlerts = Device_parseDeviceAlerts( token[ 6 ] );
+    deviceRecPtr->deviceAlerts = hexStringToInt( token[ 6 ] );
     deviceRecPtr->deviceNameIndex = Device_parseDeviceNameIndex( token[ 7 ] );
     deviceRecPtr->deviceConfiguration = Device_parseDeviceConfiguration( token[ 8 ] );
     deviceRecPtr->aliveUpdateTimer = Device_parseAliveUpdateTimer( token[ 9 ] );
@@ -148,7 +148,16 @@ int Device_parseTokens (HomeHeartBeatDevice_t *deviceRecPtr, char *token[])
     // We've already parsed out and assigned the Mac Address
     // char *macAddress = Device_parseMacAddress( token[ 15 ] );
     strncpy( deviceRecPtr->deviceName, Device_parseDeviceName( token[ 16 ] ), MAX_DEVICE_NAME_LEN );
-
+    
+    //
+    // Now decode everything in Field 7
+    deviceRecPtr->deviceInAlarm = Device_parseDeviceAlarmTriggered( token[ 6 ] );
+    deviceRecPtr->deviceOffLine = Device_parseDeviceOffline( token[ 6 ] );
+    deviceRecPtr->deviceLowBattery = Device_parseDeviceLowBattery( token[ 6 ] );
+    deviceRecPtr->deviceBatteryCharging = Device_parseDeviceBatteryCharing( token[ 6 ] );      
+    deviceRecPtr->deviceOnBatteryBackup = Device_parseDeviceOnBatteryBackup( token[ 6 ] );
+        
+        
     //
     // Just for giggles we return the device type
     return deviceRecPtr->deviceType;
@@ -265,26 +274,78 @@ int Device_parseDeviceStateTimer (char *token)
 }
 
 // ----------------------------------------------------------------------------
-int     Device_parseDeviceAlerts (char *token)
+int     Device_parseDeviceAlarmTriggered (char *token)
 {
     assert( token != NULL );
     /*
         Bit 0 (0x01)  -  Alarm triggered; controlled by Field 9: Device Configuration
         Bit 1 (0x02)  -  Device off-line, out of range, or battery dead
         Bit 2 (0x04)  -  Low Battery signal sent during “I’m Alive” message from device
+        Bit 3 (0x08)  -  Battery charging; only valid for Home Key devices
+        Bit 5 (0x20)  -  Running on backup battery; only valid for Base Station
     */
     int tmpValue = hexStringToInt( token );
+    return (tmpValue & ALARMTRIGGERED_BITMASK);
+}
 
-    int alarmTriggered = (tmpValue & ALARMTRIGGERED_BITMASK);
-    int deviceOffLine  = (tmpValue & DEVICEOFFLINE_BITMASK);
-    int lowBattery     = (tmpValue & LOWBATTERY_BITMASK);
+// ----------------------------------------------------------------------------
+int     Device_parseDeviceOffline (char *token)
+{
+    assert( token != NULL );
+    /*
+        Bit 0 (0x01)  -  Alarm triggered; controlled by Field 9: Device Configuration
+        Bit 1 (0x02)  -  Device off-line, out of range, or battery dead
+        Bit 2 (0x04)  -  Low Battery signal sent during “I’m Alive” message from device
+        Bit 3 (0x08)  -  Battery charging; only valid for Home Key devices
+        Bit 5 (0x20)  -  Running on backup battery; only valid for Base Station
+    */
+    int tmpValue = hexStringToInt( token );
+    return (tmpValue & DEVICEOFFLINE_BITMASK);
+}
 
-    //debug_print( "Alert flags - Alarm Triggered: [%s], Offline: [%s], Low Battery: [%s]\n",
-    //                    (alarmTriggered ? "YES" : "NO"),
-    //                    (deviceOffLine ? "YES" : "NO"),
-    //                    (lowBattery ? "YES" : "NO") );
-    
-    return tmpValue;
+// ----------------------------------------------------------------------------
+int     Device_parseDeviceLowBattery (char *token)
+{
+    assert( token != NULL );
+    /*
+        Bit 0 (0x01)  -  Alarm triggered; controlled by Field 9: Device Configuration
+        Bit 1 (0x02)  -  Device off-line, out of range, or battery dead
+        Bit 2 (0x04)  -  Low Battery signal sent during “I’m Alive” message from device
+        Bit 3 (0x08)  -  Battery charging; only valid for Home Key devices
+        Bit 5 (0x20)  -  Running on backup battery; only valid for Base Station
+    */
+    int tmpValue = hexStringToInt( token );
+    return (tmpValue & LOWBATTERY_BITMASK);
+}
+
+// ----------------------------------------------------------------------------
+int     Device_parseDeviceBatteryCharing (char *token)
+{
+    assert( token != NULL );
+    /*
+        Bit 0 (0x01)  -  Alarm triggered; controlled by Field 9: Device Configuration
+        Bit 1 (0x02)  -  Device off-line, out of range, or battery dead
+        Bit 2 (0x04)  -  Low Battery signal sent during “I’m Alive” message from device
+        Bit 3 (0x08)  -  Battery charging; only valid for Home Key devices
+        Bit 5 (0x20)  -  Running on backup battery; only valid for Base Station
+    */
+    int tmpValue = hexStringToInt( token );
+    return (tmpValue & BATTERYCHARGING_BITMASK);
+}
+
+// ----------------------------------------------------------------------------
+int     Device_parseDeviceOnBatteryBackup (char *token)
+{
+    assert( token != NULL );
+    /*
+        Bit 0 (0x01)  -  Alarm triggered; controlled by Field 9: Device Configuration
+        Bit 1 (0x02)  -  Device off-line, out of range, or battery dead
+        Bit 2 (0x04)  -  Low Battery signal sent during “I’m Alive” message from device
+        Bit 3 (0x08)  -  Battery charging; only valid for Home Key devices
+        Bit 5 (0x20)  -  Running on backup battery; only valid for Base Station
+    */
+    int tmpValue = hexStringToInt( token );
+    return (tmpValue & ONBATTERYBACKUP_BITMASK);
 }
 
 

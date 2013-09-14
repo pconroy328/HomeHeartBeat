@@ -1,0 +1,1206 @@
+hhb_system.c:41:HomeHeartBeatSystem_Initialize(): entering
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending CONNECT]
+hhb_system.c:133:HomeHeartBeatSystem_OpenPort(): entering. portName: (null)
+serialport.c:282:SerialPort_Open2(): v2.2 Entering [/dev/ttyUSB0]
+hhb_system.c:153:HomeHeartBeatSystem_EventLoop(): entering
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,42,00,01,0001,53,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:529:findDeviceInList(): Not found! Must be a new device!
+hhb_system.c:539:addNewDeviceToList(): Adding a new device to the list. Mac :[0000011957]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:135:WaterLeak_parseOneStateRecord(): Detected state change on the device: 0000011957. current state: 1, last state: 2
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 120 seconds
+                     Stated Changed [YES]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1140 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m1, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,3A,00,01,0201,3A,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:529:findDeviceInList(): Not found! Must be a new device!
+hhb_system.c:539:addNewDeviceToList(): Adding a new device to the list. Mac :[0000011480]
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m2, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,56,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:529:findDeviceInList(): Not found! Must be a new device!
+hhb_system.c:539:addNewDeviceToList(): Adding a new device to the list. Mac :[0000010228]
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m3, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,42,00,01,0001,53,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 120 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1140 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m4, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,01,00,01,0201,01,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m5, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,56,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m6, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,42,00,01,0001,53,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 120 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1140 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m7, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,06,00,01,0201,06,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m8, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,56,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m9, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m10, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,0B,00,01,0201,0B,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m11, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m12, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m13, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,10,00,01,0201,10,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m14, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m15, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m16, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,15,00,01,0201,15,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m17, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m18, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m19, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,1A,00,01,0201,1A,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m20, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m21, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m22, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,20,00,01,0201,20,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m23, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m24, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m25, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,25,00,01,0201,25,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m26, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m27, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m28, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,2A,00,01,0201,2A,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m29, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m30, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m31, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,2F,00,01,0201,2F,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m32, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m33, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m34, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,34,00,01,0201,34,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m35, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m36, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m37, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,01,00,01,0201,01,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m38, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m39, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m40, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,01,00,01,0201,01,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m41, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,57,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m42, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,43,00,01,0001,54,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 180 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1200 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m43, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,05,00,01,0201,05,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m44, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m45, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,44,00,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 240 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m46, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,0A,00,01,0201,0A,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m47, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,01,8D,00,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m48, 'HHB/STATUS', ... (213 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,44,00,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 240 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m49, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,01,00,01,0201,01,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m50, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,02,03,01,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:155:OpenClose_parseOneStateRecord(): Detected state change on the device: 0000010228. current state: 0, last state: 1
+openclose_sensor.c:165:OpenClose_parseOneStateRecord(): Detected TIME BASED state change on the device: 0000010228. current Time: 3, last time: 46800
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m51, 'HHB/ALARM', ... (93 bytes))]
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m52, 'HHB/STATUS', ... (209 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,44,00,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 240 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m53, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,05,00,01,0201,05,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m54, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,02,08,01,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m55, 'HHB/STATUS', ... (209 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,44,00,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 240 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m56, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,0A,00,01,0201,0A,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m57, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,02,0D,01,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m58, 'HHB/STATUS', ... (210 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,02,44,00,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:176:WaterLeak_getWaterLeakStateFromInt(): ------------------------[ 2 ] ---> Sensor is dry!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [DRY]  Duration: 240 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m59, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,01,00,01,0201,01,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m60, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,02,12,01,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m61, 'HHB/STATUS', ... (210 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,01,05,01,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:173:WaterLeak_getWaterLeakStateFromInt():  -----------------------[ 1 ] ---> Sensor is wet!
+waterleak_sensor.c:135:WaterLeak_parseOneStateRecord(): Detected state change on the device: 0000011957. current state: 0, last state: 1
+waterleak_sensor.c:144:WaterLeak_parseOneStateRecord(): Detected TIME BASED state change on the device: 0000011957. current Time: 5, last time: 240
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [WET]  Duration: 5 seconds
+                     Stated Changed [YES]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m62, 'HHB/ALARM', ... (93 bytes))]
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m63, 'HHB/STATUS', ... (203 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,01,00,01,0201,01,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m64, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,02,18,01,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m65, 'HHB/STATUS', ... (210 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,01,0B,01,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:173:WaterLeak_getWaterLeakStateFromInt():  -----------------------[ 1 ] ---> Sensor is wet!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [WET]  Duration: 11 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m66, 'HHB/STATUS', ... (204 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,03,00,01,0201,03,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m67, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,02,1D,01,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m68, 'HHB/STATUS', ... (210 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,01,10,01,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:173:WaterLeak_getWaterLeakStateFromInt():  -----------------------[ 1 ] ---> Sensor is wet!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [WET]  Duration: 16 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m69, 'HHB/STATUS', ... (204 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,08,00,01,0201,08,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m70, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,02,22,01,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m71, 'HHB/STATUS', ... (210 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,01,15,01,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:173:WaterLeak_getWaterLeakStateFromInt():  -----------------------[ 1 ] ---> Sensor is wet!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [WET]  Duration: 21 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m72, 'HHB/STATUS', ... (204 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,0D,00,01,0201,0D,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m73, 'HHB/STATUS', ... (132 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,02,27,01,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m74, 'HHB/STATUS', ... (210 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,01,1A,01,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:173:WaterLeak_getWaterLeakStateFromInt():  -----------------------[ 1 ] ---> Sensor is wet!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [WET]  Duration: 26 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m75, 'HHB/STATUS', ... (204 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,01,00,01,0201,01,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m76, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,02,2C,01,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m77, 'HHB/STATUS', ... (210 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,01,1F,01,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:173:WaterLeak_getWaterLeakStateFromInt():  -----------------------[ 1 ] ---> Sensor is wet!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [WET]  Duration: 31 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m78, 'HHB/STATUS', ... (204 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="02,00,0040,0002,00,04,00,01,0201,04,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011480]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m79, 'HHB/STATUS', ... (131 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="03,01,0024,0003,02,31,01,05,0002,58,0000,00,FF,00000000,00,000D6F0000010228,Bathroom Door"
+], numRead: 101
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]hhb_system.c:523:findDeviceInList(): 
+hhb_system.c:517:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+openclose_sensor.c:96:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:108:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m80, 'HHB/STATUS', ... (210 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="04,02,0024,0005,01,24,01,01,0001,55,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:506:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:517:findDeviceInList():    [0] List has: [0000011957], looking for: [0000011957]hhb_system.c:520:findDeviceInList():  == FOUND!
+hhb_system.c:551:updateExistingDeviceInList(): Updating device in the list
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+waterleak_sensor.c:173:WaterLeak_getWaterLeakStateFromInt():  -----------------------[ 1 ] ---> Sensor is wet!
+waterleak_sensor.c:156:WaterLeak_parseOneStateRecord(): After parse. 
+WaterLeak Sensor: WaterLeak Sensor: Name [Basement Floor] Mac [0000011957]
+                     State [WET]  Duration: 36 seconds
+                     Stated Changed [NO]
+                     Alarm On Wet [YES]  Alarm On Dry [NO]
+                     Call On Wet [NO]  Call on  [NO]
+                     Alive Update Timer: 1260 seconds   Pending Update Timer: 0 seconds                 
+
+mqtt.c:78:my_log_callback(): MQTT Logging: [Client mosq/<4;5h[I@[BSLRl\f[1 sending PUBLISH (d0, q0, r0, m81, 'HHB/STATUS', ... (204 bytes))]
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:414:tokenizeStateData(): entering. recieveBuf[
+STATE="01,FF,0080,0010,0B,94,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:669:parseOneStateRecordL(): Received a state record for the Base Station or Modem. Ignoring.

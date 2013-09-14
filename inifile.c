@@ -81,13 +81,14 @@ void    IniFile_readIniFile (HomeHeartBeatSystem_t *aSystem)
     
     //
     // MQTT Specific Information
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "logEventsToMQTT", &(aSystem->logEventsToMQTT), Cfg_Boolean );    
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "HostName", &(aSystem->mqttBrokerHost[ 0 ]), Cfg_String );
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "PortNumber", &(aSystem->mqttPortNumber), Cfg_Ushort );
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "KeepAliveValue", &(aSystem->mqttKeepAliveValue), Cfg_Ushort );
-    
-    debug_print( "aSystem->databaseHost [%s], mqtt Host[%s]\n", aSystem->databaseHost, aSystem->mqttBrokerHost );
-    //int i = 614;
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "logEventsToMQTT", &(aSystem->logEventsToMQTT), Cfg_Boolean ); 
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "HostName", &(aSystem->MQTTParameters.mqttBrokerHost[ 0 ]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "PortNumber", &(aSystem->MQTTParameters.mqttPortNumber), Cfg_Ushort );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "KeepAliveValue", &(aSystem->MQTTParameters.mqttKeepAliveValue), Cfg_Ushort );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "QoS", &(aSystem->MQTTParameters.mqttKeepAliveValue), Cfg_Ushort );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "StatusTopic", &(aSystem->MQTTParameters.mqttStatusTopic[ 0 ]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "AlarmTopic", &(aSystem->MQTTParameters.mqttAlarmTopic[ 0 ]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "retainMsgs", &(aSystem->MQTTParameters.mqttRetainMsgs), Cfg_Boolean ); 
 }
 
 

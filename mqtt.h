@@ -8,28 +8,13 @@
 #ifndef MQTT_H
 #define	MQTT_H
 
+
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
     
-typedef struct  MQTT_Parameters {
-    //
-    // MQTT Specific Information
-    int     logEventsToMQTT;
-    char    *mqttBrokerHost;
-    int     mqttPortNumber;
-    int     mqttKeepAliveValue;
-    
-    char    *mqttTopic;
-} MQTT_Parameters_t;
-
-
-extern  void    MQTT_setDefaults (HomeHeartBeatSystem_t *aSystem, char *brokerHostName);
-extern  void    MQTT_initialize (HomeHeartBeatSystem_t *aSystem);
-extern  void    MQTT_teardown( void );
-extern  int     MQTT_SendReceive ( void );
-extern  void    MQTT_CreateDeviceEvent( HomeHeartBeatDevice_t *deviceRecPtr );
-extern  void    MQTT_CreateDeviceAlarm( HomeHeartBeatDevice_t *deviceRecPtr );
+ 
 
 
 #ifdef	__cplusplus

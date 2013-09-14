@@ -11,14 +11,24 @@
 #include <string.h>
 #include <assert.h>
 #include <errno.h>
+#include <time.h>
 
 
 #include "helpers.h"
 #include "homeheartbeat.h"
 
-static     struct mosquitto *mosq = NULL;
+
+static  int                     MQTT_Connected;
+static  struct  mosquitto       *mosq = NULL;
 
 
+
+//
+// Forward declarations
+static  char    *getCurrentDateTime( void );
+
+
+// ------------------------------------------------------------------------------
 void my_message_callback(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message)
 {
     debug_print ( "Entering. Payload length: %d\n", message->payloadlen );
@@ -35,6 +45,7 @@ void my_message_callback(struct mosquitto *mosq, void *userdata, const struct mo
 //      Needs to be of type 
 // void mosquitto_connect_callback_set(struct mosquitto *mosq, void (*on_connect)(void *, int));
  
+// ------------------------------------------------------------------------------
 void my_connect_callback(struct mosquitto *mosq, void *userdata, int result)
 {
     debug_print( "MQTT Connection Callback. Result: %d\n", result );
@@ -48,43 +59,52 @@ void my_connect_callback(struct mosquitto *mosq, void *userdata, int result)
     }
 }
 
+// ------------------------------------------------------------------------------
 void my_subscribe_callback(struct mosquitto *mosq, void *userdata, int mid, int qos_count, const int *granted_qos)
 {
     int i;
 
-    debug_print("Subscribed (mid: %d): %d", mid, granted_qos[0]);
-    for(i=1; i<qos_count; i++){
-        debug_print(", %d", granted_qos[i]);
+    debug_print( "Subscribed (mid: %d): %d", mid, granted_qos[ 0 ] );
+    for(i = 1; i < qos_count; i++){
+        debug_print( ", %d", granted_qos[ i ] );
     }
-    debug_print("\n", 0 );
+    
+    debug_print( "\n", 0 );
 }
 
+// ------------------------------------------------------------------------------
 void my_log_callback(struct mosquitto *mosq, void *userdata, int level, const char *str)
 {
     /* Print all log messages regardless of level. */
     debug_print("MQTT Logging: [%s]\n", str );
 }
 
+
+
+
 // ---------------------------------------------------------------------------
 void    MQTT_setDefaults (HomeHeartBeatSystem_t *aSystem, char *brokerHostName)
 {
     assert( brokerHostName != NULL );
-    strncpy( aSystem->mqttBrokerHost, brokerHostName, sizeof aSystem->mqttBrokerHost );
-    if (aSystem->mqttPortNumber == 0)
-        aSystem->mqttPortNumber = 1883;
-    if (aSystem->mqttKeepAliveValue == 0)
-        aSystem->mqttKeepAliveValue = 60;
+    strncpy( &(aSystem->MQTTParameters.mqttBrokerHost[ 0 ]), 
+             brokerHostName, 
+            sizeof aSystem->MQTTParameters.mqttBrokerHost );
+    
+    aSystem->MQTTParameters.mqttPortNumber = (aSystem->MQTTParameters.mqttPortNumber == 0 ? 1883 : aSystem->MQTTParameters.mqttPortNumber);
+    aSystem->MQTTParameters.mqttKeepAliveValue = (aSystem->MQTTParameters.mqttKeepAliveValue == 0 ? 60 : aSystem->MQTTParameters.mqttKeepAliveValue);
+    
+    aSystem->MQTTParameters.mqttRetainMsgs = false;
+    // QoS of zero is ok
 }
 // ----------------------------------------------------------------------------
-void    MQTT_initialize (HomeHeartBeatSystem_t *aSystem)
+void    MQTT_Initialize (HomeHeartBeatSystem_t *aSystem)
 {
-    char id[30];
-    int i;
-    //char *host = "192.168.0.11";
-    //int port = 1883;
-    //int keepalive = 60;
-    bool clean_session = true;
+    char    id[30];
+    int     i;
+    bool    clean_session = true;
 
+    MQTT_Connected = FALSE;
+    
     //
     // If values aren't set - use the defaults
     if (!aSystem->logEventsToMQTT)
@@ -96,105 +116,181 @@ void    MQTT_initialize (HomeHeartBeatSystem_t *aSystem)
     //      odds are you're not pulling down the latest version of mosquitto
     //
     mosquitto_lib_init();
-        //
-        // Example code shows the first parameter is "id" - but I'm getting EINVAL so I
-        // switched it to NULL and it's working     
+    
+    //
+    // Example code shows the first parameter is "id" - but I'm getting EINVAL so I
+    // switched it to NULL and it's working     
     mosq = mosquitto_new( NULL, clean_session, NULL );
+    
     if(!mosq) {
-        perror( "Unable to instantiate an MQTT instance!" );
-        debug_print( "MQTT Broker Host: [%s], Port: %d, KeepAlive: %d\n", aSystem->mqttBrokerHost, aSystem->mqttPortNumber,aSystem->mqttKeepAliveValue );
+        warnAndKeepGoing( "Unable to instantiate an MQTT instance!" );
+        fprintf( stderr, "MQTT Broker Host: [%s], Port: %d, KeepAlive: %d\n", 
+                            aSystem->MQTTParameters.mqttBrokerHost,
+                            aSystem->MQTTParameters.mqttPortNumber,
+                            aSystem->MQTTParameters.mqttKeepAliveValue );
+
+        aSystem->logEventsToMQTT = FALSE;
         return;
     }
     
     mosquitto_log_callback_set( mosq, my_log_callback );
-
     mosquitto_connect_callback_set( mosq, my_connect_callback );
     mosquitto_message_callback_set( mosq, my_message_callback );
     mosquitto_subscribe_callback_set( mosq, my_subscribe_callback );
 
-    if (mosquitto_connect(mosq, aSystem->mqttBrokerHost, aSystem->mqttPortNumber,aSystem->mqttKeepAliveValue ) ) {
-        perror( "Unable to connect MQTT to broker!" );
-        debug_print( "MQTT Broker Host: [%s], Port: %d, KeepAlive: %d\n", aSystem->mqttBrokerHost, aSystem->mqttPortNumber,aSystem->mqttKeepAliveValue );
+    if (mosquitto_connect(  mosq, 
+                            aSystem->MQTTParameters.mqttBrokerHost,
+                            aSystem->MQTTParameters.mqttPortNumber,
+                            aSystem->MQTTParameters.mqttKeepAliveValue ) ) {
+        warnAndKeepGoing( "Unable to connect MQTT to broker!" );
+        fprintf( stderr, "MQTT Broker Host: [%s], Port: %d, KeepAlive: %d\n", 
+                            aSystem->MQTTParameters.mqttBrokerHost,
+                            aSystem->MQTTParameters.mqttPortNumber,
+                            aSystem->MQTTParameters.mqttKeepAliveValue );
+        
+        aSystem->logEventsToMQTT = FALSE;
         return;
     }
-
+    
+    MQTT_Connected = TRUE;
 }
 
 // ----------------------------------------------------------------------------
-void    MQTT_teardown()
+void    MQTT_Teardown()
 {
-    mosquitto_destroy( mosq );
-       mosquitto_lib_cleanup();
+    if (MQTT_Connected) {
+        mosquitto_destroy( mosq );
+        mosquitto_lib_cleanup();
+    }
 }
 
 // ----------------------------------------------------------------------------
 int MQTT_SendReceive ()
 {
+    if (!MQTT_Connected)
+        return;
+    
     int error = mosquitto_loop( mosq, -1, 0 );
     return error;
 }
 
 // -----------------------------------------------------------------------------
-void    MQTT_CreateDeviceAlarm( HomeHeartBeatDevice_t *deviceRecPtr )
+int    MQTT_CreateDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr )
 {
+    if (!MQTT_Connected)
+        return;
+
     //
     // We've noticed that the state has changed on one of our devices - send a new message!
     
+    char    *alarmFormatString ="*%s* | %s | %02d | %s | %s | %s | %d |";
+    char    *sensorType = NULL;
+    char    *sensorName = NULL;
+    char    *state = NULL;
+    int     duration = 0;
     char    payload[ 1024 ];
-    memset( payload, '\0', sizeof payload );
     int     length = 0;
-    char    *topic = "HHB";
+    
     
     //
     // What I send depends on the device type...
-    if (deviceRecPtr->deviceType == DT_OPEN_CLOSE_SENSOR) {
+    memset( payload, '\0', sizeof payload );
+
+    if (deviceRecPtr->deviceType == DT_HOME_KEY) {
+        sensorType = "HOME KEY";
+        state = "NA";
         
-        //
-        // Are we open and alarm on open?
+    } else if (deviceRecPtr->deviceType == DT_OPEN_CLOSE_SENSOR) {
+        sensorType = "OPEN-CLOSE SENSOR";
+        state = "???";
+        
         if (deviceRecPtr->ocSensor->isOpen && deviceRecPtr->ocSensor->alarmOnOpen)
-            length = snprintf( payload, sizeof payload, "*HHB ALARM* OPEN-CLOSE SENSOR, Name %s, State: OPEN, Duration: %d",
-                    deviceRecPtr->deviceName, deviceRecPtr->deviceStateTimer );
-                    
-        //
-        // Are we Closed and alarm on closed?
+            state = "OPEN";
         if (!deviceRecPtr->ocSensor->isOpen && deviceRecPtr->ocSensor->alarmOnClose)
-            length = snprintf( payload, sizeof payload, "*HHB ALARM* OPEN-CLOSE SENSOR, Name %s, State: CLOSED, Duration: %d",
-                    deviceRecPtr->deviceName, deviceRecPtr->deviceStateTimer );
+            state = "CLOSE";
 
-        if (length > 0)
-            topic = "HHB/ALARM/OCSENSOR";
-
-    } if (deviceRecPtr->deviceType == DT_MOTION_SENSOR) {
+        //
+        // Early exit conditions - transitioned to close but we alarm on open - ignore
+        if (!deviceRecPtr->ocSensor->isOpen && deviceRecPtr->ocSensor->alarmOnOpen)
+            return 0;
+        // transitioned to open but we alarm on close - ignore
+        if (deviceRecPtr->ocSensor->isOpen && deviceRecPtr->ocSensor->alarmOnClose)
+            return 0;
+        
+        
+    } else if (deviceRecPtr->deviceType == DT_MOTION_SENSOR) {
+        sensorType = "MOTION SENSOR";
+        state = "???";
+        
+        if (deviceRecPtr->motSensor->motionDetected && deviceRecPtr->motSensor->alarmOnMotion)
+            state = "MOTION";
+        if (!deviceRecPtr->motSensor->motionDetected && deviceRecPtr->motSensor->alarmOnNoMotion)
+            state = "NO MOTION";
         
         //
-        // Are we moving and alarm on motion?
-        if (deviceRecPtr->motSensor->motionDetected && deviceRecPtr->motSensor->alarmOnMotion)
-            length = snprintf( payload, sizeof payload, "*HHB ALARM* MOTION SENSOR, Name %s, State: MOTION, Duration: %d",
-                    deviceRecPtr->deviceName, deviceRecPtr->deviceStateTimer );
-                    
-        //
-        // Are we not moving and alarm on no motion?
-        if (!deviceRecPtr->motSensor->motionDetected && deviceRecPtr->motSensor->alarmOnNoMotion)
-            length = snprintf( payload, sizeof payload, "*HHB ALARM* MOTION SENSOR, Name %s, State: NO MOTION, Duration: %d",
-                    deviceRecPtr->deviceName, deviceRecPtr->deviceStateTimer );
+        // Early exit conditions - transitioned to NO MOTION but we alarm on MOTION - ignore
+        if (!deviceRecPtr->motSensor->motionDetected && deviceRecPtr->motSensor->alarmOnMotion)
+            return 0;
+        // transitioned to MOTION but we alarm on NO MOTION - ignore
+        if (deviceRecPtr->motSensor->motionDetected && deviceRecPtr->motSensor->alarmOnNoMotion)
+            return 0;
+        
 
-        if (length > 0)
-            topic = "HHB/ALARM/MOTIONSENSOR";
+    } else if (deviceRecPtr->deviceType == DT_WATER_LEAK_SENSOR) {
+        sensorType = "WATER LEAK SENSOR";
+        state = "???";
+        
+        if (deviceRecPtr->wlSensor->wetnessDetected && deviceRecPtr->wlSensor->alarmOnWet)
+            state = "WET";
+        if (!deviceRecPtr->wlSensor->wetnessDetected && deviceRecPtr->wlSensor->alarmOnDry)
+            state = "DRY";
+
+        //
+        // Early exit conditions - transitioned to DRY but we alarm on WET - ignore
+        if (!deviceRecPtr->wlSensor->wetnessDetected && deviceRecPtr->wlSensor->alarmOnWet)
+            return 0;
+        // transitioned to WET but we alarm on DRY - ignore
+        if (deviceRecPtr->wlSensor->wetnessDetected && deviceRecPtr->wlSensor->alarmOnDry)
+            return 0;
+
+        
+    } else {
+        sensorType = "UNKNOWN";
+        state = "UNKNOWN";
     }
+
     
-    if (payload[ 0 ] == '\0')
-        return;
+    length = snprintf( payload, sizeof payload, alarmFormatString,
+                    aSystem->MQTTParameters.mqttAlarmTopic,
+                    getCurrentDateTime(),
+                    deviceRecPtr->deviceType,
+                    sensorType,
+                    deviceRecPtr->deviceName,
+                    state,
+                    deviceRecPtr->deviceStateTimer );
       
     int     messageID;
-    int     QoS = 0;
-
-    int result = mosquitto_publish( mosq, &messageID, topic, length, payload, QoS, false );
+    int result = mosquitto_publish( mosq, &messageID, 
+                                    aSystem->MQTTParameters.mqttAlarmTopic, 
+                                    length, 
+                                    payload, 
+                                    aSystem->MQTTParameters.mqttQoS, 
+                                    aSystem->MQTTParameters.mqttRetainMsgs );
+    
+    if (result != 0) {
+        warnAndKeepGoing( "Attempt to publish an alarm to MQTT failed." );
+        fprintf( stderr, "Result: %d  Message: [%s]\n", result, payload );
+    }
+    
+    return result;
 }
 
 
 // -----------------------------------------------------------------------------
-void    MQTT_CreateDeviceEvent( HomeHeartBeatDevice_t *deviceRecPtr )
+int    MQTT_CreateDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr)
 {
+    if (!MQTT_Connected)
+        return;
     
     //
     // All we know is that we have a state event
@@ -224,45 +320,88 @@ void    MQTT_CreateDeviceEvent( HomeHeartBeatDevice_t *deviceRecPtr )
             retain    set to true to make the message retained.
      */
     
-    int length = 0;
-    char    payload[ 1024 ];
     int     messageID;
-    char    *topic = "HHB/STATUS";
+    char    *statusFormatString ="*%s* | %s | %02d | %s | %s | %s | %d | %s | %s | %s | %s | %s | %s | %s |";
+    char    *sensorType = NULL;
+    char    *sensorName = NULL;
+    char    *condition1 = NULL;
+    char    *condition2 = NULL;
+    char    *condition3 = NULL;
+    char    *condition4 = NULL;
+    char    *state = NULL;
+    char    *offLine = "ONLINE";
+    char    *lowBattery = "BATTERY OK";
+    char    *inAlarmState = "CLEARED";
+    int     duration = 0;
+    char    payload[ 1024 ];
+    int     length = 0;
 
+    if (deviceRecPtr->deviceOffLine)
+        offLine = "OFF-LINE";
+    if (deviceRecPtr->deviceLowBattery)
+        lowBattery = "LOW BATTERY";
+    if (deviceRecPtr->deviceInAlarm)
+        inAlarmState = "TRIGGERED";
+    
     memset( payload, '\0', sizeof payload );
 
-
-    if (deviceRecPtr->deviceType == DT_OPEN_CLOSE_SENSOR) {
-        length = snprintf( payload, sizeof payload, "*HHB STATUS* OPEN-CLOSE SENSOR, Name %s, State: %s, Duration: %d. Alive: %d, Alarm On Open: %s, Alerts: %d",
-                    deviceRecPtr->deviceName, 
-                    (deviceRecPtr->ocSensor->isOpen ? "OPEN" : "CLOSED" ),
-                    deviceRecPtr->deviceStateTimer,
-                    deviceRecPtr->aliveUpdateTimer,
-                    (deviceRecPtr->ocSensor->alarmOnOpen ? "YES" : "NO" ),
-                    deviceRecPtr->deviceAlerts );
-                   
-
-    } else if (deviceRecPtr->deviceType == DT_WATER_LEAK_SENSOR) {
-        length = snprintf( payload, sizeof payload, "*HHB STATUS* WATER LEAK SENSOR, Name %s, State: %s, Duration: %d. Alive: %d, Alarm On Wet: %s, Alerts: %d",
-                    deviceRecPtr->deviceName, 
-                    (deviceRecPtr->deviceState == 1 ? "DRY" : "WET" ),
-                    deviceRecPtr->deviceStateTimer,
-                    deviceRecPtr->aliveUpdateTimer,
-                    "YES",
-                    deviceRecPtr->deviceAlerts );
+    if (deviceRecPtr->deviceType == DT_HOME_KEY) {
+        sensorType = "HOME KEY";
+        
+        state = "NA";
+        condition1 = "NA";
+        condition2 = "NA";
+        condition3 = "NA";
+        condition4 = "NA";
+        
+    } else if (deviceRecPtr->deviceType == DT_OPEN_CLOSE_SENSOR) {
+        sensorType = "OPEN-CLOSE SENSOR";
+        
+        state = (deviceRecPtr->ocSensor->isOpen ? "OPEN" : "CLOSED");
+        condition1 = (deviceRecPtr->ocSensor->alarmOnOpen ? "ALARM ON OPEN" : "NO ALARM ON OPEN" );
+        condition2 = (deviceRecPtr->ocSensor->alarmOnClose ? "ALARM ON CLOSE" : "NO ALARM ON CLOSE" );
+        condition3 = (deviceRecPtr->ocSensor->callOnOpen ? "CALL ON OPEN" : "DO NOT CALL ON OPEN" );
+        condition4 = (deviceRecPtr->ocSensor->callOnClose ? "CALL ON CLOSE" : "DO NOT CALL ON CLOSE" );
         
     } else if (deviceRecPtr->deviceType == DT_MOTION_SENSOR) {
-        length = snprintf( payload, sizeof payload, "*HHB STATUS* MOTION SENSOR, Name %s, State: %s, Duration: %d. Alive: %d, Alarm On Motion: %s, Alerts: %d",
-                    deviceRecPtr->deviceName, 
-                    (deviceRecPtr->motSensor->motionDetected ? "MOTION" : "NO MOTION"),
-                    deviceRecPtr->deviceStateTimer,
-                    deviceRecPtr->aliveUpdateTimer,
-                    (deviceRecPtr->motSensor->alarmOnMotion ? "YES" : "NO" ),
-                    deviceRecPtr->deviceAlerts );
+        sensorType = "MOTION SENSOR";
+        
+        state = (deviceRecPtr->motSensor->motionDetected ? "MOTION" : "NO MOTION");
+        condition1 = (deviceRecPtr->motSensor->alarmOnMotion ? "ALARM ON MOTION" : "NO ALARM ON MOTION" );
+        condition2 = (deviceRecPtr->motSensor->alarmOnNoMotion ? "ALARM ON NO MOTION" : "NO ALARM ON NO MOTION" );
+        condition3 = (deviceRecPtr->motSensor->callOnMotion ? "CALL ON MOTION" : "DO NOT CALL ON MOTION" );
+        condition4 = (deviceRecPtr->motSensor->callOnNoMotion ? "CALL ON NO MOTION" : "DO NOT CALL ON NO MOTION" );
+        
+    } else if (deviceRecPtr->deviceType == DT_WATER_LEAK_SENSOR) {
+        sensorType = "WATER LEAK SENSOR";
+        state = (deviceRecPtr->wlSensor->wetnessDetected ? "WET" : "DRY");
+        condition1 = (deviceRecPtr->motSensor->alarmOnMotion ? "ALARM ON WET" : "NO ALARM ON WET" );
+        condition2 = (deviceRecPtr->motSensor->alarmOnNoMotion ? "ALARM ON DRY" : "NO ALARM ON DRY" );
+        condition3 = (deviceRecPtr->motSensor->callOnMotion ? "CALL ON WET" : "DO NOT CALL ON WET" );
+        condition4 = (deviceRecPtr->motSensor->callOnNoMotion ? "CALL ON DRY" : "DO NOT CALL ON DRY" );
+        
     } else {
-        debug_print( "Unknown device type status: type: %d, name: [%s]\n", deviceRecPtr->deviceType, deviceRecPtr->deviceName );
+        sensorType = "UNKNOWN";
+        state = "UNKNOWN";
+        condition1 = "";
+        condition2 = "";
+        condition3 = "";
+        condition4 = "";
     }
+
     
+    length = snprintf( payload, sizeof payload, statusFormatString,
+                    aSystem->MQTTParameters.mqttStatusTopic,
+                    getCurrentDateTime(),
+                    deviceRecPtr->deviceType,
+                    sensorType,
+                    deviceRecPtr->deviceName,
+                    state,
+                    deviceRecPtr->deviceStateTimer,
+                    condition1, condition2, condition3, condition4, 
+                    offLine, lowBattery, inAlarmState );
+            
+   
     //
     //   MQTT defines three levels of Quality of Service (QoS). The QoS defines how hard the broker/client will try 
     //  to ensure that a message is received. Messages may be sent at any QoS level, and clients may attempt to subscribe 
@@ -277,11 +416,49 @@ void    MQTT_CreateDeviceEvent( HomeHeartBeatDevice_t *deviceRecPtr )
     //      1: The broker/client will deliver the message at least once, with confirmation required.
     //      2: The broker/client will deliver the message exactly once by using a four step handshake.
     
-    int     QoS = 0;
-    int     result = 0;
-    if (length > 0)
-        result = mosquitto_publish( mosq, &messageID, topic, length, payload, QoS, false );
+    int result = mosquitto_publish( mosq, 
+                                    &messageID, 
+                                    aSystem->MQTTParameters.mqttStatusTopic,
+                                    length, 
+                                    payload, 
+                                    aSystem->MQTTParameters.mqttQoS,
+                                    aSystem->MQTTParameters.mqttRetainMsgs );
     
-    if (result != 0)
-        warnAndKeepGoing( "MQTT Publish. Non zero result\n" );
+    if (result != 0) {
+        warnAndKeepGoing( "Attempt to publish an alarm to MQTT failed." );
+        fprintf( stderr, "Result: %d  Message: [%s]\n", result, payload );
+    }
+    
+    return result;
+}
+
+
+// -----------------------------------------------------------------------------
+static  char    currentDateTimeBuffer[ 80 ];
+static
+char    *getCurrentDateTime (void)
+{
+    //
+    // Something quick and dirty... Fix this later - thread safe
+    time_t  current_time;
+    struct  tm  *tmPtr;
+ 
+    memset( currentDateTimeBuffer, '\0', sizeof currentDateTimeBuffer );
+    
+    /* Obtain current time as seconds elapsed since the Epoch. */
+    current_time = time( NULL );
+    if (current_time > 0) {
+        /* Convert to local time format. */
+        tmPtr = localtime( &current_time );
+ 
+        if (tmPtr != NULL) {
+            strftime( currentDateTimeBuffer,
+                    sizeof currentDateTimeBuffer,
+                    "%F %T %z",
+                    tmPtr );
+            
+        }
+    }
+    
+    return &currentDateTimeBuffer[ 0 ];
 }

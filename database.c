@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <mysql/mysql.h>
 
-#include "homeheartbeat.h"
+//#include "homeheartbeat.h"
 #include "helpers.h"
 #include "database.h"
 

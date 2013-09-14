@@ -56,6 +56,8 @@ extern "C" {
 #define     ALARMTRIGGERED_BITMASK      (0x01)
 #define     DEVICEOFFLINE_BITMASK       (0x02)
 #define     LOWBATTERY_BITMASK          (0x04)
+#define     BATTERYCHARGING_BITMASK     (0x08)
+#define     ONBATTERYBACKUP_BITMASK     (0x20)
 
     
 //
@@ -103,7 +105,14 @@ typedef  struct  HomeHeartBeatDevice {
     int         deviceParameter;                    // Field 13 
     int         pendingUpdateTimer;                 // Field 15
 
+    int         deviceInAlarm;                      // bit in Field 7
+    int         deviceOffLine;
+    int         deviceLowBattery;
+    int         deviceBatteryCharging;              // valid only for Home Key
+    int         deviceOnBatteryBackup;              // valid only for Base Station
 
+    
+    
     //
     //  It would help if we can just add a variable that indicates a state change
     //  Open to Closed or v.v., Wet to Dry, No Motion to Motion.  We'll do so by keeping the

@@ -8,6 +8,8 @@
 #ifndef HOMEHEARTBEAT_H
 #define	HOMEHEARTBEAT_H
 
+#include "device.h"
+#include "mqtt.h"
 
 #ifdef	__cplusplus
 extern "C" {
@@ -15,8 +17,22 @@ extern "C" {
 
 
     
+    
+   
+typedef struct  MQTT_Parameters {
+    //
+    // MQTT Specific Information
+    int     logEventsToMQTT;
+    char    mqttBrokerHost[ 256 ];
+    int     mqttPortNumber;
+    int     mqttKeepAliveValue;
+    int     mqttQoS;
+    char    mqttStatusTopic[ 256 ];
+    char    mqttAlarmTopic[ 256 ];
+    int     mqttRetainMsgs;
+} MQTT_Parameters_t;
 
-#include "device.h"
+   
     
 // -----------------------------------------------------------------------------
 //
@@ -65,9 +81,7 @@ typedef struct  HomeHeartBeatSystem {
     //
     // MQTT Specific Information
     int     logEventsToMQTT;
-    char    mqttBrokerHost[ 256 ];
-    int     mqttPortNumber;
-    int     mqttKeepAliveValue;
+    MQTT_Parameters_t   MQTTParameters;
 } HomeHeartBeatSystem_t;
 
 
@@ -80,6 +94,14 @@ extern  void        homeHeartBeatSystem_OpenPort( char * );
 extern  void        homeHeartBeatSystem_eventLoop( void );
 extern  void        homeHeartBeatSystem_Shutdown( void );
 
+
+
+extern  void    MQTT_setDefaults( HomeHeartBeatSystem_t *aSystem, char *brokerHostName );
+extern  void    MQTT_initialize( HomeHeartBeatSystem_t *aSystem );
+extern  void    MQTT_teardown( void );
+extern  int     MQTT_SendReceive ( void );
+extern  int     MQTT_CreateDeviceEvent( HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr );
+extern  int     MQTT_CreateDeviceAlarm( HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr );
 
 
 #ifdef	__cplusplus

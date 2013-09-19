@@ -26,6 +26,11 @@ extern "C" {
 //  MAC address and Device Name look pretty good sized
 #define NUM_TOKENS_PER_STATE_CMD    17
 #define MAX_TOKEN_LENGTH            30
+
+//  A typedef will make the function prototypes easier
+typedef     char    TokenArray_t[ NUM_TOKENS_PER_STATE_CMD ][ MAX_TOKEN_LENGTH ];
+    
+    
     
 // ----------------------------------------------------------------------------
 //

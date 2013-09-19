@@ -169,14 +169,14 @@ int     Motion_getMotionStateFromInt (int sensorState)
 
     // They'd better not BOTH be on!
     if (isNoMotion && isMotion)
-        warnAndKeepGoing( "Motion sensor reporting both motion and no motion!" );
+        warnAndKeepGoing( "Motion sensor reporting both motion and no motion!\n" );
     else {
 
         if (isNoMotion) {
-            debug_print( "Sensor sees MOTION!\n", 0 );
+            //debug_print( "Sensor sees MOTION!\n", 0 );
             return motNoMotion;
         } else if (isMotion) {
-            debug_print( "Sensor sees NO MOTION!\n", 0 );
+            //debug_print( "Sensor sees NO MOTION!\n", 0 );
             return motMotion;
         } else {
             debug_print( "Sensor sees ???\n", 0 );
@@ -184,7 +184,7 @@ int     Motion_getMotionStateFromInt (int sensorState)
         }
     }
     
-    return ocUnknown;
+    return motUnknown;
 }
 
 //------------------------------------------------------------------------------

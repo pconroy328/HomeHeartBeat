@@ -25,12 +25,12 @@ void    warnAndKeepGoing (char *message)
 int     hexStringToInt (char *hexChars)
 {
     assert( hexChars != NULL );
-    debug_print( "entering [%s]\n", hexChars );
+    //debug_print( "entering [%s]\n", hexChars );
     int len = strlen( hexChars );
+    assert( (len == 2) || (len == 4) );
     
-    if (len != 2 && len != 4)
-        printf( "!!!!!!!!! LENGHT %d [%s]\n", len, hexChars );
-    //assert( (len == 2) || (len == 4) );
+    //if (len != 2 && len != 4)
+    //    printf( "!!!!!!!!! LENGHT %d [%s]\n", len, hexChars );
     
     int intValue = -1;
     

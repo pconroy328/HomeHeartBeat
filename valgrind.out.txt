@@ -1,0 +1,2723 @@
+==7501== Memcheck, a memory error detector
+==7501== Copyright (C) 2002-2011, and GNU GPL'd, by Julian Seward et al.
+==7501== Using Valgrind-3.7.0 and LibVEX; rerun with -h for copyright info
+==7501== Command: dist/Debug/GNU_C99-Linux-x86/homeheartbeat_1
+==7501== 
+hhb_system.c:52:HomeHeartBeatSystem_initialize(): entering
+hhb_system.c:137:HomeHeartBeatSystem_openPort(): entering. portName: (null)
+serialport.c:298:SerialPort_Open2(): v2.2 Entering [/dev/hhb]
+hhb_system.c:228:turnOffModem(): Attempting to turn off the HHBsystem modem.
+hhb_system.c:264:turnOffDebug(): Attempting to turn off the HHBsystem debug mode.
+hhb_system.c:174:HomeHeartBeatSystem_eventLoop(): entering
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:438:findDeviceInList(): Not found! Must be a new device!
+device.c:63:Device_newDeviceRecord(): ===================================== MALLOC [000007AAAF] =============================
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+hhb_system.c:448:addNewDeviceToList(): Adding a new device to the list. Mac :[000007AAAF]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+Motion sensor reporting both motion and no motion!
+motion_sensor.c:138:Motion_parseOneStateRecord(): Detected state change on the device: 000007AAAF. current state: 2, last state: 255
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,30,00,01,0201,0D,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:438:findDeviceInList(): Not found! Must be a new device!
+device.c:63:Device_newDeviceRecord(): ===================================== MALLOC [0000011480] =============================
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:448:addNewDeviceToList(): Adding a new device to the list. Mac :[0000011480]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,50,00,00,0002,5B,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:438:findDeviceInList(): Not found! Must be a new device!
+device.c:63:Device_newDeviceRecord(): ===================================== MALLOC [0000010228] =============================
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+hhb_system.c:448:addNewDeviceToList(): Adding a new device to the list. Mac :[0000010228]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 960 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1620 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:438:findDeviceInList(): Not found! Must be a new device!
+device.c:63:Device_newDeviceRecord(): ===================================== MALLOC [0000011957] =============================
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+hhb_system.c:448:addNewDeviceToList(): Adding a new device to the list. Mac :[0000011957]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+WaterLeak sensor reporting both wet and dry!
+waterleak_sensor.c:135:WaterLeak_parseOneStateRecord(): Detected state change on the device: 0000011957. current state: 2, last state: 255
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,37,00,01,0201,14,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,50,00,00,0002,5B,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 960 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1620 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,02,00,01,0201,02,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,50,00,00,0002,5B,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 960 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1620 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,08,00,01,0201,08,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,50,00,00,0002,5B,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 960 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1620 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,0F,00,01,0201,0F,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,50,00,00,0002,5B,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 960 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1620 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,16,00,01,0201,16,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,50,00,00,0002,5B,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 960 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1620 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,1D,00,01,0201,1D,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,50,00,00,0002,5B,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 960 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1620 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,23,00,01,0201,23,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,50,00,00,0002,5B,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 960 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1620 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,2A,00,01,0201,07,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,50,00,00,0002,5B,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 960 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1620 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,31,00,01,0201,0E,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,51,00,00,0002,5C,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1020 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1680 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,38,00,01,0201,15,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,51,00,00,0002,5C,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1020 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1680 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,02,00,01,0201,02,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,51,00,00,0002,5C,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1020 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1680 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,08,00,01,0201,08,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,51,00,00,0002,5C,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1020 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1680 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,0F,00,01,0201,0F,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,51,00,00,0002,5C,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1020 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1680 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,16,00,01,0201,16,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,51,00,00,0002,5C,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1020 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1680 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,1D,00,01,0201,1D,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,51,00,00,0002,5C,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1020 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1680 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,24,00,01,0201,03,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,51,00,00,0002,5C,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1020 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1680 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,2B,00,01,0201,0A,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,51,00,00,0002,5C,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1020 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1680 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,31,00,01,0201,10,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,52,00,00,0002,5D,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1080 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1740 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,38,00,01,0201,17,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,52,00,00,0002,5D,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1080 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1740 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,03,00,01,0201,03,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,52,00,00,0002,5D,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1080 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1740 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,0A,00,01,0201,0A,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,52,00,00,0002,5D,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1080 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1740 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,11,00,01,0201,11,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,52,00,00,0002,5D,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1080 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1740 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,17,00,01,0201,17,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,52,00,00,0002,5D,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1080 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1740 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,1E,00,01,0201,1E,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,52,00,00,0002,5D,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1080 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1740 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,25,00,01,0201,04,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,52,00,00,0002,5D,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1080 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1740 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,2C,00,01,0201,0B,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,52,00,00,0002,5D,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1080 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1740 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,33,00,01,0201,12,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,53,00,00,0002,5E,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1140 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1800 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,3A,00,01,0201,19,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,53,00,00,0002,5E,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1140 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1800 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="00,FF,0088,0001,00,00,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="01,FF,0080,0010,0B,84,00,00,0000,00,0000,00,00,00000000,00,,"
+], numRead: 72
+hhb_system.c:497:parseOneStateRecord(): Received a state record for the Base Station or Modem. Ignoring.
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="02,00,0040,0002,00,03,00,01,0201,03,0000,00,FF,00000000,00,000D6F0000011480,Dad's Key"
+], numRead: 97
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011480]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011480]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011480]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [00]
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="03,01,0024,0003,01,53,00,00,0002,5E,0000,00,FF,00000000,00,000D6F0000010228,Open/Closed"
+], numRead: 99
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000010228]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000010228]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000010228]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [01]
+openclose_sensor.c:102:OpenClose_parseOneStateRecord(): Entering
+openclose_sensor.c:114:OpenClose_parseOneStateRecord(): Found this Open Close Sensor in the list. Just going to update the values
+openclose_sensor.c:183:OpenClose_parseOneStateRecord(): After parse. 
+OC Sensor: OpenCloseSensor: Name [Open/Closed] MAC [0000010228]
+                     State [CLOSED]  Duration: 1140 seconds
+                     Stated Changed [NO]
+                     Alarm On Open [YES]  Alarm On Close [NO]
+                     Call On Open [NO]  Call on Close [NO]
+                     Alive Update Timer: 1800 seconds   Pending Update Timer: 0 seconds
+                     Alerts: 0  Alarm Triggered: 0   OffLine: 0   Low Battery: 0
+                     Name Index: 0   HHB Name [Open/Closed]   State rec ID: 3   Zigbee Binding ID: 1
+                     Update Flags: 0, Configuration: 2                
+
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="04,02,0024,0005,FF,00,02,01,0001,85,0000,00,FF,00000000,00,000D6F0000011957,Basement Floor"
+], numRead: 102
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [0000011957]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [1] List has: [0000011480], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [2] List has: [0000010228], looking for: [0000011957]
+hhb_system.c:432:findDeviceInList(): 
+hhb_system.c:426:findDeviceInList():    [3] List has: [0000011957], looking for: [0000011957]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [02]
+waterleak_sensor.c:91:WaterLeak_parseOneStateRecord(): Entering
+waterleak_sensor.c:103:WaterLeak_parseOneStateRecord(): Found this WaterLeak Sensor in the list. Just going to update the values
+WaterLeak sensor reporting both wet and dry!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:473:parseOneStateRecord(): entering -----------------------------------------------------------
+hhb_system.c:562:tokenizeStateData(): entering. receiveBuf[
+STATE="05,03,0034,0017,FF,00,02,00,0002,85,0000,00,01,00000000,00,000D6F000007AAAF,Motion Sensor"
+], numRead: 101
+hhb_system.c:415:findDeviceInList(): Looking for a device with a MAC address of [000007AAAF]
+hhb_system.c:426:findDeviceInList():    [0] List has: [000007AAAF], looking for: [000007AAAF]
+hhb_system.c:429:findDeviceInList():  == FOUND!
+hhb_system.c:460:updateExistingDeviceInList(): Updating device in the list
+device.c:200:Device_parseZigbeeBindingID(): Entering. Token [03]
+motion_sensor.c:93:Motion_parseOneStateRecord(): Entering
+motion_sensor.c:105:Motion_parseOneStateRecord(): Found this Motion Sensor in the list. Just going to update the values
+Motion sensor reporting both motion and no motion!
+hhb_system.c:554:parseOneStateRecord(): exiting -----------------------------------------------------
+
+
+hhb_system.c:112:HomeHeartBeatSystem_shutdown(): entering
+hhb_system.c:332:releaseMemory(): entering
+hhb_system.c:340:releaseMemory(): Freeing memory for device [Motion Sensor] [000007AAAF]
+hhb_system.c:340:releaseMemory(): Freeing memory for device [Dad's Key] [0000011480]
+hhb_system.c:340:releaseMemory(): Freeing memory for device [Open/Closed] [0000010228]
+hhb_system.c:340:releaseMemory(): Freeing memory for device [Basement Floor] [0000011957]
+hhb_system.c:360:releaseMemory(): Freeing memory for HHB System
+==7501== 
+==7501== HEAP SUMMARY:
+==7501==     in use at exit: 1,008 bytes in 4 blocks
+==7501==   total heap usage: 4,714 allocs, 4,710 frees, 1,668,988 bytes allocated
+==7501== 
+==7501== 1,008 (252 direct, 756 indirect) bytes in 1 blocks are definitely lost in loss record 2 of 2
+==7501==    at 0x402BE68: malloc (in /usr/lib/valgrind/vgpreload_memcheck-x86-linux.so)
+==7501==    by 0x804A57B: Device_newDeviceRecord (device.c:69)
+==7501==    by 0x804C102: parseOneStateRecord (hhb_system.c:511)
+==7501==    by 0x804B4BE: HomeHeartBeatSystem_eventLoop (hhb_system.c:184)
+==7501==    by 0x804C97A: main (main.c:33)
+==7501== 
+==7501== LEAK SUMMARY:
+==7501==    definitely lost: 252 bytes in 1 blocks
+==7501==    indirectly lost: 756 bytes in 3 blocks
+==7501==      possibly lost: 0 bytes in 0 blocks
+==7501==    still reachable: 0 bytes in 0 blocks
+==7501==         suppressed: 0 bytes in 0 blocks
+==7501== 
+==7501== For counts of detected and suppressed errors, rerun with: -v
+==7501== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)

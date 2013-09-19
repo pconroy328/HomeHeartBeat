@@ -166,14 +166,14 @@ int     WaterLeak_getWaterLeakStateFromInt (int sensorState)
 
     // They'd better not BOTH be on!
     if (isWet && isDry)
-        warnAndKeepGoing( "WaterLeak sensor reporting both wet and dry!" );
+        warnAndKeepGoing( "WaterLeak sensor reporting both wet and dry!\n" );
     else {
 
         if (isWet) {
-            debug_print( " -----------------------[ %d ] ---> Sensor is wet!\n", sensorState );
+            //debug_print( " -----------------------[ %d ] ---> Sensor is wet!\n", sensorState );
             return wlWet;
         } else if (isDry) {
-            debug_print( "------------------------[ %d ] ---> Sensor is dry!\n", sensorState );
+            //debug_print( "------------------------[ %d ] ---> Sensor is dry!\n", sensorState );
             return wlDry;
         } else {
             debug_print( "Sensor is ???\n", 0 );
@@ -181,7 +181,7 @@ int     WaterLeak_getWaterLeakStateFromInt (int sensorState)
         }
     }
     
-    return ocUnknown;
+    return wlUnknown;
 }
 
 //------------------------------------------------------------------------------

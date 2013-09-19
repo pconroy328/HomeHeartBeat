@@ -60,6 +60,7 @@ HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress)
 {
     HomeHeartBeatDevice_t   *recPtr = NULL;
     
+    debug_print( "===================================== MALLOC [%s] =============================\n", macAddress );
     //
     //  We've discovered a new Open/Close Sensor attached to our system. After we allocate
     //  a record for the O/C Sensor, we call this function which allocates space for
@@ -68,6 +69,11 @@ HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress)
     recPtr = malloc( sizeof ( HomeHeartBeatDevice_t ) );
     if (recPtr != NULL) {  
         strncpy( recPtr->macAddress, macAddress, MAX_MAC_ADDRESS_SIZE );
+        //
+        // initialize some values to be safe and to get 'valgrind' to stop complaining
+        recPtr->ocSensor = NULL;
+        recPtr->wlSensor = NULL;
+        recPtr->motSensor = NULL;
     }
     
     return recPtr;

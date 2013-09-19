@@ -54,19 +54,25 @@ char    *OpenClose_dumpSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
     memset( sensorRecordDumpBuffer, '\0', sizeof sensorRecordDumpBuffer );
     snprintf( sensorRecordDumpBuffer,
              sizeof sensorRecordDumpBuffer,
-                "OpenCloseSensor: Name [%s] Mac [%s]\n \
+                "OpenCloseSensor: Name [%s] MAC [%s]\n \
                     State [%s]  Duration: %d seconds\n \
                     Stated Changed [%s]\n \
                     Alarm On Open [%s]  Alarm On Close [%s]\n \
                     Call On Open [%s]  Call on Close [%s]\n \
-                    Alive Update Timer: %d seconds   Pending Update Timer: %d seconds \
+                    Alive Update Timer: %d seconds   Pending Update Timer: %d seconds\n \
+                    Alerts: %d  Alarm Triggered: %d   OffLine: %d   Low Battery: %d\n \
+                    Name Index: %d   HHB Name [%s]   State rec ID: %d   Zigbee Binding ID: %d\n \
+                    Update Flags: %d, Configuration: %d\
                 ",
             deviceRecPtr->deviceName, deviceRecPtr->macAddress,
                 (deviceRecPtr->ocSensor->isOpen ? "OPEN" : "CLOSED"), deviceRecPtr->deviceStateTimer,
                 (deviceRecPtr->stateHasChanged ? "YES" : "NO"),
                 (deviceRecPtr->ocSensor->alarmOnOpen ? "YES" : "NO"), (deviceRecPtr->ocSensor->alarmOnClose ? "YES" : "NO"),
                 (deviceRecPtr->ocSensor->callOnOpen ? "YES" : "NO"), (deviceRecPtr->ocSensor->callOnClose ? "YES" : "NO"),
-                deviceRecPtr->aliveUpdateTimer, deviceRecPtr->pendingUpdateTimer 
+                deviceRecPtr->aliveUpdateTimer, deviceRecPtr->pendingUpdateTimer,
+            deviceRecPtr->deviceAlerts, deviceRecPtr->deviceInAlarm, deviceRecPtr->deviceOffLine, deviceRecPtr->deviceLowBattery,
+            deviceRecPtr->deviceNameIndex, deviceNames[ deviceRecPtr->deviceNameIndex ], deviceRecPtr->stateRecordID, deviceRecPtr->zigbeeBindingID,
+            deviceRecPtr->updateFlags, deviceRecPtr->deviceConfiguration
             );
     
     return &sensorRecordDumpBuffer[ 0 ];
@@ -174,7 +180,7 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     deviceRecPtr->lastDeviceState = deviceRecPtr->ocSensor->currentState;
     deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
             
-    // debug_print( "After parse. \nOC Sensor: %s\n\n", dumpOCSensorDeviceRecord( deviceRecPtr ) );
+    debug_print( "After parse. \nOC Sensor: %s\n\n", OpenClose_dumpSensorDeviceRecord( deviceRecPtr ) );
 }
 
 
@@ -186,9 +192,11 @@ int     OpenClose_getOpenCloseStateFromInt (int sensorState)
     int isOpen      = (sensorState & ISOPEN_BITMASK);
 
     // They'd better not BOTH be on!
-    if (isClosed && isOpen)
-        warnAndKeepGoing( "Open/Close sensor reporting both open and closed!" );
-    else {
+    if (isClosed && isOpen) {
+        warnAndKeepGoing( "Open/Close sensor reporting both open and closed!\n" );
+        debug_print( "Sensor state value : %d\n", sensorState );
+        
+    } else {
 
         if (isClosed) {
             // debug_print( "Sensor is CLOSED!\n", 0 );

@@ -33,8 +33,8 @@ extern      void IniFile_readIniFile( HomeHeartBeatSystem_t *aSystem );
 // Forward declarations
 static  int                     getOneStateRecord( char *, int );
 static  HomeHeartBeatDevice_t   *parseOneStateRecord( char *receiveBuf, int numRead );
-static  HomeHeartBeatDevice_t   *parseOneStateRecordA( char *receiveBuf, int numRead );
-static  HomeHeartBeatDevice_t   *parseOneStateRecordL( char *receiveBuf, int numRead );
+//static  HomeHeartBeatDevice_t   *parseOneStateRecordA( char *receiveBuf, int numRead );
+static  HomeHeartBeatDevice_t   *parseOneStateRecord( char *receiveBuf, int numRead );
 static  int                     tokenizeStateData( char *receiveBuf, int numRead, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH] );
 static  void                    releaseMemory( void );
 static  void                    turnOffModem( void );
@@ -122,7 +122,6 @@ void    HomeHeartBeatSystem_shutdown ()
     }
     
     releaseMemory();
-    free( aSystem );
 }
 
 // -----------------------------------------------------------------------------
@@ -182,14 +181,14 @@ void    HomeHeartBeatSystem_eventLoop ()
     aSystem->pollForEvents = TRUE;
     while (aSystem->pollForEvents) {
         numBytesRead = getOneStateRecord( rawStateRecord, sizeof rawStateRecord );
-        deviceRecPtr = parseOneStateRecordL( rawStateRecord, numBytesRead );
+        deviceRecPtr = parseOneStateRecord( rawStateRecord, numBytesRead );
         
         //
         // debugging for valgrind
         numLoops += 1L;
-        //if (numLoops > 6000L) {
-        //    return;
-        //}
+        if (numLoops > 180L) {
+            return;
+        }
 
         if (deviceRecPtr != NULL) {
     
@@ -330,12 +329,15 @@ static int  getOneStateRecord (char *rawStateRecord, int bufSize)
 static
 void    releaseMemory()
 {
+    debug_print( "entering\n", 0 );
+    
     HomeHeartBeatDevice_t   *elementPtr1;
     HomeHeartBeatDevice_t   *elementPtr2;
     
     LL_FOREACH_SAFE( aSystem->deviceListHead, elementPtr1, elementPtr2 ) {
         
         int deviceType = elementPtr1->deviceType;
+        debug_print( "Freeing memory for device [%s] [%s]\n", elementPtr1->deviceName, elementPtr1->macAddress );
         
         switch (deviceType) {
             case DT_BASE_STATION:       /* nothing needed */ ;  break;
@@ -354,6 +356,9 @@ void    releaseMemory()
         
         LL_DELETE( aSystem->deviceListHead, elementPtr1 );
     }
+    
+    debug_print( "Freeing memory for HHB System\n", 0 );
+    free( aSystem );
 } 
 
 // -----------------------------------------------------------------------------
@@ -456,103 +461,16 @@ int     updateExistingDeviceInList (HomeHeartBeatDevice_t *deviceRecPtr, char to
     return Device_parseTokens( deviceRecPtr, token );     // fill in the fields!
 }
 
-/* 
-// ----------------------------------------------------------------------------
-static  
-HomeHeartBeatDevice_t *parseOneStateRecordA (char *receiveBuf, int numRead)
-{
-    char    *token[ NUM_TOKENS_PER_STATE_CMD ];
-    HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
-    
-
-    //
-    //  Convert serial port stream into tokens! We know the device sends NUM_TOKENS_PER_STATE_CMD!
-    assert( receiveBuf != NULL );
-    int numTokensParsed = tokenizeStateData( receiveBuf, numRead, token );
-    if (numTokensParsed != NUM_TOKENS_PER_STATE_CMD)
-        return NULL;
-    
- 
-    //
-    //  We are going to use a device's MAC address to uniquely identify it.  That's fine
-    //  except the Base Station (Type 1, Record ID = 0) and the Modem (Type 16, Record ID= 2)
-    //  don't have MAC Addresses!  So - I could add alot of checking for device type of 1 or 16
-    //  or I could jus6t create a MAC address for them. :)
-    int     deviceType = Device_parseDeviceType( token[ 3 ] );
-    char    *macAddress = Device_parseMacAddress( token[ 15 ] );
-    
-    if (deviceType == 1 || deviceType == 16) {
-        debug_print( "Received a state record for the Base Station or Modem. Ignoring.\n", 0 );
-        return NULL;
-    }
-   
-    int     firstTimeDeviceSeen = FALSE;
-    int     arrayIndex = -1;
-    //
-    // Ok - have we seen this device before?
-    //    deviceRecPtr = Device_findThisDevice( aSystem->deviceListHead, macAddress );
-    deviceRecPtr = findDevice( macAddress, &arrayIndex );
-    if (arrayIndex < 0 || deviceRecPtr == NULL) {
-        
-        //
-        //  Ok - this is the first time we've seen this device!
-        firstTimeDeviceSeen = TRUE;
-        deviceRecPtr = Device_newDeviceRecord( macAddress );        // create a new record
-        
-        deviceType = Device_parseTokens( deviceRecPtr, token );     // fill in the fields!
-        
-        //
-        // Something we need to do just once and that's initialize the State Changed fields
-        deviceRecPtr->stateHasChanged = FALSE;
-        deviceRecPtr->lastDeviceState = deviceRecPtr->deviceState;
-        deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
-        
-        addNewDevice( deviceRecPtr );                               // add it!
-    } else {
-        //
-        // This is not the first time we've seen this device - just update the data
-        updateExistingDevice( arrayIndex, token );
-    }
-
-    //
-    // What we do next depends on what device is reporting in.
-    switch (deviceType) {
-        case DT_BASE_STATION:   
-            break;
-        case DT_HOME_KEY:
-            break; 
-        case DT_OPEN_CLOSE_SENSOR:  OpenClose_parseOneStateRecord( deviceRecPtr );
-                                    break;
-        case DT_POWER_SENSOR:     
-            break;
-        case DT_WATER_LEAK_SENSOR:  WaterLeak_parseOneStateRecord( deviceRecPtr );
-                                    break;
-        case DT_REMINDER_DEVICE:
-        case DT_ATTENTION_DEVICE:
-        case DT_MODEM:
-        case DT_MOTION_SENSOR:      Motion_parseOneStateRecord( deviceRecPtr );
-                                    break;
-        case DT_TILT_SENSOR:
-            break;
-
-        default:
-            warnAndKeepGoing( "Unrecognized device type just came through" );
-            break;
-    }
-
-    printf( "exiting \n\n", 0 );
-    return deviceRecPtr;
-}
-*/
-
 
 // ----------------------------------------------------------------------------
 static  
-HomeHeartBeatDevice_t *parseOneStateRecordL (char *receiveBuf, int numRead)
+HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
 {
-    char                    token[ NUM_TOKENS_PER_STATE_CMD ][ MAX_TOKEN_LENGTH ];           // array of NUM_TOKENS_PER_STATE_CMD strings MAX_TOKEN_LENGTH characters long...
+    // array of NUM_TOKENS_PER_STATE_CMD strings MAX_TOKEN_LENGTH characters long...
+    char                    token[ NUM_TOKENS_PER_STATE_CMD ][ MAX_TOKEN_LENGTH ];           
     HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
     
+    debug_print( "entering -----------------------------------------------------------\n", 0 );
 
     //
     //  Convert serial port stream into tokens! We know the device sends NUM_TOKENS_PER_STATE_CMD!
@@ -633,7 +551,7 @@ HomeHeartBeatDevice_t *parseOneStateRecordL (char *receiveBuf, int numRead)
             break;
     }
 
-    printf( "exiting \n\n", 0 );
+    debug_print( "exiting -----------------------------------------------------\n\n\n", 0 );
     return deviceRecPtr;
 }
 
@@ -641,7 +559,7 @@ HomeHeartBeatDevice_t *parseOneStateRecordL (char *receiveBuf, int numRead)
 static
 int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH])
 {
-   debug_print( "entering. recieveBuf[%s], numRead: %d\n", receiveBuf, numRead );
+   debug_print( "entering. receiveBuf[%s], numRead: %d\n", receiveBuf, numRead );
     
     /*
      *  A retrieved state record has the following format:
@@ -681,9 +599,9 @@ int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_P
     endPtr = strchr( startPtr, '\r' );                  // stop at the CRLF
     numBytes = (endPtr - startPtr) - 1;                 // -1 to not include trailing '"'
     memcpy( token[ 16 ], startPtr, numBytes );
-        
-    for (int j = 0; j < NUM_TOKENS_PER_STATE_CMD; j +=1)
-        printf( ">>>>>>>>> [%s]\n", token[ j ] );
+    
+    //for (int j = 0; j < NUM_TOKENS_PER_STATE_CMD; j +=1)
+    //    printf( ">>>>>>>>> [%s]\n", token[ j ] );
     return NUM_TOKENS_PER_STATE_CMD;
 }
 
@@ -845,24 +763,31 @@ del
 A pointer to the list element structure you are deleting from the list.
 
 elt
-A pointer that will be assigned to each list element in succession (see example) in the case of iteration macros; or, the output pointer from the search macros; or the element to be prepended to or replaced.
+A pointer that will be assigned to each list element in succession (see example) in the case of 
+ * iteration macros; or, the output pointer from the search macros; or the element to be prepended to or replaced.
 
 like
-An element pointer, having the same type as elt, for which the search macro seeks a match (if found, the match is stored in elt). A match is determined by the given cmp function.
+An element pointer, having the same type as elt, for which the search macro seeks a 
+ * match (if found, the match is stored in elt). A match is determined by the given cmp function.
 
 cmp
-pointer to comparison function which accepts two arguments-- these are pointers to two element structures to be compared. The comparison function must return an int that is negative, zero, or positive, which specifies whether the first item should sort before, equal to, or after the second item, respectively. (In other words, the same convention that is used by strcmp). Note that under Visual Studio 2008 you may need to declare the two arguments as void * and then cast them back to their actual types.
+pointer to comparison function which accepts two arguments-- these are pointers to two 
+ * element structures to be compared. The comparison function must return an int that 
+ * is negative, zero, or positive, which specifies whether the first item should sort before, 
+ * equal to, or after the second item, respectively. (In other words, the same convention 
+ * that is used by strcmp). Note that under Visual Studio 2008 you may need to declare the 
+ * two arguments as void * and then cast them back to their actual types.
 
 tmp
 A pointer of the same type as elt. Used internally. Need not be initialized.
 
 mbr
-In the scalar search macro, the name of a member within the elt structure which will be tested (using ==) for equality with the value val.
+In the scalar search macro, the name of a member within the elt structure which will 
+ * be tested (using ==) for equality with the value val.
 
 val
 In the scalar search macro, specifies the value of (of structure member field) of the element being sought.
 
 count
 integer which will be set to the length of the list
- 
  */

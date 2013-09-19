@@ -11,11 +11,7 @@
 #include <assert.h>
 #include <limits.h>
 
-
-extern  void    setHHBPort (char *aPortName);
-extern  void    openHHBPort (char *aPortName);
-extern  void    closeHHBPort();
-extern  void    getOneStateRecord ();
+#include "homeheartbeat.h"
 
 /*
  * 
@@ -32,10 +28,10 @@ int main(int argc, char** argv)
     
 
     
-    HomeHeartBeatSystem_Initialize();
-    HomeHeartBeatSystem_OpenPort( NULL );
-    HomeHeartBeatSystem_EventLoop( 1 );
-    HomeHeartBeatSystem_Shutdown();
+    HomeHeartBeatSystem_initialize();
+    HomeHeartBeatSystem_openPort( NULL );           // use the INI file values!!
+    HomeHeartBeatSystem_eventLoop( );
+    HomeHeartBeatSystem_shutdown();
 
     return (EXIT_SUCCESS);
 }

@@ -11,14 +11,6 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-#include <termios.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <errno.h>    
-
-#define BAUDRATE    B38400
     
 
 extern  int     SerialPort_Open( char *portName );

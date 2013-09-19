@@ -8,13 +8,18 @@
 #ifndef DATABASE_H
 #define	DATABASE_H
 
-#include "homeheartbeat.h"
+#include "hhb_structures.h"
 
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
     
+extern  void    Database_setDatabaseHost( char *hostName );
+extern  void    Database_setDatabaseUserName( char *userName );
+extern  void    Database_setDatabasePassword( char *password );
+extern  void    Database_setDatabaseSchema( char *schemaName );
+extern  void    Database_setFailOnDatabaseErrors(int newValue );
     
     
 extern  int     Database_openDatabase ();

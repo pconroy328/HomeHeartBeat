@@ -4,10 +4,8 @@
 #include <sys/stat.h>
 
 #include <configIO.h>
-#include "homeheartbeat.h"
+#include "hhb_structures.h"
 #include "helpers.h"
-
-
 
 static  char    *INIFileName;
 
@@ -74,10 +72,10 @@ void    IniFile_readIniFile (HomeHeartBeatSystem_t *aSystem)
     //
     // Now the database stuff
     (void) IniFiler_SearchCfg( INIFileName, "Database", "logEventsToDatabase", &(aSystem->logEventsToDatabase), Cfg_Boolean );    
-    (void) IniFiler_SearchCfg( INIFileName, "Database", "HostName", &(aSystem->databaseHost[ 0 ]), Cfg_String );
-    (void) IniFiler_SearchCfg( INIFileName, "Database", "UserName", &(aSystem->databaseUserName[ 0 ]), Cfg_String );
-    (void) IniFiler_SearchCfg( INIFileName, "Database", "Password", &(aSystem->databasePassword[ 0 ]), Cfg_String );
-    (void) IniFiler_SearchCfg( INIFileName, "Database", "Schema", &(aSystem->databaseSchema[ 0 ]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "HostName", &(aSystem->DBParameters.databaseHost[ 0 ]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "UserName", &(aSystem->DBParameters.databaseUserName[ 0 ]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "Password", &(aSystem->DBParameters.databasePassword[ 0 ]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "Schema", &(aSystem->DBParameters.databaseSchema[ 0 ]), Cfg_String );
     
     //
     // MQTT Specific Information

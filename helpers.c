@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <ctype.h>
 
 #include "homeheartbeat.h"
 #include "helpers.h"
@@ -24,7 +25,7 @@ void    warnAndKeepGoing (char *message)
 int     hexStringToInt (char *hexChars)
 {
     assert( hexChars != NULL );
-    
+    debug_print( "entering [%s]\n", hexChars );
     int len = strlen( hexChars );
     
     if (len != 2 && len != 4)

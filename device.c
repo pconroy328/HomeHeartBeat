@@ -23,6 +23,12 @@
 // #include "utlist.h"
 
 
+//
+// Forward declarations
+static  int     Device_parseAnyTimerValue( char *token );
+
+
+
 static  char    deviceRecordDumpBuffer[ 8192 ];
 
 // ----------------------------------------------------------------------------
@@ -116,8 +122,9 @@ HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceLis
 */
 
 // -----------------------------------------------------------------------------
-int Device_parseTokens (HomeHeartBeatDevice_t *deviceRecPtr, char *token[])
+int     Device_parseTokens (HomeHeartBeatDevice_t *deviceRecPtr, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH])
 {
+    assert( deviceRecPtr != NULL );
     //int j;
     //for (j = 0; j < 17; j +=1)
     //    printf( ">>>>*** >[%d] [%s]\n", j+1, token[j] );
@@ -172,10 +179,10 @@ int     Device_parseStateRecordID (char *token)
     
     //
     // This comes into us with "STATExx=" prepended.  Let's whack that off
-    char  *cPtr = strchr( token, '=' );
-    cPtr++;                                     // skip over "="
-    cPtr++;                                     // skip over double quote mark
-    int recordID = hexStringToInt( cPtr );
+    // char  *cPtr = strchr( token, '=' );
+    // cPtr++;                                     // skip over "="
+    // cPtr++;                                     // skip over double quote mark
+    int recordID = hexStringToInt( token );
     return recordID;
 }
 
@@ -184,7 +191,7 @@ int     Device_parseStateRecordID (char *token)
 int Device_parseZigbeeBindingID (char *token)
 {
     assert( token != NULL );
-    //debug_print( "Entering. Token [%s]\n", token );
+    debug_print( "Entering. Token [%s]\n", token );
     
     int zigbeeID = hexStringToInt( token );
     return zigbeeID;
@@ -483,6 +490,7 @@ char *Device_parseDeviceName (char *token)
 
 
 // ----------------------------------------------------------------------------
+static
 int     Device_parseAnyTimerValue (char *token)
 {
     assert( token != NULL );

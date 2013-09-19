@@ -13,29 +13,12 @@
 extern "C" {
 #endif
 
+#include "hhb_structures.h"
     
-    
+extern  char    *OpenClose_dumpSensorDeviceRecord( HomeHeartBeatDevice_t *deviceRecPtr );
+extern  void    OpenClose_parseOneStateRecord( HomeHeartBeatDevice_t *deviceRecPtr );
 
-// ----------------------------------------------------------------------------
-//  Device State (Field 5) values specific to an Open/Close Sensor
-//
-#define     ISOPEN_BITMASK      (0x02)
-#define     ISCLOSED_BITMASK    (0x01)
-typedef enum  ocDeviceState { ocOpen, ocClosed, ocUnknown } ocDeviceState_t;
     
-
-typedef struct  OpenCloseSensor {
-    ocDeviceState_t currentState;               // Field 5
-    int             isOpen;                     // derived
-    
-    int             alarmOnOpen;                // Field 9
-    int             alarmOnClose;               // Field 9
-    int             callOnOpen;                 // Field 9
-    int             callOnClose;                // Field 9
-                                                    // ....5....0....5.
-    char            usersDeviceName[ MAX_DEVICE_NAME_LEN ];        // Field 17
-} OpenCloseSensor_t;
-
 
 
 

@@ -33,6 +33,7 @@ extern "C" {
     
 extern  void    haltAndCatchFire( char * );
 extern  void    warnAndKeepGoing( char *message );
+extern  int     hexStringToInt( char *hexChars );
 
 
 

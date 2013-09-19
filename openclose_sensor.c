@@ -45,7 +45,7 @@ static  char    *deviceNames[] = {
 static  char    sensorRecordDumpBuffer[ 8192 ];
 
 // ----------------------------------------------------------------------------
-char    *dumpOCSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
+char    *OpenClose_dumpSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
 {
     assert( deviceRecPtr != NULL );
     

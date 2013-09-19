@@ -7,6 +7,7 @@
       <itemPath>database.h</itemPath>
       <itemPath>device.h</itemPath>
       <itemPath>helpers.h</itemPath>
+      <itemPath>hhb_structures.h</itemPath>
       <itemPath>homeheartbeat.h</itemPath>
       <itemPath>motion_sensor.h</itemPath>
       <itemPath>mqtt.h</itemPath>
@@ -51,7 +52,7 @@
     <conf name="Debug" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>default</compilerSet>
+        <compilerSet>GNU_C99|GNU</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
@@ -86,6 +87,8 @@
       <item path="helpers.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="helpers.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hhb_structures.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="hhb_system.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -150,6 +153,8 @@
       <item path="helpers.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="helpers.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hhb_structures.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="hhb_system.c" ex="false" tool="0" flavor2="0">
       </item>

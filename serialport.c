@@ -15,6 +15,22 @@
 #include <unistd.h>
 
 
+#include <termios.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <errno.h>    
+
+//
+//  Screw it -- I'm tired of trying to figure out where Linux guys stuck all these
+//  damned defines.  it was working under gcc but not under C99.  I can't see if these
+//  are POSIX wrapped or not...   These defines are stolen from <asm/termbits.h>
+#define CRTSCTS   020000000000  /* flow control */
+
+
+#define BAUDRATE    B38400
+
+
 #include "homeheartbeat.h"
 #include "serialport.h"
 #include "helpers.h"
@@ -426,7 +442,7 @@ int SerialPort_Open3 (char *portName)
     portID = open (portName, O_RDWR | O_NOCTTY | O_SYNC);
     if (portID < 0) {
         fprintf( stderr, "error %d opening %s: %s", errno, portName, strerror (errno));
-        return;
+        return -1;
     }
 
     set_interface_attribs (portID, BAUDRATE, 0);  // set speed to 115,200 bps, 8n1 (no parity)

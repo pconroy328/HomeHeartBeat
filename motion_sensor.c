@@ -43,7 +43,7 @@ static  char    *deviceNames[] = {
 static  char    sensorRecordDumpBuffer[ 8192 ];
 
 // ----------------------------------------------------------------------------
-char    *dumpMotionSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
+char    *MotionSensor_dumpSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
 {
     assert( deviceRecPtr != NULL );
     
@@ -156,7 +156,7 @@ void    Motion_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     deviceRecPtr->lastDeviceState = deviceRecPtr->motSensor->currentState;
     deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
             
-    debug_print( "After parse. \nMotion Sensor: %s\n\n", dumpMotionSensorDeviceRecord( deviceRecPtr ) );
+    // debug_print( "After parse. \nMotion Sensor: %s\n\n", MotionSensor_dumpSensorDeviceRecord( deviceRecPtr ) );
 }
 
 

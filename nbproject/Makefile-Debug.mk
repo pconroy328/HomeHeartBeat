@@ -14,14 +14,14 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc
+CC=c99
 CCC=g++
 CXX=g++
 FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
+CND_PLATFORM=GNU_C99-Linux-x86
 CND_DLIB_EXT=so
 CND_CONF=Debug
 CND_DISTDIR=dist
@@ -62,13 +62,13 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lmosquitto ../IniFiler/dist/Debug/GNU-Linux-x86/libinifiler.a -lmysqlclient
+LDLIBSOPTIONS=-lmosquitto ../IniFiler/dist/Debug/GNU_C99-Linux-x86/libinifiler.a -lmysqlclient
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
 	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: ../IniFiler/dist/Debug/GNU-Linux-x86/libinifiler.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: ../IniFiler/dist/Debug/GNU_C99-Linux-x86/libinifiler.a
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}

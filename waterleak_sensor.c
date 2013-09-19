@@ -41,7 +41,7 @@ static  int         WaterLeak_parseDeviceParameter( int dpValue );
 static  char    sensorRecordDumpBuffer[ 8192 ];
 
 // ----------------------------------------------------------------------------
-char    *dumpWaterLeakSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
+char    *Waterleak_dumpSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
 {
     assert( deviceRecPtr != NULL );
     
@@ -153,7 +153,7 @@ void    WaterLeak_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     deviceRecPtr->lastDeviceState = deviceRecPtr->wlSensor->currentState;
     deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
             
-    debug_print( "After parse. \nWaterLeak Sensor: %s\n\n", dumpWaterLeakSensorDeviceRecord( deviceRecPtr ) );
+    // debug_print( "After parse. \nWaterLeak Sensor: %s\n\n", WaterLeak_dumpSensorDeviceRecord( deviceRecPtr ) );
 }
 
 

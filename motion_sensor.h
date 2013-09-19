@@ -12,30 +12,14 @@
 extern "C" {
 #endif
 
-#include "device.h"
 
-// ----------------------------------------------------------------------------
-//  Device State (Field 5) values specific to an Motion Sensor
-//
-#define     ISNOMOTION_BITMASK    (0x01)
-#define     ISMOTION_BITMASK      (0x02)
-
-typedef enum  motDeviceState { motMotion, motNoMotion, motUnknown } motDeviceState_t;
+#include "hhb_structures.h"
+    
+extern  char    *MotionSensor_dumpSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr);
+extern  void    Motion_parseOneStateRecord( HomeHeartBeatDevice_t *deviceRecPtr );
+   
     
 
-typedef struct  MotionSensor {
-    motDeviceState_t    currentState;
-    int             motionDetected;             // derived
-    
-    int             alarmOnMotion;
-    int             alarmOnNoMotion;
-    int             callOnMotion;  
-    int             callOnNoMotion;
-    
-    int             motionDelayValueSecs;       // field 13
-    
-    char            *usersDeviceName[ MAX_DEVICE_NAME_LEN ];
-} MotionSensor_t;
 
 
 

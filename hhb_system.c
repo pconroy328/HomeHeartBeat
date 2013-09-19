@@ -8,26 +8,37 @@
 #include <stddef.h>
 #include <string.h>
 #include <assert.h>
+#include <unistd.h>
 
 
 #include "homeheartbeat.h"
+#include "hhb_structures.h"
+#include "database.h"
+#include "device.h"
 #include "mqtt.h"
 #include "helpers.h"
 #include "serialport.h"
+
+
 #include "openclose_sensor.h"
 #include "waterleak_sensor.h"
 #include "motion_sensor.h"
 #include "utlist.h"
 
+//
+//  External definitions that aren't in header files
+extern      void IniFile_readIniFile( HomeHeartBeatSystem_t *aSystem );    
 
 //
 // Forward declarations
 static  int                     getOneStateRecord( char *, int );
-static  HomeHeartBeatDevice_t   *parseOneStateRecord (char *receiveBuf, int numRead);
-static  HomeHeartBeatDevice_t   *parseOneStateRecordA (char *receiveBuf, int numRead);
-static  HomeHeartBeatDevice_t   *parseOneStateRecordL (char *receiveBuf, int numRead);
-static  int                     tokenizeStateData (char *receiveBuf, int numRead, char *token[]);
+static  HomeHeartBeatDevice_t   *parseOneStateRecord( char *receiveBuf, int numRead );
+static  HomeHeartBeatDevice_t   *parseOneStateRecordA( char *receiveBuf, int numRead );
+static  HomeHeartBeatDevice_t   *parseOneStateRecordL( char *receiveBuf, int numRead );
+static  int                     tokenizeStateData( char *receiveBuf, int numRead, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH] );
 static  void                    releaseMemory( void );
+static  void                    turnOffModem( void );
+static  void                    turnOffDebug( void );
 
 
 //
@@ -36,7 +47,7 @@ static  HomeHeartBeatSystem_t   *aSystem;
 
 
 // -----------------------------------------------------------------------------
-void    HomeHeartBeatSystem_Initialize ()
+void    HomeHeartBeatSystem_initialize ()
 {
     debug_print( "entering\n", 0 );
     
@@ -79,10 +90,10 @@ void    HomeHeartBeatSystem_Initialize ()
     IniFile_readIniFile( aSystem );    
     
     if (aSystem->logEventsToDatabase) {
-        Database_setDatabaseHost( aSystem->databaseHost );
-        Database_setDatabaseUserName( aSystem->databaseUserName );
-        Database_setDatabasePassword( aSystem->databasePassword );
-        Database_setDatabaseSchema( aSystem->databaseSchema );
+        Database_setDatabaseHost( &(aSystem->DBParameters.databaseHost[ 0 ] ) );
+        Database_setDatabaseUserName( &(aSystem->DBParameters.databaseUserName[ 0 ] ) );
+        Database_setDatabasePassword( &(aSystem->DBParameters.databasePassword[ 0 ] ) );
+        Database_setDatabaseSchema( &(aSystem->DBParameters.databaseSchema[ 0 ] ) );
         Database_setFailOnDatabaseErrors( 1 );
         Database_openDatabase();
         Database_dropDeviceStateLogTable(); Database_createDeviceStateLogTable();
@@ -91,25 +102,19 @@ void    HomeHeartBeatSystem_Initialize ()
     
     if (aSystem->logEventsToMQTT) {
         MQTT_setDefaults( aSystem, aSystem->MQTTParameters.mqttBrokerHost );
-        MQTT_Initialize( aSystem );
-    }
-    
-    //
-    //  Kick Base Unit into NO MODEM and Debug Off
-    //  No Modem - send 'M' until we get "MODEM=0
-    //  Debug Off - send 'a' until we get DBG=0
-    
+        MQTT_initialize( aSystem );
+    }    
 }
 
 // -----------------------------------------------------------------------------
-void    HomeHeartBeatSystem_Shutdown ()
+void    HomeHeartBeatSystem_shutdown ()
 {
     debug_print( "entering\n", 0 );
     SerialPort_Close( aSystem->hhbFD );
     aSystem->portOpen = FALSE;
 
     if (aSystem->logEventsToMQTT) {
-        MQTT_Teardown();
+        MQTT_teardown();
     }
     
     if (aSystem->logEventsToDatabase) {
@@ -121,33 +126,50 @@ void    HomeHeartBeatSystem_Shutdown ()
 }
 
 // -----------------------------------------------------------------------------
-void    HomeHeartBeatSystem_SetPortName (char *portName)
+void    HomeHeartBeatSystem_setPortName (char *portName)
 {
     debug_print( "entering. portName: %s\n", portName );
     strncpy( aSystem->portName, portName, sizeof aSystem->portName );
 }
 
 // -----------------------------------------------------------------------------
-void    HomeHeartBeatSystem_OpenPort (char *portName)
+void    HomeHeartBeatSystem_openPort (char *portName)
 {
     debug_print( "entering. portName: %s\n", portName );
     
     if (portName != NULL)
-        HomeHeartBeatSystem_SetPortName( portName );
+        HomeHeartBeatSystem_setPortName( portName );
     
     //
     // Open up the serial port!
     if ( (aSystem->hhbFD = SerialPort_Open( aSystem->portName )) > 0)
         aSystem->portOpen = TRUE;
+  
+    if (aSystem->portOpen) {
+        //
+        //  Kick Base Unit into NO MODEM and Debug Off
+        //  No Modem - send 'M' until we get "MODEM=0
+        //  Debug Off - send 'a' until we get DBG=0
+        turnOffModem();
+        turnOffDebug();
+    }
 }
 
 // -----------------------------------------------------------------------------
-void    HomeHeartBeatSystem_EventLoop ()
+void    HomeHeartBeatSystem_eventLoop ()
 {
     int     numBytesRead = 0;
-    char    rawStateRecord[ 256 ];                  // should be 4x bigger than what we need for one state record
     long    numLoops = 0;
     HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
+    int     mqttResult = 0;
+    
+    //
+    //  Heads-up - this is allocated on the stack.  Be sure that as we parse out the
+    //  tokens, the data - we don't keep references to a pointer in a stack frame 
+    //  that will go away!   DAMHIKT.  :)
+    //
+    char    rawStateRecord[ 256 ];                  // should be 4x bigger than what we need for one state record
+    
     
     
     debug_print( "entering\n", 0 );
@@ -180,15 +202,96 @@ void    HomeHeartBeatSystem_EventLoop ()
                 //
                 // Have we had a state change???
                 if (deviceRecPtr->stateHasChanged)
-                    MQTT_CreateDeviceAlarm( aSystem, deviceRecPtr );
+                    mqttResult = MQTT_createDeviceAlarm( aSystem, deviceRecPtr );
                 
-                MQTT_CreateDeviceEvent( aSystem, deviceRecPtr );
-                MQTT_SendReceive();
+                mqttResult = MQTT_createDeviceEvent( aSystem, deviceRecPtr );
+                mqttResult = MQTT_sendReceive();
+                
+                //
+                // Need to check for MQTT broker errors and reestablish connections
+                if (mqttResult != 0)
+                    MQTT_handleError( aSystem, mqttResult );
             }
         }
         
         sleep( aSystem->sleepSecsBetweenEventLoops );
+        
+        //
+        // Reload the INI file each time thru to pick up new values!
+        IniFile_readIniFile( aSystem );
     }
+}
+
+// -----------------------------------------------------------------------------
+static
+void    turnOffModem ()
+{
+    debug_print( "Attempting to turn off the HHBsystem modem.\n", 0 );
+    //
+    //  No Modem - send 'M' until we get "MODEM=0
+    //
+    int     numAttempts = 0;
+    int     modemOn = TRUE;
+    char    commandBuf[ 1 ];
+    int     numRead;
+    char    resultBuf[ 40 ];
+    
+    while (modemOn && numAttempts < 10) {
+        SerialPort_FlushBuffers( aSystem->hhbFD );
+    
+        commandBuf[ 0 ] = 'M'; 
+        SerialPort_SendData( aSystem->hhbFD, commandBuf, 1 );
+    
+        //
+        // Get the data back from the HHB
+        memset( resultBuf, '\0', sizeof resultBuf );
+        numRead = SerialPort_ReadLine( aSystem->hhbFD, resultBuf, sizeof resultBuf );
+        // debug_print( "read returned %d bytes. Data [%s]\n", numRead, rawStateRecord );
+        
+        if (numRead > 0 && strstr( resultBuf, "MODEM=0" ) != NULL)
+            modemOn = FALSE;
+    
+        numAttempts += 1;
+    }
+    
+    if (modemOn)
+        warnAndKeepGoing( "WARNING - Unable to turn off HHB Modem!\n" );
+}
+
+// -----------------------------------------------------------------------------
+static
+void    turnOffDebug ()
+{
+    debug_print( "Attempting to turn off the HHBsystem debug mode.\n", 0 );
+    //
+    //  Debug Off - send 'a' until we get DBG=0
+    //
+    int     numAttempts = 0;
+    int     debugOn = TRUE;
+    char    commandBuf[ 1 ];
+    int     numRead;
+    char    resultBuf[ 40 ];
+    
+    while (debugOn && numAttempts < 10) {
+        SerialPort_FlushBuffers( aSystem->hhbFD );
+    
+        commandBuf[ 0 ] = 'a'; 
+        SerialPort_SendData( aSystem->hhbFD, commandBuf, 1 );
+    
+        //
+        // Get the data back from the HHB
+        memset( resultBuf, '\0', sizeof resultBuf );
+        numRead = SerialPort_ReadLine( aSystem->hhbFD, resultBuf, sizeof resultBuf );
+        // debug_print( "read returned %d bytes. Data [%s]\n", numRead, rawStateRecord );
+        
+        if (numRead > 0 && strstr( resultBuf, "DBG=0" ) != NULL)
+            debugOn = FALSE;
+    
+        numAttempts += 1;
+    }
+    
+    if (debugOn)
+        warnAndKeepGoing( "WARNING - Unable to turn off HHB Debug Mode!\n" );
 }
 
 // ----------------------------------------------------------------------------
@@ -221,160 +324,6 @@ static int  getOneStateRecord (char *rawStateRecord, int bufSize)
     
     return numRead;
 }   // getOneStateRecord
-
-/*
-// ----------------------------------------------------------------------------
-static  
-HomeHeartBeatDevice_t *parseOneStateRecord2 (char *receiveBuf, int numRead)
-{
-    char    *token[ 17 ];
-    HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
-    
-    
-    assert( receiveBuf != NULL );
-
-    int numTokensParsed = tokenizeStateData( receiveBuf, numRead, token );
-    if (numTokensParsed != 17)
-        return NULL;
-    int j;
-    for (j = 0; j < 17; j +=1)
-        printf( ">>>>>>>[%d] [%s]\n", j+1, token[j] );
-    
-    int     deviceType = Device_parseDeviceType( token[ 3 ] );
-    char    *macAddress = Device_parseMacAddress( token[ 15 ] );
- 
-    //
-    //  We are going to use a device's MAC address to uniquely identify it.  That's fine
-    //  except the Base Station (Type 1, Record ID = 0) and the Modem (Type 16, Record ID= 2)
-    //  don't have MAC Addresses!  So - I could add alot of checking for device type of 1 or 16
-    //  or I could jus6t create a MAC address for them. :)
-    if (deviceType == 1 || deviceType == 16) {
-        debug_print( "Received a state record for the Base Station or Modem. Ignoring.\n", 0 );
-        return NULL;
-    }
-   
-    //
-    // Now we look to see if we can find this device (by it's MAC address) already in our list of devices
-    for (j = 0; j < 17; j +=1)
-        printf( ">>555555 >>>>>[%d] [%s]\n", j+1, token[j] );
-    // deviceRecPtr = Device_findThisDevice( aSystem->deviceListHead, macAddress );
-
-    
-    //
-    // Have we found this device already or is it the first time we've seen it?
-    int     firstTimeDeviceSeen = FALSE;
-    if (deviceRecPtr == NULL) {
-        firstTimeDeviceSeen = TRUE;
-        deviceRecPtr = Device_newDeviceRecord( macAddress );
-        assert( deviceRecPtr != NULL );
-    for (j = 0; j < 17; j +=1)
-        printf( ">>>>>66666666666>[%d] [%s]\n", j+1, token[j] );
-
-        
-        printf( "FIRST TIME DEVICE [%s]\n", macAddress );
-        printf( "               1. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
-        
-        //
-        // Debugging dump the list
-        puts( "\n====================== BEFORE =========================\n" );
-        HomeHeartBeatDevice_t    *tmpPtr = NULL;
-        int     i = 1;
-        LL_FOREACH( aSystem->deviceListHead, tmpPtr ) {
-            printf( "[[%2d]] %s\n------------------------------------\n", i, Device_dumpDeviceRecord( tmpPtr ));
-            i += 1;
-        }
-        
-    for (j = 0; j < 17; j +=1)
-        printf( ">>>>>777777777777>[%d] [%s]\n", j+1, token[j] );
-        printf( "               2. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
-        
-        //
-        // Add it to the linked list
-        deviceRecPtr->next = NULL;
-        LL_APPEND( aSystem->deviceListHead, deviceRecPtr );
-        printf( "               3. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
-    for (j = 0; j < 17; j +=1)
-        printf( ">>>>>88888888888>[%d] [%s]\n", j+1, token[j] );
-
-        
-        
-        
-        ////////////////////
-        /////////// TOKENS OK!!!!!!!!!!
-        puts( "\n====================== AFTER =========================\n" );
-        //tmpPtr = NULL;
-        //i = 1;
-        //LL_FOREACH( aSystem->deviceListHead, tmpPtr ) {
-        //    printf( "[[%2d]] %s\n------------------------------------\n", i, Device_dumpDeviceRecord( tmpPtr ));
-        //    i += 1;
-       // }
-        printf( "               4. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
-
-        ////////////// TOKENS WHACKED!!!
-        
-    for (j = 0; j < 17; j +=1)
-        printf( ">>>>>999999999999>[%d] [%s]\n", j+1, token[j] );
-        
-        int numDevices = 0;
-        HomeHeartBeatDevice_t   *elementPtr;
-        LL_COUNT( aSystem->deviceListHead, elementPtr, numDevices );             // numDevices is not passed by reference here
-        printf( "After addition there are %d devices in the device list.\n", numDevices );
-        printf( "               5. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
-
-    for (j = 0; j < 17; j +=1)
-        printf( ">>>>>AAAAAAAAAAAAAAAAA>[%d] [%s]\n", j+1, token[j] );
-
-        //
-        // Something we need to do just once and that's initialize the State Changed fields
-        deviceRecPtr->stateHasChanged = FALSE;
-        deviceRecPtr->lastDeviceState = deviceRecPtr->deviceState;
-        deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
-            for (j = 0; j < 17; j +=1)
-        printf( ">>>>>BBBBBBBBBBBBB>[%d] [%s]\n", j+1, token[j] );
-
-    }
-
-    printf( "               6. Head <%p>, RecPtr: <%p>\n", aSystem->deviceListHead, deviceRecPtr );
-
-    //
-    // TOKENS ARE SCREW UP AT THIS POINT!!!
-    
-    for (j = 0; j < 17; j +=1)
-        printf( ">>22222222222222>>>>>[%d] [%s]\n", j+1, token[j] );
-    
-    deviceType = Device_parseTokens( deviceRecPtr, token );
-    printf( "After calling find - this is what we found: %s", Device_dumpDeviceRecord( deviceRecPtr ) );
-
-    //
-    // What we do next depends on what device is reporting in.
-    switch (deviceType) {
-        case DT_BASE_STATION:   
-            break;
-        case DT_HOME_KEY:
-            break; 
-        case DT_OPEN_CLOSE_SENSOR:  OpenClose_parseOneStateRecord( deviceRecPtr );
-                                    break;
-        case DT_POWER_SENSOR:     
-            break;
-        case DT_WATER_LEAK_SENSOR:  WaterLeak_parseOneStateRecord( deviceRecPtr );
-                                    break;
-        case DT_REMINDER_DEVICE:
-        case DT_ATTENTION_DEVICE:
-        case DT_MODEM:
-        case DT_MOTION_SENSOR:      Motion_parseOneStateRecord( deviceRecPtr );
-                                    break;
-        case DT_TILT_SENSOR:
-            break;
-
-        default:
-            warnAndKeepGoing( "Unrecognized device type just came through" );
-            break;
-    }
-
-    printf( "exiting \n\n", 0 );
-    return deviceRecPtr;
-}
-*/
 
 
 // -----------------------------------------------------------------------------
@@ -409,51 +358,6 @@ void    releaseMemory()
 
 // -----------------------------------------------------------------------------
 static
-int    tokenizeStateData (char *receiveBuf, int numRead, char *token[])
-{
-   debug_print( "entering. recieveBuf[%s], numRead: %d\n", receiveBuf, numRead );
-    
-    /*
-     *  A retrieved state record has the following format:
-     *      STATE="F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17"
-     *  Where F1 through F17 are the returned data fields. Field 17 (F17) contains the 
-     *  ASCII text name of the device. All of the remaining fields are numerical and 
-     *  are expressed in hexadecimal notation (base 16).
-     */
-    const char  delimiters[] = ",";
-    char        dataCopy[ 1024 ];
-    char        *cPtr;
-    
-    //
-    // Since this is my code, I'm going to use "strsep()" instead of strtok_r
-    memcpy( dataCopy, receiveBuf, numRead );
-    cPtr = &dataCopy[ 0 ];
-    //
-    // These functions modify the buffer, that's why we made a copy.
-    // I'm OK with putting a hard 17 in here. The HHB is dead and unlikely to change :)
-    int     i;
-    for (i = 0; i < 17; i += 1) {
-        token[ i ] = strsep( &cPtr, delimiters );
-        if (token[ i ] == NULL) {
-            warnAndKeepGoing( "ERROR:homeheartbeat:parseOneStateRecord(): Hit null token on loop\n" );
-            break;
-        }
-    }
-    int numTokensFound = i;
-    //debug_print( "Total number of tokens in data: %d\n", numTokensFound );
-        
-                
-    if (numTokensFound != 17) {
-       warnAndKeepGoing( "Less than 17 tokens found in the data stream. Considering it corrupt and discarding it all\n" );
-       return numTokensFound;
-    } 
-    
-    return 17;
-}
-
-
-// -----------------------------------------------------------------------------
-static
 HomeHeartBeatDevice_t   *addNewDevice (HomeHeartBeatDevice_t *deviceRecPtr)
 {
     //
@@ -469,7 +373,7 @@ HomeHeartBeatDevice_t   *addNewDevice (HomeHeartBeatDevice_t *deviceRecPtr)
 
 // -----------------------------------------------------------------------------
 static
-int     updateExistingDevice (int indexPosition, char *token[])
+int     updateExistingDevice (int indexPosition, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH])
 {
     //
     //
@@ -544,7 +448,7 @@ HomeHeartBeatDevice_t   *addNewDeviceToList (HomeHeartBeatDevice_t *deviceRecPtr
 
 // -----------------------------------------------------------------------------
 static
-int     updateExistingDeviceInList (HomeHeartBeatDevice_t *deviceRecPtr, char *token[])
+int     updateExistingDeviceInList (HomeHeartBeatDevice_t *deviceRecPtr, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH])
 {
     //
     //
@@ -552,20 +456,20 @@ int     updateExistingDeviceInList (HomeHeartBeatDevice_t *deviceRecPtr, char *t
     return Device_parseTokens( deviceRecPtr, token );     // fill in the fields!
 }
 
-
+/* 
 // ----------------------------------------------------------------------------
 static  
 HomeHeartBeatDevice_t *parseOneStateRecordA (char *receiveBuf, int numRead)
 {
-    char    *token[ 17 ];
+    char    *token[ NUM_TOKENS_PER_STATE_CMD ];
     HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
     
 
     //
-    //  Convert serial port stream into tokens! We know the device sends 17!
+    //  Convert serial port stream into tokens! We know the device sends NUM_TOKENS_PER_STATE_CMD!
     assert( receiveBuf != NULL );
     int numTokensParsed = tokenizeStateData( receiveBuf, numRead, token );
-    if (numTokensParsed != 17)
+    if (numTokensParsed != NUM_TOKENS_PER_STATE_CMD)
         return NULL;
     
  
@@ -639,21 +543,27 @@ HomeHeartBeatDevice_t *parseOneStateRecordA (char *receiveBuf, int numRead)
     printf( "exiting \n\n", 0 );
     return deviceRecPtr;
 }
+*/
 
 
 // ----------------------------------------------------------------------------
 static  
 HomeHeartBeatDevice_t *parseOneStateRecordL (char *receiveBuf, int numRead)
 {
-    char    *token[ 17 ];
+    char                    token[ NUM_TOKENS_PER_STATE_CMD ][ MAX_TOKEN_LENGTH ];           // array of NUM_TOKENS_PER_STATE_CMD strings MAX_TOKEN_LENGTH characters long...
     HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
     
 
     //
-    //  Convert serial port stream into tokens! We know the device sends 17!
+    //  Convert serial port stream into tokens! We know the device sends NUM_TOKENS_PER_STATE_CMD!
     assert( receiveBuf != NULL );
+    
+    //
+    // receiveBuf coming in is on the stack - don't hold onto pointers to it!
+    memset( token, '\0', sizeof token );
+    
     int numTokensParsed = tokenizeStateData( receiveBuf, numRead, token );
-    if (numTokensParsed != 17)
+    if (numTokensParsed != NUM_TOKENS_PER_STATE_CMD)
         return NULL;
     
  
@@ -726,6 +636,57 @@ HomeHeartBeatDevice_t *parseOneStateRecordL (char *receiveBuf, int numRead)
     printf( "exiting \n\n", 0 );
     return deviceRecPtr;
 }
+
+// -----------------------------------------------------------------------------
+static
+int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH])
+{
+   debug_print( "entering. recieveBuf[%s], numRead: %d\n", receiveBuf, numRead );
+    
+    /*
+     *  A retrieved state record has the following format:
+     *      STATE="F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17"
+     *  Where F1 through F17 are the returned data fields. Field 17 (F17) contains the 
+     *  ASCII text name of the device. All of the remaining fields are numerical and 
+     *  are expressed in hexadecimal notation (base 16).
+     */
+   
+     //
+     // pluck 'em out one by one
+    char    *startPtr, *endPtr;
+    size_t  numBytes = 0;
+   
+    //
+    // first token is special, advance to the '"' sign and then skip over it
+    startPtr = strchr( receiveBuf, '"' );
+    startPtr++;
+    endPtr = strchr( startPtr, ',' );                     // stop at the comma
+    numBytes = (endPtr - startPtr);
+    memcpy( token[ 0 ], startPtr, numBytes );
+   
+    //
+    // Now the next 15 are all the same...
+    for (int i = 0; i < 15; i +=1) {
+        endPtr++;                                       // skip over the last comma
+        startPtr = endPtr;                              // start there
+        endPtr = strchr( startPtr, ',' );               // stop at the next comma
+        numBytes = (endPtr - startPtr);
+        memcpy( token[ i + 1 ], startPtr, numBytes );
+    }
+   
+    //
+    //  Last one we stop at the eol...
+    endPtr++;                                           // skip over last comma
+    startPtr = endPtr;
+    endPtr = strchr( startPtr, '\r' );                  // stop at the CRLF
+    numBytes = (endPtr - startPtr) - 1;                 // -1 to not include trailing '"'
+    memcpy( token[ 16 ], startPtr, numBytes );
+        
+    for (int j = 0; j < NUM_TOKENS_PER_STATE_CMD; j +=1)
+        printf( ">>>>>>>>> [%s]\n", token[ j ] );
+    return NUM_TOKENS_PER_STATE_CMD;
+}
+
 
 
 // -----------------------------------------------------------------------------

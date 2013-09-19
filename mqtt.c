@@ -15,8 +15,8 @@
 
 
 #include "helpers.h"
-#include "homeheartbeat.h"
-
+#include "hhb_structures.h"
+#include "mqtt.h"
 
 static  int                     MQTT_Connected;
 static  struct  mosquitto       *mosq = NULL;
@@ -25,18 +25,22 @@ static  struct  mosquitto       *mosq = NULL;
 
 //
 // Forward declarations
+static  void    my_message_callback( struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message );
+static  void    my_connect_callback( struct mosquitto *mosq, void *userdata, int result );
+static  void    my_log_callback( struct mosquitto *mosq, void *userdata, int level, const char *str );
 static  char    *getCurrentDateTime( void );
 
 
 // ------------------------------------------------------------------------------
-void my_message_callback(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message)
+static
+void my_message_callback (struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message)
 {
-    debug_print ( "Entering. Payload length: %d\n", message->payloadlen );
+    debug_print ( "MQTT Entering. Payload length: %d\n", message->payloadlen );
     if (message->payloadlen > 0) {
         debug_print( "Topic [%s] Data [%s]\n", (char *) message->topic, (char *) message->payload);
         
     } else {
-        debug_print("Topic [%s] with no payload\n", message->topic );
+        debug_print(" MQTT Topic [%s] with no payload\n", message->topic );
     }
 }
 
@@ -46,16 +50,19 @@ void my_message_callback(struct mosquitto *mosq, void *userdata, const struct mo
 // void mosquitto_connect_callback_set(struct mosquitto *mosq, void (*on_connect)(void *, int));
  
 // ------------------------------------------------------------------------------
-void my_connect_callback(struct mosquitto *mosq, void *userdata, int result)
+static
+void my_connect_callback (struct mosquitto *mosq, void *userdata, int result)
 {
     debug_print( "MQTT Connection Callback. Result: %d\n", result );
 
     if(!result){
         /* Subscribe to broker information topics on successful connect. */
         mosquitto_subscribe( mosq, NULL, "$SYS/#", 2 );
+        MQTT_Connected = TRUE;
         
     } else {
-        fprintf(stderr, "Connect failed\n");
+        fprintf(stderr, " MQTT Connection failed\n" );
+        MQTT_Connected = FALSE;
     }
 }
 
@@ -64,7 +71,7 @@ void my_subscribe_callback(struct mosquitto *mosq, void *userdata, int mid, int 
 {
     int i;
 
-    debug_print( "Subscribed (mid: %d): %d", mid, granted_qos[ 0 ] );
+    debug_print( "MQTT Subscribed (mid: %d): %d", mid, granted_qos[ 0 ] );
     for(i = 1; i < qos_count; i++){
         debug_print( ", %d", granted_qos[ i ] );
     }
@@ -73,12 +80,12 @@ void my_subscribe_callback(struct mosquitto *mosq, void *userdata, int mid, int 
 }
 
 // ------------------------------------------------------------------------------
+static
 void my_log_callback(struct mosquitto *mosq, void *userdata, int level, const char *str)
 {
     /* Print all log messages regardless of level. */
     debug_print("MQTT Logging: [%s]\n", str );
 }
-
 
 
 
@@ -97,7 +104,7 @@ void    MQTT_setDefaults (HomeHeartBeatSystem_t *aSystem, char *brokerHostName)
     // QoS of zero is ok
 }
 // ----------------------------------------------------------------------------
-void    MQTT_Initialize (HomeHeartBeatSystem_t *aSystem)
+void    MQTT_initialize (HomeHeartBeatSystem_t *aSystem)
 {
     char    id[30];
     int     i;
@@ -105,8 +112,6 @@ void    MQTT_Initialize (HomeHeartBeatSystem_t *aSystem)
 
     MQTT_Connected = FALSE;
     
-    //
-    // If values aren't set - use the defaults
     if (!aSystem->logEventsToMQTT)
         return;
     
@@ -156,7 +161,7 @@ void    MQTT_Initialize (HomeHeartBeatSystem_t *aSystem)
 }
 
 // ----------------------------------------------------------------------------
-void    MQTT_Teardown()
+void    MQTT_teardown ()
 {
     if (MQTT_Connected) {
         mosquitto_destroy( mosq );
@@ -165,20 +170,20 @@ void    MQTT_Teardown()
 }
 
 // ----------------------------------------------------------------------------
-int MQTT_SendReceive ()
+int MQTT_sendReceive ()
 {
     if (!MQTT_Connected)
-        return;
+        return MQTT_NOT_CONNECTED;
     
     int error = mosquitto_loop( mosq, -1, 0 );
     return error;
 }
 
 // -----------------------------------------------------------------------------
-int    MQTT_CreateDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr )
+int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr)
 {
     if (!MQTT_Connected)
-        return;
+        return MQTT_NOT_CONNECTED;
 
     //
     // We've noticed that the state has changed on one of our devices - send a new message!
@@ -287,10 +292,10 @@ int    MQTT_CreateDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
 
 
 // -----------------------------------------------------------------------------
-int    MQTT_CreateDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr)
+int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr)
 {
     if (!MQTT_Connected)
-        return;
+        return MQTT_NOT_CONNECTED;
     
     //
     // All we know is that we have a state event
@@ -461,4 +466,14 @@ char    *getCurrentDateTime (void)
     }
     
     return &currentDateTimeBuffer[ 0 ];
+}
+
+// -----------------------------------------------------------------------------
+int MQTT_handleError (HomeHeartBeatSystem_t *aSystem, int errorCode) 
+{
+    fprintf( stderr, "ERROR detected in MQTT [%d]\n", errorCode );
+    fprintf( stderr, "Disconnecting...\n" );
+    MQTT_teardown();
+    fprintf( stderr, "Reconnecting...\n" );
+    MQTT_initialize( aSystem );
 }

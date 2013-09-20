@@ -195,7 +195,15 @@ void    Database_insertDeviceStateLogRecord (HomeHeartBeatDevice_t *recPtr)
      * 
      */
     memset( buffer, '\0', sizeof buffer );
-    snprintf( buffer, sizeof buffer, sql,
+    
+    //
+    //  We need to worry about Quoet Marks in the device Name that will screw up SQL
+    //  Escape any special characters in the string!
+    // unsigned long mysql_real_escape_string(MYSQL *mysql, char *to, const char *from, unsigned long length)    
+    char    safeDeviceName[ MAX_DEVICE_NAME_LEN ];
+    (void) mysql_real_escape_string( connection, safeDeviceName, recPtr->deviceName, strlen( recPtr->deviceName ) );
+    
+    int bufferLength = snprintf( buffer, sizeof buffer, sql,
                             dbSchemaName, deviceStateLogTableName,
                             recPtr->deviceType,
                             recPtr->stateRecordID,
@@ -213,7 +221,7 @@ void    Database_insertDeviceStateLogRecord (HomeHeartBeatDevice_t *recPtr)
                             0,  //  `field14`  
                             recPtr->pendingUpdateTimer,
                             recPtr->macAddress,
-                            recPtr->deviceName );
+                            safeDeviceName );
     
     
     if (mysql_query( connection, buffer ) != 0) {
@@ -251,11 +259,11 @@ int     Database_createDeviceStateCurrentTable()
           `deviceName` VARCHAR(80) NULL ,\
           `lastUpdate` TIMESTAMP NULL DEFAULT NOW() ,\
           PRIMARY KEY (`ID`) ); ";
-    char  buffer[ 1024 ];
+    char    buffer[ 4096 ];
     
     
     memset( buffer, '\0', sizeof buffer );
-    snprintf( buffer, sizeof buffer, "CREATE TABLE `%s`.`%s` ( %s", dbSchemaName, deviceStateCurrentTableName, sql );
+    int bufferLength = snprintf( buffer, sizeof buffer, "CREATE TABLE `%s`.`%s` ( %s", dbSchemaName, deviceStateCurrentTableName, sql );
     
     if (mysql_query( connection, buffer ) != 0) {
         fprintf( stderr, "Unable to create the device table.\n" );
@@ -290,6 +298,7 @@ void    Database_dropDeviceStateCurrentTable ()
 void    Database_updateDeviceStateCurrentRecord (HomeHeartBeatDevice_t *recPtr)
 {
     char    buffer[ 8192 ];
+    char    buffer2[ 8192 ];
     char    *updateSQL = "UPDATE `%s`.`%s` SET \
 deviceType=%d, \
 stateRecordID=%d, \
@@ -362,11 +371,21 @@ deviceName='%s', lastUpdate=NOW()  WHERE macAddress='%s';";
     int     doInsertNotUpdate = (data[ 0 ] == '0');
     mysql_free_result( result );    
     
+
+    //
+    //  We need to worry about Quoet Marks in the device Name that will screw up SQL
+    //  Escape any special characters in the string!
+    // unsigned long mysql_real_escape_string(MYSQL *mysql, char *to, const char *from, unsigned long length)    
+    char    safeDeviceName[ MAX_DEVICE_NAME_LEN ];
+    (void) mysql_real_escape_string( connection, safeDeviceName, recPtr->deviceName, strlen( recPtr->deviceName ) );
+
+
     //
     //
+    int bufferLength = 0;
     memset( buffer, '\0', sizeof buffer );
     if (doInsertNotUpdate) {
-        snprintf( buffer, sizeof buffer, insertSQL,
+        bufferLength = snprintf( buffer, sizeof buffer, insertSQL,
                             dbSchemaName, deviceStateCurrentTableName,
                             recPtr->deviceType,
                             recPtr->stateRecordID,
@@ -384,9 +403,9 @@ deviceName='%s', lastUpdate=NOW()  WHERE macAddress='%s';";
                             0,  //  `field14`  
                             recPtr->pendingUpdateTimer,
                             recPtr->macAddress, 
-                            recPtr->deviceName );
+                            safeDeviceName );
     } else { 
-        snprintf( buffer, sizeof buffer, updateSQL,
+        bufferLength = snprintf( buffer, sizeof buffer, updateSQL,
                             dbSchemaName, deviceStateCurrentTableName,
                             recPtr->deviceType,
                             recPtr->stateRecordID,
@@ -403,9 +422,10 @@ deviceName='%s', lastUpdate=NOW()  WHERE macAddress='%s';";
                             recPtr->deviceParameter,
                             0,  //  `field14`  
                             recPtr->pendingUpdateTimer,
-                            recPtr->deviceName,
+                            safeDeviceName,
                             recPtr->macAddress );
     }
+    
     
     if (mysql_query( connection, buffer ) != 0) {
         fprintf( stderr, "Unable to insert the record into the device table.\n" );

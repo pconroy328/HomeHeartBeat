@@ -55,9 +55,9 @@ void my_connect_callback (struct mosquitto *mosq, void *userdata, int result)
 {
     debug_print( "MQTT Connection Callback. Result: %d\n", result );
 
-    if(!result){
+    if(!result) {
         /* Subscribe to broker information topics on successful connect. */
-        mosquitto_subscribe( mosq, NULL, "$SYS/#", 2 );
+        //mosquitto_subscribe( mosq, NULL, "$SYS/#", 2 );
         MQTT_Connected = TRUE;
         
     } else {
@@ -84,7 +84,7 @@ static
 void my_log_callback(struct mosquitto *mosq, void *userdata, int level, const char *str)
 {
     /* Print all log messages regardless of level. */
-    debug_print("MQTT Logging: [%s]\n", str );
+    // debug_print("MQTT Logging: [%s]\n", str );
 }
 
 
@@ -175,7 +175,21 @@ int MQTT_sendReceive ()
     if (!MQTT_Connected)
         return MQTT_NOT_CONNECTED;
     
-    int error = mosquitto_loop( mosq, -1, 0 );
+    //
+    // Last parmeter cannot be ZERO!
+    int error = mosquitto_loop( mosq, -1, 10 );
+    if (error != MOSQ_ERR_SUCCESS) {
+        debug_print( "Error Code : %d\n", error  );
+        switch (error) {
+            case    MOSQ_ERR_INVAL:     debug_print( "ERROR: mosquitto_loop() says INVAL", 0 ); break;
+            case    MOSQ_ERR_NOMEM:     debug_print( "ERROR: mosquitto_loop() says NOMEM", 0 ); break;
+            case    MOSQ_ERR_NO_CONN:   debug_print( "ERROR: mosquitto_loop() says NO CONN", 0 ); break;
+            case    MOSQ_ERR_CONN_LOST: debug_print( "ERROR: mosquitto_loop() says CONN LOST", 0 ); break;
+            case    MOSQ_ERR_PROTOCOL:  debug_print( "ERROR: mosquitto_loop() says PROTOCOL", 0 ); break;
+            case    MOSQ_ERR_ERRNO:     debug_print( "ERROR: mosquitto_loop() says ERRNO", 0 ); break;
+                
+        }
+    }
     return error;
 }
 

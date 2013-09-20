@@ -60,7 +60,7 @@ HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress)
 {
     HomeHeartBeatDevice_t   *recPtr = NULL;
     
-    debug_print( "===================================== MALLOC [%s] =============================\n", macAddress );
+    // debug_print( "===================================== MALLOC [%s] =============================\n", macAddress );
     //
     //  We've discovered a new Open/Close Sensor attached to our system. After we allocate
     //  a record for the O/C Sensor, we call this function which allocates space for

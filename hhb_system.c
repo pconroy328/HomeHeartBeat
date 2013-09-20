@@ -186,7 +186,7 @@ void    HomeHeartBeatSystem_eventLoop ()
         //
         // debugging for valgrind
         numLoops += 1L;
-        if (numLoops > 180L) {
+        if (numLoops > 18000L) {
             return;
         }
 

@@ -8,23 +8,151 @@
 #include <assert.h>
 #include <mysql/mysql.h>
 
-//#include "homeheartbeat.h"
+#include "hhb_structures.h"
 #include "helpers.h"
 #include "database.h"
 
 //
 // We can keep a log of all device readings
-static  char    *deviceStateLogTableName = "HHBDeviceStateLog";
+static  char    *historyTableName = "HHBHistory";
+static  char    *createHistoryTableSQL = "`ID` INT NOT NULL AUTO_INCREMENT ,        \
+`deviceType` INT NOT NULL ,           \
+`stateRecordID` INT NOT NULL ,\
+`zigbeeBindingID` INT NULL ,\
+`deviceCapabilities` INT NULL ,\
+`deviceState` INT NULL ,\
+`deviceStateTimer` INT NULL ,\
+`deviceAlerts` INT NULL ,\
+`deviceNameIndex` INT NULL ,\
+`deviceConfiguration` INT NULL ,\
+`aliveUpdateTimer` INT NULL ,\
+`updateFlags` INT NULL ,\
+`field12` INT NULL ,\
+`deviceParameter` INT NULL ,\
+`field14` INT NULL ,\
+`pendingUpdateTimer` INT NULL ,\
+`macAddress` VARCHAR(20) NULL ,\
+`deviceName` VARCHAR(80) NULL ,\
+`lastUpdate` TIMESTAMP NULL DEFAULT NOW() ,\
+PRIMARY KEY (`ID`) ); ";
+
+static  char    *insertHistoryRecordSQL = "INSERT INTO `%s`.`%s` (\
+`deviceType`, \
+`stateRecordID`, \
+`zigbeeBindingID`, \
+`deviceCapabilities`, \
+`deviceState` , \
+`deviceStateTimer`, \
+`deviceAlerts` ,\
+`deviceNameIndex`  ,\
+`deviceConfiguration`  ,\
+`aliveUpdateTimer`  ,\
+`updateFlags`  ,\
+`field12`  ,\
+`deviceParameter`  ,\
+`field14`  ,\
+`pendingUpdateTimer`  ,\
+`macAddress`,\
+`deviceName` ) VALUES ( \
+%d, %d, %d, \
+%d, %d, %d,  \
+%d, %d, %d,  \
+%d, %d, %d,  \
+%d, %d, %d,  \
+'%s', '%s' );";    
+
 
 //
 // We can keep a log of only state changes
-static  char    *deviceStateChangeLogTableName = "HHBDeviceChangeStateLog";
+static  char    *alarmTableName = "HHBAlarms";
+static  char    *createAlarmTableSQL = "`ID` INT NOT NULL AUTO_INCREMENT ,        \
+`deviceType` INT NOT NULL ,           \
+`deviceName` VARCHAR(80) NULL ,\
+`status` VARCHAR( 40 ) NULL,\
+`duration` INT NULL, \
+`macAddress` VARCHAR(20) NULL ,\
+`lastUpdate` TIMESTAMP NULL DEFAULT NOW() ,\
+PRIMARY KEY (`ID`) ); ";
+
+static  char    *insertAlarmRecordSQL = "INSERT INTO `%s`.`%s` (\
+`deviceType`,\
+`deviceName`,\
+`status`,\
+`duration`,\
+`macAddress`) VALUES ( %d, '%s', '%s', %d, '%s' );";
+
+
+
 
 //
 // We can keep a table with the *current* states
-static  char    *deviceStateCurrentTableName = "HHBDeviceCurrentState";
+static  char    *statusTableName = "HHBStatus";
+static  char    *createStatusTableSQL = "`ID` INT NOT NULL AUTO_INCREMENT ,        \
+`deviceType` INT NOT NULL ,           \
+`stateRecordID` INT NOT NULL ,\
+`zigbeeBindingID` INT NULL ,\
+`deviceCapabilities` INT NULL ,\
+`deviceState` INT NULL ,\
+`deviceStateTimer` INT NULL ,\
+`deviceAlerts` INT NULL ,\
+`deviceNameIndex` INT NULL ,\
+`deviceConfiguration` INT NULL ,\
+`aliveUpdateTimer` INT NULL ,\
+`updateFlags` INT NULL ,\
+`field12` INT NULL ,\
+`deviceParameter` INT NULL ,\
+`field14` INT NULL ,\
+`pendingUpdateTimer` INT NULL ,\
+`macAddress` VARCHAR(20) NULL ,\
+`deviceName` VARCHAR(80) NULL ,\
+`lastUpdate` TIMESTAMP NULL DEFAULT NOW() ,\
+PRIMARY KEY (`ID`) ); ";
 
+static  char    *updateStatusRecordSQL = "UPDATE `%s`.`%s` SET \
+deviceType=%d, \
+stateRecordID=%d, \
+zigbeeBindingID=%d, \
+deviceCapabilities=%d, \
+deviceState=%d, \
+deviceStateTimer=%d, \
+deviceAlerts=%d,\
+deviceNameIndex=%d,\
+deviceConfiguration=%d,\
+aliveUpdateTimer=%d,\
+updateFlags=%d,\
+field12=%d,\
+deviceParameter=%d,\
+field14=%d,\
+pendingUpdateTimer=%d,\
+deviceName='%s', lastUpdate=NOW()  WHERE macAddress='%s';"; 
+    
+static  char    *insertStatusRecordSQL = "INSERT INTO `%s`.`%s` (\
+`deviceType`,\
+`stateRecordID`,\
+`zigbeeBindingID`,\
+`deviceCapabilities`,\
+`deviceState`,\
+`deviceStateTimer`,\
+`deviceAlerts`,\
+`deviceNameIndex`,\
+`deviceConfiguration`,\
+`aliveUpdateTimer`,\
+`updateFlags`,\
+`field12`,\
+`deviceParameter`,\
+`field14`,\
+`pendingUpdateTimer`,\
+`macAddress`,\
+`deviceName`) VALUES (\
+%d,%d,%d,%d,%d,\
+%d,%d,%d,%d,%d,\
+%d,%d,%d,%d,%d,\
+'%s','%s');";
 
+    
+    
+    
+// -----------------------------------------------------------------------------
 static  int     databaseIsOpen = FALSE;
 static  MYSQL   *connection = NULL;
 static  char    *dbHostName;
@@ -32,6 +160,10 @@ static  char    *dbUserName;
 static  char    *dbPassword;
 static  char    *dbSchemaName;
 static  int     dbFailOnErrors = FALSE;
+static  int     logAlarms = FALSE;
+static  int     logStatus = FALSE;
+static  int     logHistory = FALSE;
+static  int     maxMinutesOfHistoryStored = 180;
 
 // -----------------------------------------------------------------------------
 void    Database_setDatabaseHost (char *hostName)
@@ -71,16 +203,16 @@ int     Database_openDatabase ()
     if (databaseIsOpen)
         return TRUE;
     
-    
+    databaseIsOpen = FALSE;
     connection = mysql_init( NULL );
     if (connection == NULL) {
-        fprintf( stderr, "Unable to establish a client database session.\n" );
+        fprintf( stderr, "Unable to create a client database session (mysql_init call failed).\n" );
         if (dbFailOnErrors)
             exit( 1 );
     }
 
     if (mysql_real_connect( connection, dbHostName, dbUserName, dbPassword, dbSchemaName, 0, NULL, 0) == NULL) {
-        fprintf( stderr, "Unable to establish a connection to the database.\n" );
+        fprintf( stderr, "Unable to establish a connection to the database. Host: [%s], User: [%s], Schema: [%s].\n", dbHostName, dbUserName, dbSchemaName );
         fprintf( stderr, "%s\n", mysql_error( connection ));
         if (dbFailOnErrors) {
             mysql_close( connection );
@@ -90,12 +222,15 @@ int     Database_openDatabase ()
         databaseIsOpen = TRUE;
     }
     
-    return TRUE;
+    return databaseIsOpen;
 }        
 
 // -----------------------------------------------------------------------------
-int     Database_closeDatabase ()
+int     Database_closeDatabase (void)
 {
+    if (!databaseIsOpen)
+        return TRUE;
+    
     mysql_close( connection );
     databaseIsOpen = FALSE;
     connection = NULL;
@@ -103,56 +238,119 @@ int     Database_closeDatabase ()
 }
 
 // -----------------------------------------------------------------------------
-int     Database_createDeviceStateLogTable()
+void    Database_setDefaults (HomeHeartBeatSystem_t *aSystem)
 {
-    char *sql = "`ID` INT NOT NULL AUTO_INCREMENT ,        \
-          `deviceType` INT NOT NULL ,           \
-          `stateRecordID` INT NOT NULL ,\
-          `zigbeeBindingID` INT NULL ,\
-          `deviceCapabilities` INT NULL ,\
-          `deviceState` INT NULL ,\
-          `deviceStateTimer` INT NULL ,\
-          `deviceAlerts` INT NULL ,\
-          `deviceNameIndex` INT NULL ,\
-          `deviceConfiguration` INT NULL ,\
-          `aliveUpdateTimer` INT NULL ,\
-          `updateFlags` INT NULL ,\
-          `field12` INT NULL ,\
-          `deviceParameter` INT NULL ,\
-          `field14` INT NULL ,\
-          `pendingUpdateTimer` INT NULL ,\
-          `macAddress` VARCHAR(20) NULL ,\
-          `deviceName` VARCHAR(80) NULL ,\
-          `lastUpdate` TIMESTAMP NULL DEFAULT NOW() ,\
-          PRIMARY KEY (`ID`) ); ";
-    char  buffer[ 1024 ];
-    
-    
-    memset( buffer, '\0', sizeof buffer );
-    snprintf( buffer, sizeof buffer, "CREATE TABLE `%s`.`%s` ( %s", dbSchemaName, deviceStateLogTableName, sql );
-    
-    if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to create the device table.\n" );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
-        if (dbFailOnErrors) {
-            mysql_close( connection );
-            exit( 1 );
+    aSystem->DBParameters.dropAlarmTable = FALSE;
+    aSystem->DBParameters.createAlarmTable = FALSE;
+    aSystem->DBParameters.dropStatusTable = FALSE;
+    aSystem->DBParameters.createStatusTable = FALSE;
+    aSystem->DBParameters.dropHistoryTable = FALSE;
+    aSystem->DBParameters.createHistoryTable = FALSE;
+    aSystem->DBParameters.maxMinutesOfHistoryStored = 180;
+    aSystem->DBParameters.logAlarms = FALSE;
+    aSystem->DBParameters.logStatus = FALSE;
+    aSystem->DBParameters.logHistory = FALSE;
+}
+
+// -----------------------------------------------------------------------------
+void    Database_initialize (Database_Parameters_t dbParameters)
+{
+    if (dbParameters.logAlarms || dbParameters.logStatus || dbParameters.logHistory) {
+        Database_setDatabaseHost( &(dbParameters.databaseHost[ 0 ] ) );
+        Database_setDatabaseUserName( &(dbParameters.databaseUserName[ 0 ] ) );
+        Database_setDatabasePassword( &(dbParameters.databasePassword[ 0 ] ) );
+        Database_setDatabaseSchema( &(dbParameters.databaseSchema[ 0 ] ) );
+        Database_setFailOnDatabaseErrors( 1 );
+        
+        if (!Database_openDatabase()) {
+            fprintf( stderr, "Unable to open the database -- continuing\n" );
+            return;
         }
+        
+        if (dbParameters.dropAlarmTable)
+            dropAlarmTable();
+        if (dbParameters.createAlarmTable)
+            createAlarmTable();
+
+        if (dbParameters.dropStatusTable)
+            dropStatusTable();
+        if (dbParameters.createStatusTable)
+            createStatusTable();
+
+        if (dbParameters.dropHistoryTable)
+            dropHistoryTable();
+        if (dbParameters.createHistoryTable)
+            createHistoryTable();
+
+        
+        //
+        // Make some local copies of the data...
+        logAlarms = (dbParameters.logAlarms);
+        logHistory = (dbParameters.logHistory);
+        logStatus = (dbParameters.logStatus);
+
+        maxMinutesOfHistoryStored = dbParameters.maxMinutesOfHistoryStored;
     }
 }
 
 // -----------------------------------------------------------------------------
-void    Database_dropDeviceStateLogTable ()
+void    Database_updateDeviceTables (HomeHeartBeatDevice_t *deviceRecPtr)
+{
+    if (!databaseIsOpen)
+        return;
+    
+    if (logAlarms)
+        insertAlarmRecord( deviceRecPtr );
+    if (logStatus)
+        updateStatusRecord( deviceRecPtr );
+    if (logHistory)
+        insertHistoryRecord( deviceRecPtr );
+    if (maxMinutesOfHistoryStored > 0)
+        deleteHistoryRecords();
+}
+
+// -----------------------------------------------------------------------------
+static
+int     createAlarmTable()
+{
+    char  buffer[ 1024 ];
+    
+    if (!databaseIsOpen)
+        return FALSE;
+    
+    memset( buffer, '\0', sizeof buffer );
+    snprintf( buffer, sizeof buffer, "CREATE TABLE `%s`.`%s` ( %s", dbSchemaName, alarmTableName, createAlarmTableSQL );
+    
+    if (mysql_query( connection, buffer ) != 0) {
+        fprintf( stderr, "Unable to create the alarm table.\n" );
+        fprintf( stderr, "%s\n", mysql_error( connection ));
+        fprintf( stderr, "SQL [%s]\n", buffer );
+        if (dbFailOnErrors) {
+            mysql_close( connection );
+            exit( 1 );
+        }
+        return FALSE;
+    }
+    
+    return TRUE;
+}
+
+// -----------------------------------------------------------------------------
+static
+void   dropAlarmTable ()
 {
     char buffer[ 1024 ];
     
-    memset( buffer, '\0', sizeof buffer );
+    if (!databaseIsOpen)
+        return;
     
-    snprintf( buffer, sizeof buffer, "DROP TABLE `%s`.`%s` ", dbSchemaName, deviceStateLogTableName );
+    memset( buffer, '\0', sizeof buffer );
+    snprintf( buffer, sizeof buffer, "DROP TABLE `%s`.`%s` ", dbSchemaName, alarmTableName );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to drop the device table.\n" );
+        fprintf( stderr, "Unable to drop the alarm table.\n" );
         fprintf( stderr, "%s\n", mysql_error( connection ));
+        fprintf( stderr, "SQL [%s]\n", buffer );
         if (dbFailOnErrors) {
             //mysql_close( connection );
             //exit( 1 );
@@ -161,34 +359,114 @@ void    Database_dropDeviceStateLogTable ()
 }
 
 // -----------------------------------------------------------------------------
-void    Database_insertDeviceStateLogRecord (HomeHeartBeatDevice_t *recPtr)
+static
+void    insertAlarmRecord (HomeHeartBeatDevice_t *recPtr)
+{
+    char    *stateString;
+    char    buffer[ 8192 ];
+
+    if (!databaseIsOpen)
+        return;
+    
+    //
+    // Type, Name, Status, Duration, MAC address
+
+    stateString = "?unknown?";
+    if (recPtr->deviceType == DT_OPEN_CLOSE_SENSOR) {
+        stateString = (recPtr->ocSensor->isOpen ? "OPEN" : "CLOSED" );
+    } else if (recPtr->deviceType == DT_MOTION_SENSOR) {
+        stateString = (recPtr->motSensor->motionDetected ? "MOTION" : "NO MOTION" );
+    } else if (recPtr->deviceType == DT_WATER_LEAK_SENSOR) {
+        stateString = (recPtr->wlSensor->wetnessDetected ? "WET" : "DRY" );
+    }
+    
+        
+    memset( buffer, '\0', sizeof buffer );
+    
+    //
+    //  We need to worry about Quoet Marks in the device Name that will screw up SQL
+    //  Escape any special characters in the string!
+    // unsigned long mysql_real_escape_string(MYSQL *mysql, char *to, const char *from, unsigned long length)    
+    char    safeDeviceName[ MAX_DEVICE_NAME_LEN ];
+    (void) mysql_real_escape_string( connection, safeDeviceName, recPtr->deviceName, strlen( recPtr->deviceName ) );
+    
+    int bufferLength = snprintf( buffer, sizeof buffer, insertAlarmRecordSQL,
+                            dbSchemaName, alarmTableName,
+                            recPtr->deviceType,
+                            safeDeviceName,
+                            stateString,
+                            recPtr->deviceStateTimer,
+                            recPtr->macAddress );
+    
+    
+    if (mysql_query( connection, buffer ) != 0) {
+        fprintf( stderr, "Unable to insert the record into the alarm table.\n" );
+        fprintf( stderr, "%s\n", mysql_error( connection ));
+        fprintf( stderr, "SQL: [%s]\n", buffer );
+        if (dbFailOnErrors) {
+            mysql_close( connection );
+            exit( 1 );
+        }
+    }
+}    
+
+// -----------------------------------------------------------------------------
+static
+int     createHistoryTable()
+{
+    char  buffer[ 1024 ];
+    
+    if (!databaseIsOpen)
+        return FALSE;
+    
+    memset( buffer, '\0', sizeof buffer );
+    snprintf( buffer, sizeof buffer, "CREATE TABLE `%s`.`%s` ( %s", dbSchemaName, historyTableName, createHistoryTableSQL );
+    
+    if (mysql_query( connection, buffer ) != 0) {
+        fprintf( stderr, "Unable to create the history table.\n" );
+        fprintf( stderr, "%s\n", mysql_error( connection ));
+        fprintf( stderr, "SQL [%s]\n", buffer );
+        if (dbFailOnErrors) {
+            mysql_close( connection );
+            exit( 1 );
+        }
+        return FALSE;
+    }
+    
+    return TRUE;
+}
+
+// -----------------------------------------------------------------------------
+static
+void   dropHistoryTable ()
+{
+    char buffer[ 1024 ];
+    
+    if (!databaseIsOpen)
+        return;
+    
+    memset( buffer, '\0', sizeof buffer );
+    snprintf( buffer, sizeof buffer, "DROP TABLE `%s`.`%s` ", dbSchemaName, historyTableName );
+    
+    if (mysql_query( connection, buffer ) != 0) {
+        fprintf( stderr, "Unable to drop the history table.\n" );
+        fprintf( stderr, "%s\n", mysql_error( connection ));
+        fprintf( stderr, "SQL [%s]\n", buffer );
+        if (dbFailOnErrors) {
+            //mysql_close( connection );
+            //exit( 1 );
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+static
+void    insertHistoryRecord (HomeHeartBeatDevice_t *recPtr)
 {
     char    buffer[ 8192 ];
-    char    *sql = "INSERT INTO `%s`.`%s` (\
-                        `deviceType`, \
-                        `stateRecordID`, \
-                        `zigbeeBindingID`, \
-                        `deviceCapabilities`, \
-                        `deviceState` , \
-                        `deviceStateTimer`, \
-                        `deviceAlerts` ,\
-                        `deviceNameIndex`  ,\
-                        `deviceConfiguration`  ,\
-                        `aliveUpdateTimer`  ,\
-                        `updateFlags`  ,\
-                        `field12`  ,\
-                        `deviceParameter`  ,\
-                        `field14`  ,\
-                        `pendingUpdateTimer`  ,\
-                        `macAddress`,\
-                        `deviceName` ) VALUES ( \
-                        %d, %d, %d, \
-                        %d, %d, %d,  \
-                        %d, %d, %d,  \
-                        %d, %d, %d,  \
-                        %d, %d, %d,  \
-                        '%s', '%s' );";    
 
+    if (!databaseIsOpen)
+        return;
 
     /*
     if (recPtr->deviceType == DT_OPEN_CLOSE_SENSOR)
@@ -203,8 +481,8 @@ void    Database_insertDeviceStateLogRecord (HomeHeartBeatDevice_t *recPtr)
     char    safeDeviceName[ MAX_DEVICE_NAME_LEN ];
     (void) mysql_real_escape_string( connection, safeDeviceName, recPtr->deviceName, strlen( recPtr->deviceName ) );
     
-    int bufferLength = snprintf( buffer, sizeof buffer, sql,
-                            dbSchemaName, deviceStateLogTableName,
+    int bufferLength = snprintf( buffer, sizeof buffer, insertHistoryRecordSQL,
+                            dbSchemaName, historyTableName,
                             recPtr->deviceType,
                             recPtr->stateRecordID,
                             recPtr->zigbeeBindingID,
@@ -216,18 +494,18 @@ void    Database_insertDeviceStateLogRecord (HomeHeartBeatDevice_t *recPtr)
                             recPtr->deviceConfiguration,
                             recPtr->aliveUpdateTimer,
                             recPtr->updateFlags,
-                            0, // `field12`  
+                            0,      // `field12`  
                             recPtr->deviceParameter,
-                            0,  //  `field14`  
+                            0,      //  `field14`  
                             recPtr->pendingUpdateTimer,
                             recPtr->macAddress,
                             safeDeviceName );
     
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to insert the record into the device table.\n" );
-        fprintf( stderr, "SQL: [%s]\n", buffer );
+        fprintf( stderr, "Unable to insert the record into the history table.\n" );
         fprintf( stderr, "%s\n", mysql_error( connection ));
+        fprintf( stderr, "SQL: [%s]\n", buffer );
         if (dbFailOnErrors) {
             mysql_close( connection );
             exit( 1 );
@@ -236,56 +514,66 @@ void    Database_insertDeviceStateLogRecord (HomeHeartBeatDevice_t *recPtr)
 }
 
 // -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-int     Database_createDeviceStateCurrentTable()
+static
+void    deleteHistoryRecords (void)
 {
-    char *sql = "`ID` INT NOT NULL AUTO_INCREMENT ,        \
-          `deviceType` INT NOT NULL ,           \
-          `stateRecordID` INT NOT NULL ,\
-          `zigbeeBindingID` INT NULL ,\
-          `deviceCapabilities` INT NULL ,\
-          `deviceState` INT NULL ,\
-          `deviceStateTimer` INT NULL ,\
-          `deviceAlerts` INT NULL ,\
-          `deviceNameIndex` INT NULL ,\
-          `deviceConfiguration` INT NULL ,\
-          `aliveUpdateTimer` INT NULL ,\
-          `updateFlags` INT NULL ,\
-          `field12` INT NULL ,\
-          `deviceParameter` INT NULL ,\
-          `field14` INT NULL ,\
-          `pendingUpdateTimer` INT NULL ,\
-          `macAddress` VARCHAR(20) NULL ,\
-          `deviceName` VARCHAR(80) NULL ,\
-          `lastUpdate` TIMESTAMP NULL DEFAULT NOW() ,\
-          PRIMARY KEY (`ID`) ); ";
-    char    buffer[ 4096 ];
+    char    *deleteRecordsSQL = "DELETE FROM `%s`.`%s` WHERE lastUpdate < NOW() - INTERVAL %d MINUTE";
+    char    buffer[ 1024 ];
     
+    if (!databaseIsOpen)
+        return;
     
     memset( buffer, '\0', sizeof buffer );
-    int bufferLength = snprintf( buffer, sizeof buffer, "CREATE TABLE `%s`.`%s` ( %s", dbSchemaName, deviceStateCurrentTableName, sql );
+    snprintf( buffer, sizeof buffer, deleteRecordsSQL, dbSchemaName, historyTableName, maxMinutesOfHistoryStored );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to create the device table.\n" );
+        fprintf( stderr, "Unable to delete all but the last %d minutes of history stored in the table.\n", maxMinutesOfHistoryStored );
+        fprintf( stderr, "%s\n", mysql_error( connection ));
+        fprintf( stderr, "SQL [%s]\n", buffer );
+        if (dbFailOnErrors) {
+            //mysql_close( connection );
+            //exit( 1 );
+        }
+    }
+    
+}
+// -----------------------------------------------------------------------------
+static
+int     createStatusTable(void)
+{
+    char    buffer[ 4096 ];
+    
+    if (!databaseIsOpen)
+        return FALSE;
+    
+    memset( buffer, '\0', sizeof buffer );
+    int bufferLength = snprintf( buffer, sizeof buffer, "CREATE TABLE `%s`.`%s` ( %s", 
+                                dbSchemaName, statusTableName, createStatusTableSQL );
+    
+    if (mysql_query( connection, buffer ) != 0) {
+        fprintf( stderr, "Unable to create the status table.\n" );
         fprintf( stderr, "%s\n", mysql_error( connection ));
         if (dbFailOnErrors) {
             mysql_close( connection );
             exit( 1 );
         }
+        return FALSE;
     }
+    return TRUE;
 }
 
 // -----------------------------------------------------------------------------
-void    Database_dropDeviceStateCurrentTable ()
+static
+void    dropStatusTable (void)
 {
     char buffer[ 1024 ];
     
     memset( buffer, '\0', sizeof buffer );
     
-    snprintf( buffer, sizeof buffer, "DROP TABLE `%s`.`%s` ", dbSchemaName, deviceStateCurrentTableName );
+    snprintf( buffer, sizeof buffer, "DROP TABLE `%s`.`%s` ", dbSchemaName, statusTableName );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to drop the device table.\n" );
+        fprintf( stderr, "Unable to drop the status table.\n" );
         fprintf( stderr, "%s\n", mysql_error( connection ));
         if (dbFailOnErrors) {
             //mysql_close( connection );
@@ -295,60 +583,21 @@ void    Database_dropDeviceStateCurrentTable ()
 }
 
 // -----------------------------------------------------------------------------
-void    Database_updateDeviceStateCurrentRecord (HomeHeartBeatDevice_t *recPtr)
+static
+int     statusRecordExists (char *macAddress)
 {
-    char    buffer[ 8192 ];
-    char    buffer2[ 8192 ];
-    char    *updateSQL = "UPDATE `%s`.`%s` SET \
-deviceType=%d, \
-stateRecordID=%d, \
-zigbeeBindingID=%d, \
-deviceCapabilities=%d, \
-deviceState=%d, \
-deviceStateTimer=%d, \
-deviceAlerts=%d,\
-deviceNameIndex=%d,\
-deviceConfiguration=%d,\
-aliveUpdateTimer=%d,\
-updateFlags=%d,\
-field12=%d,\
-deviceParameter=%d,\
-field14=%d,\
-pendingUpdateTimer=%d,\
-deviceName='%s', lastUpdate=NOW()  WHERE macAddress='%s';"; 
-    
-    char    *insertSQL = "INSERT INTO `%s`.`%s` (\
-`deviceType`,\
-`stateRecordID`,\
-`zigbeeBindingID`,\
-`deviceCapabilities`,\
-`deviceState`,\
-`deviceStateTimer`,\
-`deviceAlerts`,\
-`deviceNameIndex`,\
-`deviceConfiguration`,\
-`aliveUpdateTimer`,\
-`updateFlags`,\
-`field12`,\
-`deviceParameter`,\
-`field14`,\
-`pendingUpdateTimer`,\
-`macAddress`,\
-`deviceName`) VALUES (\
-%d,%d,%d,%d,%d,\
-%d,%d,%d,%d,%d,\
-%d,%d,%d,%d,%d,\
-'%s','%s');";
     //
     // Darned SQL...  
+    char    buffer[ 1024 ];
+    
     char    *countSQL = "SELECT COUNT(*) FROM `%s`.`%s` WHERE macAddress='%s'";
     memset( buffer, '\0', sizeof buffer );
     snprintf( buffer, sizeof buffer, countSQL,
-                            dbSchemaName, deviceStateCurrentTableName,
-                            recPtr->macAddress );
+                            dbSchemaName, statusTableName,
+                            macAddress );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to see if the record is already in the device table.\n" );
+        fprintf( stderr, "Unable to see if the record is already in the status table.\n" );
         fprintf( stderr, "SQL: [%s]\n", buffer );
         fprintf( stderr, "%s\n", mysql_error( connection ));
         if (dbFailOnErrors) {
@@ -367,13 +616,27 @@ deviceName='%s', lastUpdate=NOW()  WHERE macAddress='%s';";
     int         num_fields = mysql_num_fields( result );
     MYSQL_ROW   row = mysql_fetch_row( result );
     char        *data = row[ 0 ];
-  
-    int     doInsertNotUpdate = (data[ 0 ] == '0');
     mysql_free_result( result );    
+  
+    return (data[ 0 ] == '0');
+}
+
+
+// -----------------------------------------------------------------------------
+static
+void    updateStatusRecord (HomeHeartBeatDevice_t *recPtr)
+{
+    char    buffer[ 8192 ];
+    char    buffer2[ 8192 ];
     
+    
+    if (!databaseIsOpen)
+        return;
+
+    int     doInsertNotUpdate = statusRecordExists( recPtr->macAddress );
 
     //
-    //  We need to worry about Quoet Marks in the device Name that will screw up SQL
+    //  We need to worry about quote Marks in the device Name that will screw up SQL
     //  Escape any special characters in the string!
     // unsigned long mysql_real_escape_string(MYSQL *mysql, char *to, const char *from, unsigned long length)    
     char    safeDeviceName[ MAX_DEVICE_NAME_LEN ];
@@ -385,8 +648,8 @@ deviceName='%s', lastUpdate=NOW()  WHERE macAddress='%s';";
     int bufferLength = 0;
     memset( buffer, '\0', sizeof buffer );
     if (doInsertNotUpdate) {
-        bufferLength = snprintf( buffer, sizeof buffer, insertSQL,
-                            dbSchemaName, deviceStateCurrentTableName,
+        bufferLength = snprintf( buffer, sizeof buffer, insertStatusRecordSQL,
+                            dbSchemaName, statusTableName,
                             recPtr->deviceType,
                             recPtr->stateRecordID,
                             recPtr->zigbeeBindingID,
@@ -405,8 +668,8 @@ deviceName='%s', lastUpdate=NOW()  WHERE macAddress='%s';";
                             recPtr->macAddress, 
                             safeDeviceName );
     } else { 
-        bufferLength = snprintf( buffer, sizeof buffer, updateSQL,
-                            dbSchemaName, deviceStateCurrentTableName,
+        bufferLength = snprintf( buffer, sizeof buffer, updateStatusRecordSQL,
+                            dbSchemaName, statusTableName,
                             recPtr->deviceType,
                             recPtr->stateRecordID,
                             recPtr->zigbeeBindingID,
@@ -428,7 +691,7 @@ deviceName='%s', lastUpdate=NOW()  WHERE macAddress='%s';";
     
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to insert the record into the device table.\n" );
+        fprintf( stderr, "Unable to insert or update the record into the device table.\n" );
         fprintf( stderr, "SQL: [%s]\n", buffer );
         fprintf( stderr, "%s\n", mysql_error( connection ));
         if (dbFailOnErrors) {

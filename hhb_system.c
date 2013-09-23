@@ -75,30 +75,24 @@ void    HomeHeartBeatSystem_initialize ()
     aSystem->longitude = 0.0;
     
     aSystem->sleepSecsBetweenEventLoops = 1;           // seconds
-    // 
-    // Database Logging if enabled
-    aSystem->logEventsToDatabase = FALSE;
     
     //
     // MQTT Stuff
     aSystem->logEventsToMQTT = FALSE;
+    
+    Database_setDefaults( aSystem );
 
+    
     //
     //  Read in data from an IniFile if it exists
     // readIniFileValues( aSystem );
     //
     IniFile_readIniFile( aSystem );    
     
-    if (aSystem->logEventsToDatabase) {
-        Database_setDatabaseHost( &(aSystem->DBParameters.databaseHost[ 0 ] ) );
-        Database_setDatabaseUserName( &(aSystem->DBParameters.databaseUserName[ 0 ] ) );
-        Database_setDatabasePassword( &(aSystem->DBParameters.databasePassword[ 0 ] ) );
-        Database_setDatabaseSchema( &(aSystem->DBParameters.databaseSchema[ 0 ] ) );
-        Database_setFailOnDatabaseErrors( 1 );
-        Database_openDatabase();
-        Database_dropDeviceStateLogTable(); Database_createDeviceStateLogTable();
-        Database_dropDeviceStateCurrentTable(); Database_createDeviceStateCurrentTable();
-    }
+    //
+    // Now Database Stuff
+    Database_initialize( aSystem->DBParameters );
+    
     
     if (aSystem->logEventsToMQTT) {
         MQTT_setDefaults( aSystem, aSystem->MQTTParameters.mqttBrokerHost );
@@ -117,10 +111,7 @@ void    HomeHeartBeatSystem_shutdown ()
         MQTT_teardown();
     }
     
-    if (aSystem->logEventsToDatabase) {
-        Database_closeDatabase();
-    }
-    
+    Database_closeDatabase();    
     releaseMemory();
 }
 
@@ -181,21 +172,27 @@ void    HomeHeartBeatSystem_eventLoop ()
     aSystem->pollForEvents = TRUE;
     while (aSystem->pollForEvents) {
         numBytesRead = getOneStateRecord( rawStateRecord, sizeof rawStateRecord );
+        
+        //
+        // Sometimes we pick up the STATE=NEW message from the Base Station - we can ignore that
+        if (strstr( rawStateRecord, "NEW" ) != NULL) {
+            debug_print( "Detected STATE=NEW message from device.  Ignoring!", 0 );
+            continue;
+        }
+        
         deviceRecPtr = parseOneStateRecord( rawStateRecord, numBytesRead );
         
         //
         // debugging for valgrind
         numLoops += 1L;
-        if (numLoops > 18000L) {
-            return;
-        }
+        //if (numLoops > 18000L) {
+         //   return;
+        //}
 
         if (deviceRecPtr != NULL) {
-    
-            if (aSystem->logEventsToDatabase) {
-                Database_insertDeviceStateLogRecord( deviceRecPtr );
-                Database_updateDeviceStateCurrentRecord( deviceRecPtr );
-            }
+            //
+            //  Update any tables if we have things enabled...
+            Database_updateDeviceTables( deviceRecPtr );
     
             if (aSystem->logEventsToMQTT) {
                 //
@@ -569,16 +566,22 @@ int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_P
      *  are expressed in hexadecimal notation (base 16).
      */
    
-     //
-     // pluck 'em out one by one
+    //
+    // pluck 'em out one by one
     char    *startPtr, *endPtr;
     size_t  numBytes = 0;
    
     //
     // first token is special, advance to the '"' sign and then skip over it
     startPtr = strchr( receiveBuf, '"' );
+    if (startPtr == NULL)
+        return 0;
+    
     startPtr++;
     endPtr = strchr( startPtr, ',' );                     // stop at the comma
+    if (endPtr == NULL)
+        return 0;
+    
     numBytes = (endPtr - startPtr);
     memcpy( token[ 0 ], startPtr, numBytes );
    
@@ -588,6 +591,9 @@ int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_P
         endPtr++;                                       // skip over the last comma
         startPtr = endPtr;                              // start there
         endPtr = strchr( startPtr, ',' );               // stop at the next comma
+        if (endPtr == NULL)
+            return i;
+        
         numBytes = (endPtr - startPtr);
         memcpy( token[ i + 1 ], startPtr, numBytes );
     }
@@ -597,6 +603,9 @@ int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_P
     endPtr++;                                           // skip over last comma
     startPtr = endPtr;
     endPtr = strchr( startPtr, '\r' );                  // stop at the CRLF
+    if (endPtr == NULL)
+        return 16;
+
     numBytes = (endPtr - startPtr) - 1;                 // -1 to not include trailing '"'
     memcpy( token[ 16 ], startPtr, numBytes );
     

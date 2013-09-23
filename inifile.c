@@ -71,11 +71,22 @@ void    IniFile_readIniFile (HomeHeartBeatSystem_t *aSystem)
 
     //
     // Now the database stuff
-    (void) IniFiler_SearchCfg( INIFileName, "Database", "logEventsToDatabase", &(aSystem->logEventsToDatabase), Cfg_Boolean );    
     (void) IniFiler_SearchCfg( INIFileName, "Database", "HostName", &(aSystem->DBParameters.databaseHost[ 0 ]), Cfg_String );
     (void) IniFiler_SearchCfg( INIFileName, "Database", "UserName", &(aSystem->DBParameters.databaseUserName[ 0 ]), Cfg_String );
     (void) IniFiler_SearchCfg( INIFileName, "Database", "Password", &(aSystem->DBParameters.databasePassword[ 0 ]), Cfg_String );
     (void) IniFiler_SearchCfg( INIFileName, "Database", "Schema", &(aSystem->DBParameters.databaseSchema[ 0 ]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "logAlarms", &(aSystem->DBParameters.logAlarms), Cfg_Boolean );    
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "logStatus", &(aSystem->DBParameters.logStatus), Cfg_Boolean );    
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "logHistory", &(aSystem->DBParameters.logHistory), Cfg_Boolean );    
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "dropAlarmTable", &(aSystem->DBParameters.dropAlarmTable), Cfg_Boolean );    
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "createAlarmTable", &(aSystem->DBParameters.createAlarmTable), Cfg_Boolean );    
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "dropStatusTable", &(aSystem->DBParameters.dropStatusTable), Cfg_Boolean );    
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "createStatusTable", &(aSystem->DBParameters.createStatusTable), Cfg_Boolean );    
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "dropHistoryTable", &(aSystem->DBParameters.dropHistoryTable), Cfg_Boolean );    
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "createHistoryTable", &(aSystem->DBParameters.createHistoryTable), Cfg_Boolean );    
+
+
+    (void) IniFiler_SearchCfg( INIFileName, "Database", "maxMinutesOfHistoryStored", &(aSystem->DBParameters.maxMinutesOfHistoryStored), Cfg_Ushort );    
     
     //
     // MQTT Specific Information

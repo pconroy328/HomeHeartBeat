@@ -19,20 +19,30 @@ extern  void    Database_setDatabaseHost( char *hostName );
 extern  void    Database_setDatabaseUserName( char *userName );
 extern  void    Database_setDatabasePassword( char *password );
 extern  void    Database_setDatabaseSchema( char *schemaName );
-extern  void    Database_setFailOnDatabaseErrors(int newValue );
+extern  void    Database_setFailOnDatabaseErrors( int newValue );
+extern  void    Database_setDefaults( HomeHeartBeatSystem_t *aSystem );
+extern  void    Database_initialize( Database_Parameters_t dbParameters );
+extern  void    Database_updateDeviceTables( HomeHeartBeatDevice_t *deviceRecPtr );
     
     
 extern  int     Database_openDatabase ();
 extern  int     Database_closeDatabase ();
     
-    
-extern  int     Database_createDeviceStateLogTable();
-extern  void    Database_dropDeviceStateLogTable ();
-extern  void    Database_insertDeviceStateLogRecord (HomeHeartBeatDevice_t *recPtr);
 
-extern  int     Database_createDeviceStateCurrentTable();
-extern  void    Database_dropDeviceStateCurrentTable();
-extern  void    Database_updateDeviceStateCurrentRecord (HomeHeartBeatDevice_t *recPtr);
+static  int     createAlarmTable( void );
+static  void    dropAlarmTable( void );
+static  void    insertAlarmRecord( HomeHeartBeatDevice_t *recPtr );
+
+static  int     createHistoryTable( void );
+static  void    dropHistoryTable( void );
+static  void    insertHistoryRecord( HomeHeartBeatDevice_t *recPtr );
+static  void    deleteHistoryRecords( void );
+
+
+static  int     createStatusTable( void );
+static  void    dropStatusTable( void );
+static  int     statusRecordExists( char *macAddress );
+static  void    updateStatusRecord( HomeHeartBeatDevice_t *recPtr );
 
 
 #ifdef	__cplusplus

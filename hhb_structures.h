@@ -73,6 +73,16 @@ typedef struct  Database_Parameters {
     char    databaseUserName[ 256 ];
     char    databasePassword[ 256 ];
     char    databaseSchema[ 256 ];
+    int     logAlarms;
+    int     logStatus;
+    int     logHistory;
+    int     dropAlarmTable; 
+    int     createAlarmTable;
+    int     dropStatusTable; 
+    int     createStatusTable;
+    int     dropHistoryTable; 
+    int     createHistoryTable;
+    int     maxMinutesOfHistoryStored;
 } Database_Parameters_t;    
     
    
@@ -277,7 +287,6 @@ typedef struct  HomeHeartBeatSystem {
     
     //
     // Database Specific Information
-    int     logEventsToDatabase;
     Database_Parameters_t   DBParameters;
     //
     // MQTT Specific Information

@@ -195,8 +195,10 @@ void    HomeHeartBeatSystem_eventLoop ()
             Database_updateDeviceTables( deviceRecPtr );
     
             if (aSystem->logEventsToMQTT) {
+                
                 //
-                // Have we had a state change???
+                // Have we had a state change???   Hmmmmmmmmmm - why didn't I check deviceRecPtr->deviceInAlarm
+                //  I should change this method to deviceStateChange
                 if (deviceRecPtr->stateHasChanged)
                     mqttResult = MQTT_createDeviceAlarm( aSystem, deviceRecPtr );
                 

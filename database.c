@@ -155,10 +155,10 @@ static  char    *insertStatusRecordSQL = "INSERT INTO `%s`.`%s` (\
 // -----------------------------------------------------------------------------
 static  int     databaseIsOpen = FALSE;
 static  MYSQL   *connection = NULL;
-static  char    *dbHostName;
-static  char    *dbUserName;
-static  char    *dbPassword;
-static  char    *dbSchemaName;
+static  char    dbHostName[ 256 ];
+static  char    dbUserName[ 256 ];
+static  char    dbPassword[ 256 ];
+static  char    dbSchemaName[ 256 ];
 static  int     dbFailOnErrors = FALSE;
 static  int     logAlarms = FALSE;
 static  int     logStatus = FALSE;
@@ -169,26 +169,26 @@ static  int     maxMinutesOfHistoryStored = 180;
 void    Database_setDatabaseHost (char *hostName)
 {
     assert( hostName != NULL );
-    dbHostName = hostName;
+    strncpy( dbHostName, hostName, sizeof( dbHostName ) );
 }
 // -----------------------------------------------------------------------------
 void    Database_setDatabaseUserName (char *userName)
 {
     assert( userName != NULL );
-    dbUserName = userName;
+    strncpy( dbUserName, userName, sizeof( dbUserName ) );
 }
 // -----------------------------------------------------------------------------
 void    Database_setDatabasePassword (char *password)
 {
     assert( password != NULL );
-    dbPassword = password;
+    strncpy( dbPassword, password, sizeof( dbPassword ) );
 }
 
 // -----------------------------------------------------------------------------
 void    Database_setDatabaseSchema (char *schemaName)
 {
     assert( schemaName != NULL );
-    dbSchemaName = schemaName;
+    strncpy( dbSchemaName, schemaName, sizeof( dbSchemaName ) );
 }
 
 // -----------------------------------------------------------------------------
@@ -299,8 +299,16 @@ void    Database_updateDeviceTables (HomeHeartBeatDevice_t *deviceRecPtr)
     if (!databaseIsOpen)
         return;
     
-    if (logAlarms)
-        insertAlarmRecord( deviceRecPtr );
+    if (logAlarms) {
+        if (deviceRecPtr->deviceInAlarm)
+            insertAlarmRecord( deviceRecPtr );
+        else
+            //
+            //  I need to put some thought into the definition of an Alarm.  It should probably mirror what's been
+            //  defined by the Base Station.  But, in MQTT, I'm sending actually state change events...
+            debug_print( "POSSIBLE PROGRAMMER FAUX PAUS: - logAlarms is TRUE but deviceInAlarm is FALSE\n", 0 );
+    }
+    
     if (logStatus)
         updateStatusRecord( deviceRecPtr );
     if (logHistory)
@@ -325,10 +333,6 @@ int     createAlarmTable()
         fprintf( stderr, "Unable to create the alarm table.\n" );
         fprintf( stderr, "%s\n", mysql_error( connection ));
         fprintf( stderr, "SQL [%s]\n", buffer );
-        if (dbFailOnErrors) {
-            mysql_close( connection );
-            exit( 1 );
-        }
         return FALSE;
     }
     
@@ -378,6 +382,8 @@ void    insertAlarmRecord (HomeHeartBeatDevice_t *recPtr)
         stateString = (recPtr->motSensor->motionDetected ? "MOTION" : "NO MOTION" );
     } else if (recPtr->deviceType == DT_WATER_LEAK_SENSOR) {
         stateString = (recPtr->wlSensor->wetnessDetected ? "WET" : "DRY" );
+    } else if (recPtr->deviceType == DT_HOME_KEY) {
+        return;
     }
     
         
@@ -426,10 +432,6 @@ int     createHistoryTable()
         fprintf( stderr, "Unable to create the history table.\n" );
         fprintf( stderr, "%s\n", mysql_error( connection ));
         fprintf( stderr, "SQL [%s]\n", buffer );
-        if (dbFailOnErrors) {
-            mysql_close( connection );
-            exit( 1 );
-        }
         return FALSE;
     }
     
@@ -536,6 +538,7 @@ void    deleteHistoryRecords (void)
         }
     }
     
+    debug_print( "History records deleted!\n", 0 );
 }
 // -----------------------------------------------------------------------------
 static
@@ -553,10 +556,6 @@ int     createStatusTable(void)
     if (mysql_query( connection, buffer ) != 0) {
         fprintf( stderr, "Unable to create the status table.\n" );
         fprintf( stderr, "%s\n", mysql_error( connection ));
-        if (dbFailOnErrors) {
-            mysql_close( connection );
-            exit( 1 );
-        }
         return FALSE;
     }
     return TRUE;

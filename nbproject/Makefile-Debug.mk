@@ -40,6 +40,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/helpers.o \
 	${OBJECTDIR}/hhb_system.o \
 	${OBJECTDIR}/inifile.o \
+	${OBJECTDIR}/logger.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/motion_sensor.o \
 	${OBJECTDIR}/mqtt.o \
@@ -62,13 +63,15 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lmosquitto ../IniFiler/dist/Debug/GNU_C99-Linux-x86/libinifiler.a -lmysqlclient
+LDLIBSOPTIONS=-lmosquitto ../IniFiler/dist/Debug/GNU_C99-Linux-x86/libinifiler.a -lmysqlclient /usr/lib/liblog4c.so
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
 	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: ../IniFiler/dist/Debug/GNU_C99-Linux-x86/libinifiler.a
+
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: /usr/lib/liblog4c.so
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
@@ -98,6 +101,11 @@ ${OBJECTDIR}/inifile.o: inifile.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/inifile.o inifile.c
+
+${OBJECTDIR}/logger.o: logger.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/logger.o logger.c
 
 ${OBJECTDIR}/main.o: main.c 
 	${MKDIR} -p ${OBJECTDIR}

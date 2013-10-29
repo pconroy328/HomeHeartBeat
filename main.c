@@ -12,11 +12,14 @@
 #include <limits.h>
 
 #include "homeheartbeat.h"
+#include "logger.h"
 
 /*
  * 
  */
 static  int useDatabase = 0;
+// log4c_category_t    *logCat;
+
 
 int main(int argc, char** argv) 
 {
@@ -26,13 +29,17 @@ int main(int argc, char** argv)
     assert( sizeof( int ) >= 4 );
     assert( (long) INT_MAX > 9000000L);
     
-
+    //
+    Logger_Initialize();
     
     HomeHeartBeatSystem_initialize();
+    // SerialPort_findBaseStation();
+
     HomeHeartBeatSystem_openPort( NULL );           // use the INI file values!!
     HomeHeartBeatSystem_eventLoop( );
     HomeHeartBeatSystem_shutdown();
 
+    Logger_Terminate();
     return (EXIT_SUCCESS);
 }
 

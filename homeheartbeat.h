@@ -15,6 +15,21 @@
 extern "C" {
 #endif
 
+        
+#ifndef     FALSE
+# define    FALSE   (0)
+# define    TRUE    (!FALSE)    
+#endif
+
+
+// #include "log4c.h"                              // we're going to use Log4C for logging
+    
+    
+//
+// Log4C information - yes, it's a global.
+// extern  log4c_category_t    *logCat;
+    
+    
 //
 // Home Heart Beat System Function Declarations 
 extern  void        HomeHeartBeatSystem_initialize( void );

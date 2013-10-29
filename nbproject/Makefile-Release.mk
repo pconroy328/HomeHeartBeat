@@ -40,6 +40,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/helpers.o \
 	${OBJECTDIR}/hhb_system.o \
 	${OBJECTDIR}/inifile.o \
+	${OBJECTDIR}/logger.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/motion_sensor.o \
 	${OBJECTDIR}/mqtt.o \
@@ -96,6 +97,11 @@ ${OBJECTDIR}/inifile.o: inifile.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/inifile.o inifile.c
+
+${OBJECTDIR}/logger.o: logger.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/logger.o logger.c
 
 ${OBJECTDIR}/main.o: main.c 
 	${MKDIR} -p ${OBJECTDIR}

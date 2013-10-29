@@ -9,6 +9,7 @@
       <itemPath>helpers.h</itemPath>
       <itemPath>hhb_structures.h</itemPath>
       <itemPath>homeheartbeat.h</itemPath>
+      <itemPath>logger.h</itemPath>
       <itemPath>motion_sensor.h</itemPath>
       <itemPath>mqtt.h</itemPath>
       <itemPath>openclose_sensor.h</itemPath>
@@ -28,6 +29,7 @@
       <itemPath>helpers.c</itemPath>
       <itemPath>hhb_system.c</itemPath>
       <itemPath>inifile.c</itemPath>
+      <itemPath>logger.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>motion_sensor.c</itemPath>
       <itemPath>mqtt.c</itemPath>
@@ -73,6 +75,7 @@
               </makeArtifact>
             </linkerLibProjectItem>
             <linkerLibLibItem>mysqlclient</linkerLibLibItem>
+            <linkerLibFileItem>/usr/lib/liblog4c.so</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -95,6 +98,10 @@
       <item path="homeheartbeat.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="inifile.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="logger.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="logger.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -161,6 +168,10 @@
       <item path="homeheartbeat.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="inifile.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="logger.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="logger.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>

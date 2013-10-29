@@ -6,7 +6,7 @@
 #include "homeheartbeat.h"
 #include "helpers.h"
 #include "motion_sensor.h"
-// #include "utlist.h"
+#include "logger.h"
 
 
 static  char    *deviceNames[] = { 
@@ -50,13 +50,9 @@ char    *Waterleak_dumpSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
     memset( sensorRecordDumpBuffer, '\0', sizeof sensorRecordDumpBuffer );
     snprintf( sensorRecordDumpBuffer,
              sizeof sensorRecordDumpBuffer,
-                "WaterLeak Sensor: Name [%s] Mac [%s]\n \
-                    State [%s]  Duration: %d seconds\n \
-                    Stated Changed [%s]\n \
-                    Alarm On Wet [%s]  Alarm On Dry [%s]\n \
-                    Call On Wet [%s]  Call on  [%s]\n \
-                    Alive Update Timer: %d seconds   Pending Update Timer: %d seconds \
-                ",
+"WaterLeak Sensor: Name [%s] Mac [%s] State [%s]  Duration: %d secs Stated Changed [%s] \
+Alarm On Wet [%s]  Alarm On Dry [%s] Call On Wet [%s]  Call on  [%s] \
+Alive Update Timer: %d secs   Pending Update Timer: %d secs",
             deviceRecPtr->deviceName, deviceRecPtr->macAddress,
                 (deviceRecPtr->wlSensor->wetnessDetected ? "WET" : "DRY"), deviceRecPtr->deviceStateTimer,
                 (deviceRecPtr->stateHasChanged ? "YES" : "NO"),
@@ -80,7 +76,7 @@ WaterLeakSensor_t  *WaterLeak_newWaterLeakSensorRecord ()
     //
     recPtr = malloc( sizeof ( WaterLeakSensor_t ) );
     if (recPtr == NULL) {
-        haltAndCatchFire( "Insufficient memory to allocate space for an WaterLeak Sensor!" );
+        Logger_LogFatal( "Insufficient memory to allocate space for an WaterLeak Sensor!\n" );
     }
     
     return recPtr;
@@ -88,7 +84,7 @@ WaterLeakSensor_t  *WaterLeak_newWaterLeakSensorRecord ()
 //------------------------------------------------------------------------------
 void    WaterLeak_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
 {
-    debug_print( "Entering\n", 0 );
+    Logger_LogDebug( "Entering\n", 0 );
     
     assert( deviceRecPtr != NULL );
 
@@ -100,7 +96,7 @@ void    WaterLeak_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
         assert( deviceRecPtr->wlSensor != NULL );
         
    } else {
-        debug_print( "Found this WaterLeak Sensor in the list. Just going to update the values\n", 0 );
+        Logger_LogDebug( "Found this WaterLeak Sensor in the list. Just going to update the values\n", 0 );
     }
     
     //
@@ -130,7 +126,7 @@ void    WaterLeak_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     // Is the current state different? Then yes - the state has changed
     if (deviceRecPtr->wlSensor->currentState != deviceRecPtr->lastDeviceState) {
         deviceRecPtr->stateHasChanged = TRUE;
-        debug_print( "Detected state change on the device: %s. current state: %d, last state: %d\n", 
+        Logger_LogDebug( "Detected state change on the device: %s. current state: %d, last state: %d\n", 
                 deviceRecPtr->macAddress,
                 deviceRecPtr->wlSensor->currentState, deviceRecPtr->lastDeviceState);
     }
@@ -140,11 +136,11 @@ void    WaterLeak_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     //  the resolution of the timer changes to minutes after 60 seconds
     if (deviceRecPtr->deviceStateTimer < deviceRecPtr->lastDeviceStateTimer) {
         deviceRecPtr->stateHasChanged = TRUE;
-        debug_print( "Detected TIME BASED state change on the device: %s. current Time: %d, last time: %d\n", deviceRecPtr->macAddress,
+        Logger_LogDebug( "Detected TIME BASED state change on the device: %s. current Time: %d, last time: %d\n", deviceRecPtr->macAddress,
                 deviceRecPtr->deviceStateTimer, deviceRecPtr->lastDeviceStateTimer);
     }
 
-    //debug_print( ">>>>>>>>>>>> state stateChaned: %d, current Timer: %d, lastTimer: %d\n", deviceRecPtr->stateHasChanged,
+    //Logger_LogDebug( ">>>>>>>>>>>> state stateChaned: %d, current Timer: %d, lastTimer: %d\n", deviceRecPtr->stateHasChanged,
     //                deviceRecPtr->deviceStateTimer, deviceRecPtr->lastDeviceStateTimer);
 
     //
@@ -153,7 +149,7 @@ void    WaterLeak_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     deviceRecPtr->lastDeviceState = deviceRecPtr->wlSensor->currentState;
     deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
             
-    // debug_print( "After parse. \nWaterLeak Sensor: %s\n\n", WaterLeak_dumpSensorDeviceRecord( deviceRecPtr ) );
+    // Logger_LogDebug( "After parse. \nWaterLeak Sensor: %s\n\n", WaterLeak_dumpSensorDeviceRecord( deviceRecPtr ) );
 }
 
 
@@ -166,17 +162,17 @@ int     WaterLeak_getWaterLeakStateFromInt (int sensorState)
 
     // They'd better not BOTH be on!
     if (isWet && isDry)
-        warnAndKeepGoing( "WaterLeak sensor reporting both wet and dry!\n" );
+        Logger_LogWarning( "WaterLeak sensor reporting both wet and dry!\n" );
     else {
 
         if (isWet) {
-            //debug_print( " -----------------------[ %d ] ---> Sensor is wet!\n", sensorState );
+            //Logger_LogDebug( " -----------------------[ %d ] ---> Sensor is wet!\n", sensorState );
             return wlWet;
         } else if (isDry) {
-            //debug_print( "------------------------[ %d ] ---> Sensor is dry!\n", sensorState );
+            //Logger_LogDebug( "------------------------[ %d ] ---> Sensor is dry!\n", sensorState );
             return wlDry;
         } else {
-            debug_print( "Sensor is ???\n", 0 );
+            Logger_LogError( "WaterLeak Sensor reporting neither wet nor dry!\n", 0 );
             return wlUnknown;
         }
     }

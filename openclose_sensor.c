@@ -4,6 +4,7 @@
 
 
 #include "homeheartbeat.h"
+#include "logger.h"
 #include "helpers.h"
 #include "openclose_sensor.h"
 #include "utlist.h"
@@ -54,16 +55,10 @@ char    *OpenClose_dumpSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPtr)
     memset( sensorRecordDumpBuffer, '\0', sizeof sensorRecordDumpBuffer );
     snprintf( sensorRecordDumpBuffer,
              sizeof sensorRecordDumpBuffer,
-                "OpenCloseSensor: Name [%s] MAC [%s]\n \
-                    State [%s]  Duration: %d seconds\n \
-                    Stated Changed [%s]\n \
-                    Alarm On Open [%s]  Alarm On Close [%s]\n \
-                    Call On Open [%s]  Call on Close [%s]\n \
-                    Alive Update Timer: %d seconds   Pending Update Timer: %d seconds\n \
-                    Alerts: %d  Alarm Triggered: %d   OffLine: %d   Low Battery: %d\n \
-                    Name Index: %d   HHB Name [%s]   State rec ID: %d   Zigbee Binding ID: %d\n \
-                    Update Flags: %d, Configuration: %d\
-                ",
+"OpenClose Sensor: Name [%s] MAC [%s] State [%s] Duration: %d secs Stated Changed [%s] \
+Alarm On Open [%s]  Alarm On Close [%s]  Call On Open [%s]  Call on Close [%s] \
+Alive Update Timer: %d Pending Update Timer: %d Alerts: %d  Alarm Triggered: %d   OffLine: %d   Low Battery: %d Name Index: %d   HHB Name [%s] State rec ID: %d  Zigbee Binding ID: %d\n \
+Update Flags: %d, Configuration: %d",
             deviceRecPtr->deviceName, deviceRecPtr->macAddress,
                 (deviceRecPtr->ocSensor->isOpen ? "OPEN" : "CLOSED"), deviceRecPtr->deviceStateTimer,
                 (deviceRecPtr->stateHasChanged ? "YES" : "NO"),
@@ -90,7 +85,7 @@ OpenCloseSensor_t  *OpenClose_newOCSensorRecord ()
     //
     recPtr = malloc( sizeof ( OpenCloseSensor_t ) );
     if (recPtr == NULL) {
-        haltAndCatchFire( "Insufficient memory to allocate space for an Open/Close Sensor!" );
+        Logger_LogFatal( "Insufficient memory to allocate space for an Open/Close Sensor!\n" );
     }
     
     return recPtr;
@@ -99,7 +94,7 @@ OpenCloseSensor_t  *OpenClose_newOCSensorRecord ()
 //------------------------------------------------------------------------------
 void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
 {
-    debug_print( "Entering\n", 0 );
+    Logger_FunctionStart();
     
     assert( deviceRecPtr != NULL );
 
@@ -111,7 +106,7 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
         assert( deviceRecPtr->ocSensor != NULL );
         
    } else {
-        debug_print( "Found this Open Close Sensor in the list. Just going to update the values\n", 0 );
+        Logger_LogDebug( "Found this Open Close Sensor in the list. Just going to update the values\n", 0 );
     }
     
     //
@@ -156,7 +151,7 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     // Is the current state different? Then yes - the state has changed
     if (deviceRecPtr->ocSensor->currentState != deviceRecPtr->lastDeviceState) {
         deviceRecPtr->stateHasChanged = TRUE;
-        debug_print( "Detected state change on the device: %s. current state: %d, last state: %d\n", 
+        Logger_LogDebug( "Detected state change on the device: %s. current state: %d, last state: %d\n", 
                 deviceRecPtr->macAddress,
                 deviceRecPtr->ocSensor->currentState, deviceRecPtr->lastDeviceState);
     }
@@ -167,11 +162,11 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     //  the resolution of the timer changes to minutes after 60 seconds
     if (deviceRecPtr->deviceStateTimer < deviceRecPtr->lastDeviceStateTimer) {
         deviceRecPtr->stateHasChanged = TRUE;
-        debug_print( "Detected TIME BASED state change on the device: %s. current Time: %d, last time: %d\n", deviceRecPtr->macAddress,
+        Logger_LogDebug( "Detected TIME BASED state change on the device: %s. current Time: %d, last time: %d\n", deviceRecPtr->macAddress,
                 deviceRecPtr->deviceStateTimer, deviceRecPtr->lastDeviceStateTimer);
     }
 
-    //debug_print( ">>>>>>>>>>>> state stateChaned: %d, current Timer: %d, lastTimer: %d\n", deviceRecPtr->stateHasChanged,
+    //Logger_LogDebug( ">>>>>>>>>>>> state stateChaned: %d, current Timer: %d, lastTimer: %d\n", deviceRecPtr->stateHasChanged,
     //                deviceRecPtr->deviceStateTimer, deviceRecPtr->lastDeviceStateTimer);
 
     //
@@ -180,7 +175,7 @@ void    OpenClose_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     deviceRecPtr->lastDeviceState = deviceRecPtr->ocSensor->currentState;
     deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
             
-    debug_print( "After parse. \nOC Sensor: %s\n\n", OpenClose_dumpSensorDeviceRecord( deviceRecPtr ) );
+    Logger_LogDebug( "After parse. \nOC Sensor: %s\n\n", OpenClose_dumpSensorDeviceRecord( deviceRecPtr ) );
 }
 
 
@@ -193,19 +188,18 @@ int     OpenClose_getOpenCloseStateFromInt (int sensorState)
 
     // They'd better not BOTH be on!
     if (isClosed && isOpen) {
-        warnAndKeepGoing( "Open/Close sensor reporting both open and closed!\n" );
-        debug_print( "Sensor state value : %d\n", sensorState );
+        Logger_LogWarning( "OpenClose Sensor reporting both open and closed!\n" );
         
     } else {
 
         if (isClosed) {
-            // debug_print( "Sensor is CLOSED!\n", 0 );
+            // Logger_LogDebug( "Sensor is CLOSED!\n", 0 );
             return ocClosed;
         } else if (isOpen) {
-            // debug_print( "Sensor is OPEN!\n", 0 );
+            // Logger_LogDebug( "Sensor is OPEN!\n", 0 );
             return ocOpen;
         } else {
-            // debug_print( "Sensor is ???\n", 0 );
+            Logger_LogError( "OpenClose Sensor reporting neither Open nor Closed!\n", 0 );
             return ocUnknown;
         }
     }
@@ -256,7 +250,7 @@ int     OpenClose_getAlarmEnabledCondition1 (int dcValue)
     //int     callMeEnabledCondition2 = (dcValue & 0x0200);
 
     
-    //debug_print( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
+    //Logger_LogDebug( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
     //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
 
     return (dcValue & 0x0001);
@@ -267,7 +261,7 @@ static
 int     OpenClose_getAlarmEnabledCondition2 (int dcValue)
 {
 
-    //debug_print( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
+    //Logger_LogDebug( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
     //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
     return (dcValue & 0x0002);
 }

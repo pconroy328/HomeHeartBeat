@@ -6,7 +6,7 @@
 #include "homeheartbeat.h"
 #include "helpers.h"
 #include "motion_sensor.h"
-// #include "utlist.h"
+#include "logger.h"
 
 
 // -----------------------------------------------------------------------------
@@ -52,13 +52,9 @@ char    *MotionSensor_dumpSensorDeviceRecord (HomeHeartBeatDevice_t *deviceRecPt
     memset( sensorRecordDumpBuffer, '\0', sizeof sensorRecordDumpBuffer );
     snprintf( sensorRecordDumpBuffer,
              sizeof sensorRecordDumpBuffer,
-                "MotionSensor: Name [%s] Mac [%s]\n \
-                    State [%s]  Duration: %d seconds\n \
-                    Stated Changed [%s]\n \
-                    Alarm On Motion [%s]  Alarm On No Motion [%s]\n \
-                    Call On Motion [%s]  Call on No Motion [%s]\n \
-                    Alive Update Timer: %d seconds   Pending Update Timer: %d seconds \
-                ",
+"MotionSensor: Name [%s] MAC [%s] State [%s] Duration: %d secs Stated Changed [%s] \
+Alarm On Motion [%s]  Alarm On No Motion [%s] Call On Motion [%s] Call on No Motion [%s] \
+Alive Update Timer: %d secs   Pending Update Timer: %d secs",
             deviceRecPtr->deviceName, deviceRecPtr->macAddress,
                 (deviceRecPtr->motSensor->motionDetected ? "MOTION" : "NO MOTION"), deviceRecPtr->deviceStateTimer,
                 (deviceRecPtr->stateHasChanged ? "YES" : "NO"),
@@ -82,7 +78,7 @@ MotionSensor_t  *Motion_newMotionSensorRecord ()
     //
     recPtr = malloc( sizeof ( MotionSensor_t ) );
     if (recPtr == NULL) {
-        haltAndCatchFire( "Insufficient memory to allocate space for an Motion Sensor!" );
+        Logger_LogFatal( "Insufficient memory to allocate space for an Motion Sensor!\n" );
     }
     
     return recPtr;
@@ -90,7 +86,7 @@ MotionSensor_t  *Motion_newMotionSensorRecord ()
 //------------------------------------------------------------------------------
 void    Motion_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
 {
-    debug_print( "Entering\n", 0 );
+    Logger_FunctionStart();
     
     assert( deviceRecPtr != NULL );
 
@@ -102,7 +98,7 @@ void    Motion_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
         assert( deviceRecPtr->motSensor != NULL );
         
    } else {
-        debug_print( "Found this Motion Sensor in the list. Just going to update the values\n", 0 );
+        Logger_LogDebug( "Found this Motion Sensor in the list. Just going to update the values\n", 0 );
     }
     
     //
@@ -133,7 +129,7 @@ void    Motion_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     // Is the current state different? Then yes - the state has changed
     if (deviceRecPtr->motSensor->currentState != deviceRecPtr->lastDeviceState) {
         deviceRecPtr->stateHasChanged = TRUE;
-        debug_print( "Detected state change on the device: %s. current state: %d, last state: %d\n", 
+        Logger_LogDebug( "Detected state change on the device: %s. current state: %d, last state: %d\n", 
                 deviceRecPtr->macAddress,
                 deviceRecPtr->motSensor->currentState, deviceRecPtr->lastDeviceState);
     }
@@ -143,11 +139,11 @@ void    Motion_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     //  the resolution of the timer changes to minutes after 60 seconds
     if (deviceRecPtr->deviceStateTimer < deviceRecPtr->lastDeviceStateTimer) {
         deviceRecPtr->stateHasChanged = TRUE;
-        debug_print( "Detected TIME BASED state change on the device: %s. current Time: %d, last time: %d\n", deviceRecPtr->macAddress,
+        Logger_LogDebug( "Detected TIME BASED state change on the device: %s. current Time: %d, last time: %d\n", deviceRecPtr->macAddress,
                 deviceRecPtr->deviceStateTimer, deviceRecPtr->lastDeviceStateTimer);
     }
 
-    //debug_print( ">>>>>>>>>>>> state stateChaned: %d, current Timer: %d, lastTimer: %d\n", deviceRecPtr->stateHasChanged,
+    //Logger_LogDebug( ">>>>>>>>>>>> state stateChaned: %d, current Timer: %d, lastTimer: %d\n", deviceRecPtr->stateHasChanged,
     //                deviceRecPtr->deviceStateTimer, deviceRecPtr->lastDeviceStateTimer);
 
     //
@@ -156,7 +152,7 @@ void    Motion_parseOneStateRecord (HomeHeartBeatDevice_t *deviceRecPtr )
     deviceRecPtr->lastDeviceState = deviceRecPtr->motSensor->currentState;
     deviceRecPtr->lastDeviceStateTimer = deviceRecPtr->deviceStateTimer;
             
-    // debug_print( "After parse. \nMotion Sensor: %s\n\n", MotionSensor_dumpSensorDeviceRecord( deviceRecPtr ) );
+    // Logger_LogDebug( "After parse. \nMotion Sensor: %s\n\n", MotionSensor_dumpSensorDeviceRecord( deviceRecPtr ) );
 }
 
 
@@ -169,17 +165,17 @@ int     Motion_getMotionStateFromInt (int sensorState)
 
     // They'd better not BOTH be on!
     if (isNoMotion && isMotion)
-        warnAndKeepGoing( "Motion sensor reporting both motion and no motion!\n" );
+        Logger_LogWarning( "Motion sensor reporting both motion and no motion!\n" );
     else {
 
         if (isNoMotion) {
-            //debug_print( "Sensor sees MOTION!\n", 0 );
+            //Logger_LogDebug( "Sensor sees MOTION!\n", 0 );
             return motNoMotion;
         } else if (isMotion) {
-            //debug_print( "Sensor sees NO MOTION!\n", 0 );
+            //Logger_LogDebug( "Sensor sees NO MOTION!\n", 0 );
             return motMotion;
         } else {
-            debug_print( "Sensor sees ???\n", 0 );
+            Logger_LogError( "Motion Sensor reporting neither Motion nor No-Motion!\n", 0 );
             return motUnknown;
         }
     }
@@ -193,7 +189,7 @@ int     Motion_getMotionState (char *token)
 {
     assert( token != NULL );
     int tmpValue = hexStringToInt( token );
-    // debug_print( "----------- [%s] %d\n", token, tmpValue );
+    // Logger_LogDebug( "----------- [%s] %d\n", token, tmpValue );
 
     return tmpValue;
 }
@@ -235,7 +231,7 @@ int     Motion_getAlarmEnabledCondition1 (int dcValue)
     //int     callMeEnabledCondition2 = (dcValue & 0x0200);
 
     
-    //debug_print( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
+    //Logger_LogDebug( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
     //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
 }
 
@@ -250,7 +246,7 @@ int     Motion_getAlarmEnabledCondition2 (int dcValue)
     //int     callMeEnabledCondition2 = (dcValue & 0x0200);
 
     
-    //debug_print( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
+    //Logger_LogDebug( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
     //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
 }
 
@@ -265,7 +261,7 @@ int     Motion_getCallMeEnabledCondition1 (int dcValue)
     //int     callMeEnabledCondition2 = (dcValue & 0x0200);
 
     
-    //debug_print( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
+    //Logger_LogDebug( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
     //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
 }
 
@@ -280,7 +276,7 @@ int     Motion_getCallMeEnabledCondition2 (int dcValue)
     return (dcValue & 0x0200);
 
     
-    //debug_print( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
+    //Logger_LogDebug( "Device Configuration alarm1: %d, alarm2: %d, callMe1: %d, callMe2: %d\n", 
     //        alarmEnabledCondition1, alarmEnabledCondition2, callMeEnabledCondition1, callMeEnabledCondition2 );
 }
 

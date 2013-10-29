@@ -21,6 +21,8 @@
 #include <fcntl.h>
 #include <errno.h>    
 
+#include "logger.h"
+
 //
 //  Screw it -- I'm tired of trying to figure out where Linux guys stuck all these
 //  damned defines.  it was working under gcc but not under C99.  I can't see if these
@@ -35,16 +37,156 @@
 #include "serialport.h"
 #include "helpers.h"
 
+#define READ_ERRORS_THRESHOLD   250
 
-// static  int     hhbPortID;
-//static  char    *portName;
+
 static  struct  termios oldtio;
-// static  char    outBuffer[ 8192 ];          // fix this!
+static  int     readErrors = 0;
+static  char    serialPortName[ 255 ];
+static  int     serialPortPortID = 0;
 
+// ----------------------------------------------------------------------------
+int SerialPort_Open (char *portName)
+{
+    int             portID;
+    int             portstatus;
+    struct termios  newtio;    
+    
+    Logger_LogDebug( "v2.2 Entering [%s]\n", portName );
+    strncpy( serialPortName, portName, sizeof serialPortName );
+    
+    /*                                                                            
+      Open modem device for reading and writing and not as controlling tty        
+      because we don't want to get killed if linenoise sends CTRL-C.              
+    */                                                                            
+     portID = open( portName, (O_RDWR | O_NOCTTY) );                                  
+     if (portID < 0) {
+         perror( portName );
+         return -1;
+     }   
+     
+    //We want full control of what is set and simply reset the entire newtio struct
+    memset( &newtio, 0, sizeof( newtio ) );
+    
+    // Serial control options
+    newtio.c_cflag &= ~PARENB;      // No parity
+    newtio.c_cflag &= ~CSTOPB;      // One stop bit
+    newtio.c_cflag &= ~CSIZE;       // Character size mask
+    newtio.c_cflag |= CS8;          // Character size 8 bits
+    newtio.c_cflag |= CREAD;        // Enable Receiver
+    newtio.c_cflag &= ~HUPCL;       // No "hangup"
+    newtio.c_cflag &= ~CRTSCTS;     // No flowcontrol
+    newtio.c_cflag |= CLOCAL;       // Ignore modem control lines
 
+    // Baudrate, for newer systems
+    cfsetispeed( &newtio, BAUDRATE );
+    cfsetospeed( &newtio, BAUDRATE );
+
+    // Serial local options: newtio.c_lflag
+    // Raw input = clear ICANON, ECHO, ECHOE, and ISIG
+    // Disable misc other local features = clear FLUSHO, NOFLSH, TOSTOP, PENDIN, and IEXTEN
+    // So we actually clear all flags in newtio.c_lflag
+    newtio.c_lflag = 0;
+
+    // Serial input options: newtio.c_iflag
+    // Disable parity check = clear INPCK, PARMRK, and ISTRIP
+    // Disable software flow control = clear IXON, IXOFF, and IXANY
+    // Disable any translation of CR and LF = clear INLCR, IGNCR, and ICRNL
+    // Ignore break condition on input = set IGNBRK
+    // Ignore parity errors just in case = set IGNPAR;
+    // So we can clear all flags except IGNBRK and IGNPAR
+    newtio.c_iflag = IGNBRK|IGNPAR;
+    newtio.c_iflag &= ~(IXON | IXOFF | IXANY);           // ignore software flow control
+
+    // Serial output options
+    // Raw output should disable all other output options
+    newtio.c_oflag &= ~OPOST;
+
+    newtio.c_cc[ VTIME ] = 10;          // timer 1s
+    newtio.c_cc[ VMIN ] = 0;            // blocking read until 1 char
+
+    if (tcsetattr( portID, TCSANOW, &newtio ) < 0) {
+        perror( "Unable to initialize serial device" );
+        return -1;
+    }
+
+    tcflush( portID, TCIOFLUSH );
+
+    // Set DTR low and RTS high and leave other ctrl lines untouched
+
+    //ioctl(portID, TIOCMGET, &portstatus);    // get current port status
+    //portstatus &= ~TIOCM_DTR;
+    //portstatus |= TIOCM_RTS;
+    //ioctl(portID, TIOCMSET, &portstatus);    // set current port status
+
+    /*
+    int n = write( portID, "i", 1 );           // send 7 character greeting
+    Logger_LogDebug( ">>Num written: %d\n", n ); fflush(stdout); fflush( stderr );
+    char buf [2048];
+    //sleep( 1 );
+    n = read (portID, buf, sizeof buf);  // read up to 100 characters if ready to read
+    Logger_LogDebug( ">>Num read: %d\n", n ); fflush(stdout); fflush( stderr );
+    sleep( 5 );
+    */
+    serialPortPortID = portID;
+    
+    return portID;
+}
 
 // -----------------------------------------------------------------------------
-int SerialPort_Open (char *portName)
+int SerialPort_findBaseStation ()
+{
+    //
+    //  I wonder if we can just add some code to try and find our base station??
+    //
+    static  char    *device[] = { "/dev/hhb",   "/dev/ttyUSB0", 
+                                "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/ttyUSB4", "/dev/ttyUSB5",
+                                "/dev/ttyUSB6", "/dev/ttyUSB7", "/dev/ttyUSB8", "/dev/ttyUSB9", "/dev/ttyUSB10",
+                                "/dev/ttyS0",   "/dev/ttyS1",   "/dev/ttyS2",   "/dev/ttyS3",   "/dev/ttyS4",    "/dev/ttyS5",
+                                NULL };
+    int     hhbFound = FALSE;
+    
+    int i = 0;
+    int portID = -1;
+    while (!hhbFound && device[ i ] != NULL) {
+        if ( (portID = SerialPort_Open( device[ i ])) >= 0) {
+            //
+            //  Let's see if the device on this end responds to an 'A' command
+            //  We want a 'Radio OK' message back
+            SerialPort_FlushBuffers( portID );
+            SerialPort_SendData( portID, "A", 1 );
+            
+            //
+            //  Don't call SerialPort_ReadLine because that has reset code in it...
+            char    receiveBuffer[ 80 ];
+            memset  (receiveBuffer, '\0', sizeof receiveBuffer );
+            int numRead = SerialPort_ReadData( portID, receiveBuffer, sizeof receiveBuffer );
+            
+            if (numRead > 0 && strstr( receiveBuffer, "Radio OK" ) != NULL) {
+                hhbFound = TRUE;
+                SerialPort_FlushBuffers( portID );
+                
+            } else {
+                SerialPort_Close( portID );
+            }
+            
+        } else {
+            Logger_LogDebug( "Eaton Home Heartbeat Base station not found on device [%s], checking another device.\n", device[ i ] );
+            sleep( 1 );
+        }
+        i += 1;
+    }
+    
+    if (hhbFound)
+        Logger_LogDebug( "Eaton Home Heartbeat Base station FOUND on device [%s].\n", device[ i ] );
+    
+    return hhbFound;    
+}
+
+
+#if 0
+// -----------------------------------------------------------------------------
+int SerialPort_OpenXYZ (char *portName)
 {
     assert( portName != NULL );
     
@@ -166,6 +308,7 @@ int SerialPort_Open (char *portName)
 
     return portID;
 }   // SerialPort_Open
+#endif 
 
 // ----------------------------------------------------------------------------
 int SerialPort_Close (int portID)
@@ -192,6 +335,39 @@ void    SerialPort_FlushBuffers (int portID)
     tcflush( portID,  TCOFLUSH );     
 }
 
+// ----------------------------------------------------------------------------
+void    SerialPort_Reset (void)
+{
+    //
+    //  I'm seeing this on quite a few USB/Serial Port adapters - after a while the kernel
+    //  disconnects them and reconnects them.  But invariably under a different device.
+    //  You'll see this in syslog:
+    //
+    //  syslog:Sep 26 16:31:26 MA78GM kernel: [205549.830095] ftdi_sio ttyUSB0: FTDI USB Serial Device converter now disconnected from ttyUSB0
+    //  syslog:Sep 26 16:31:27 MA78GM kernel: [205550.433024] usb 3-1: FTDI USB Serial Device converter now attached to ttyUSB1
+    //  syslog:Sep 26 16:31:27 MA78GM udevd[14270]: kernel-provided name 'ttyUSB1' and NAME= 'hhb' disagree, please use SYMLINK+= or change the kernel to provide the proper name
+    //
+    //  When this happens, I think we're screwed. I haven't readup on a way to recover...
+
+    readErrors = 0;
+    
+    SerialPort_FlushBuffers( serialPortPortID );
+    //
+    // Try closing
+    SerialPort_Close( serialPortPortID );
+    
+    //
+    // Maybe waiting helps...  :)
+    sleep( 10 );
+    
+    //
+    // All better?
+    if (SerialPort_Open( serialPortName ) < 0) {
+        fprintf( stderr, "Unable to reset the serial port! Check syslog for 'FTDI Serial Device converter now disconnected' message\n" );
+        (void) SerialPort_findBaseStation();
+        exit(1);
+    }
+}
 
 // ----------------------------------------------------------------------------
 int SerialPort_SendData (int portID, char *data, int numBytes)
@@ -234,7 +410,7 @@ int     SerialPort_ReadLine (int portID, char *dataBuffer, int bufSize)
     int     numLoops = 0;
     char    inBuffer[ 1024 ];   
 
-    //debug_print( "entering\n", 0 );
+    //Logger_LogDebug( "entering\n", 0 );
     assert( dataBuffer != NULL );
     assert( bufSize > 0 );
     
@@ -263,200 +439,36 @@ int     SerialPort_ReadLine (int portID, char *dataBuffer, int bufSize)
         if (totalRead > 1) {
             done = (dataBuffer[ numRead - 2 ] == 0x0D) && (dataBuffer[ numRead - 1 ] == 0x0A);
             if (done)
-                //debug_print( "EOL FOUND at end of buffer - totalRead: %d\n", totalRead )
+                //Logger_LogDebug( "EOL FOUND at end of buffer - totalRead: %d\n", totalRead )
                 ;
 
             if (!done) {
                  done = (strstr( &dataBuffer[ 2 ], "\r\n" ) != NULL);
                 if (done)
-                    //debug_print( "EOL FOUND in buffer (via strstr) - totalRead: %d\n", totalRead )
+                    //Logger_LogDebug( "EOL FOUND in buffer (via strstr) - totalRead: %d\n", totalRead )
                             ;
             }
         }
         
         numLoops += 1;
         
+        //
+        // I need something in the way of error checking...
         if (numLoops > 250) {
             done = TRUE;
-            debug_print( "TOO MANY LOOPS - EXITING \n", 0 );
+            readErrors += 1;
+            if (readErrors > READ_ERRORS_THRESHOLD)
+                SerialPort_Reset();
         }
     }
 
-    // debug_print( "Final OutBuffer[%s]\n", dataBuffer );
+    // Logger_LogDebug( "Final OutBuffer[%s]\n", dataBuffer );
         
     return totalRead;
 }   // SerialPort_ReadLine
 
 
-// ----------------------------------------------------------------------------
-int SerialPort_Open2 (char *portName)
-{
-    int             portID;
-    int             portstatus;
-    struct termios  newtio;    
-    
-    debug_print( "v2.2 Entering [%s]\n", portName );
-    
-    /*                                                                            
-      Open modem device for reading and writing and not as controlling tty        
-      because we don't want to get killed if linenoise sends CTRL-C.              
-    */                                                                            
-     portID = open( portName, (O_RDWR | O_NOCTTY) );                                  
-     if (portID < 0) {
-         perror( portName );
-         return -1;
-     }   
-     
-    //We want full control of what is set and simply reset the entire newtio struct
-    memset(&newtio, 0, sizeof(newtio));
-    
-    // Serial control options
-    newtio.c_cflag &= ~PARENB;      // No parity
-    newtio.c_cflag &= ~CSTOPB;      // One stop bit
-    newtio.c_cflag &= ~CSIZE;       // Character size mask
-    newtio.c_cflag |= CS8;          // Character size 8 bits
-    newtio.c_cflag |= CREAD;        // Enable Receiver
-    newtio.c_cflag &= ~HUPCL;       // No "hangup"
-    newtio.c_cflag &= ~CRTSCTS;     // No flowcontrol
-    newtio.c_cflag |= CLOCAL;       // Ignore modem control lines
 
-    // Baudrate, for newer systems
-    cfsetispeed(&newtio, BAUDRATE);
-    cfsetospeed(&newtio, BAUDRATE);
 
-    // Serial local options: newtio.c_lflag
-    // Raw input = clear ICANON, ECHO, ECHOE, and ISIG
-    // Disable misc other local features = clear FLUSHO, NOFLSH, TOSTOP, PENDIN, and IEXTEN
-    // So we actually clear all flags in newtio.c_lflag
-    newtio.c_lflag = 0;
 
-    // Serial input options: newtio.c_iflag
-    // Disable parity check = clear INPCK, PARMRK, and ISTRIP
-    // Disable software flow control = clear IXON, IXOFF, and IXANY
-    // Disable any translation of CR and LF = clear INLCR, IGNCR, and ICRNL
-    // Ignore break condition on input = set IGNBRK
-    // Ignore parity errors just in case = set IGNPAR;
-    // So we can clear all flags except IGNBRK and IGNPAR
-    newtio.c_iflag = IGNBRK|IGNPAR;
-    newtio.c_iflag &= ~(IXON | IXOFF | IXANY);           // ignore software flow control
-
-    // Serial output options
-    // Raw output should disable all other output options
-    newtio.c_oflag &= ~OPOST;
-
-    newtio.c_cc[ VTIME ] = 10;        // timer 1s
-    newtio.c_cc[ VMIN ] = 0;        // blocking read until 1 char
-
-    if (tcsetattr(portID, TCSANOW, &newtio) < 0)
-    {
-        perror( "Unable to initialize serial device" );
-        //exit(0);
-                return 0;
-    }
-
-    tcflush(portID, TCIOFLUSH);
-
-    // Set DTR low and RTS high and leave other ctrl lines untouched
-
-    //ioctl(portID, TIOCMGET, &portstatus);    // get current port status
-    //portstatus &= ~TIOCM_DTR;
-    //portstatus |= TIOCM_RTS;
-    //ioctl(portID, TIOCMSET, &portstatus);    // set current port status
-
-    /*
-    int n = write( portID, "i", 1 );           // send 7 character greeting
-    debug_print( ">>Num written: %d\n", n ); fflush(stdout); fflush( stderr );
-    char buf [2048];
-    //sleep( 1 );
-    n = read (portID, buf, sizeof buf);  // read up to 100 characters if ready to read
-    debug_print( ">>Num read: %d\n", n ); fflush(stdout); fflush( stderr );
-    sleep( 5 );
-    */
-    
-    return portID;
-}
-
-//-----------------------------------------------------------------------------
-static int set_interface_attribs (int fd, int speed, int parity)
-{
-        struct termios tty;
-        memset (&tty, 0, sizeof tty);
-        if (tcgetattr (fd, &tty) != 0)
-        {
-                fprintf( stderr, "error %d from tcgetattr", errno);
-                return -1;
-        }
-
-        cfsetospeed (&tty, speed);
-        cfsetispeed (&tty, speed);
-
-        tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
-        // disable IGNBRK for mismatched speed tests; otherwise receive break
-        // as \000 chars
-        tty.c_iflag &= ~IGNBRK;         // ignore break signal
-        tty.c_lflag = 0;                // no signaling chars, no echo,
-                                        // no canonical processing
-        tty.c_oflag = 0;                // no remapping, no delays
-        tty.c_cc[VMIN]  = 0;            // read doesn't block
-        tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
-
-        tty.c_iflag &= ~(IXON | IXOFF | IXANY); // shut off xon/xoff ctrl
-
-        tty.c_cflag |= (CLOCAL | CREAD);// ignore modem controls,
-                                        // enable reading
-        tty.c_cflag &= ~(PARENB | PARODD);      // shut off parity
-        tty.c_cflag |= parity;
-        tty.c_cflag &= ~CSTOPB;
-        tty.c_cflag &= ~CRTSCTS;
-
-        if (tcsetattr (fd, TCSANOW, &tty) != 0)
-        {
-                fprintf( stderr, "error %d from tcsetattr", errno);
-                return -1;
-        }
-        return 0;
-}
-
-void
-set_blocking (int fd, int should_block)
-{
-        struct termios tty;
-        memset (&tty, 0, sizeof tty);
-        if (tcgetattr (fd, &tty) != 0)
-        {
-                fprintf( stderr, "error %d from tggetattr", errno);
-                return;
-        }
-
-        tty.c_cc[VMIN]  = should_block ? 1 : 0;
-        tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
-
-        if (tcsetattr (fd, TCSANOW, &tty) != 0)
-                fprintf( stderr, "error %d setting term attributes", errno);
-}
-
-int SerialPort_Open3 (char *portName)
-{
-    int     portID;
- 
-    portID = open (portName, O_RDWR | O_NOCTTY | O_SYNC);
-    if (portID < 0) {
-        fprintf( stderr, "error %d opening %s: %s", errno, portName, strerror (errno));
-        return -1;
-    }
-
-    set_interface_attribs (portID, BAUDRATE, 0);  // set speed to 115,200 bps, 8n1 (no parity)
-    set_blocking (portID, 0);                // set no blocking
-
-    /*
-    int n = write( portID, "i", 1 );           // send 7 character greeting
-    printf( ">>>Num written: %d\n", n ); fflush(stdout); fflush( stderr );
-    char buf [2048];
-    //sleep( 1 );
-    n = read (portID, buf, sizeof buf);  // read up to 100 characters if ready to read
-    printf( ">>>Num read: %d\n", n ); fflush(stdout); fflush( stderr );
-    sleep( 5 );
-    */
-    return portID;
-}
-
+//---------------------------------------------

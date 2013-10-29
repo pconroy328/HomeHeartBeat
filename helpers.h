@@ -13,12 +13,6 @@ extern "C" {
 #endif
  
     
-#ifndef     FALSE
-# define    FALSE   (0)
-# define    TRUE    (!FALSE)    
-#endif
-    
-    
 #include <stdio.h>
     
 //
@@ -31,8 +25,8 @@ extern "C" {
 
     
     
-extern  void    haltAndCatchFire( char * );
-extern  void    warnAndKeepGoing( char *message );
+// extern  void    haltAndCatchFire( char * );
+// extern  void    warnAndKeepGoing( char *message );
 extern  int     hexStringToInt( char *hexChars );
 
 

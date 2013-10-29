@@ -3,13 +3,15 @@
 //
 //
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <mysql/mysql.h>
 
 #include "hhb_structures.h"
-#include "helpers.h"
+#include "logger.h"
+#include "homeheartbeat.h"
 #include "database.h"
 
 //
@@ -206,14 +208,14 @@ int     Database_openDatabase ()
     databaseIsOpen = FALSE;
     connection = mysql_init( NULL );
     if (connection == NULL) {
-        fprintf( stderr, "Unable to create a client database session (mysql_init call failed).\n" );
+        Logger_LogError( "Unable to create a client database session (mysql_init call failed).\n" );
         if (dbFailOnErrors)
             exit( 1 );
     }
 
     if (mysql_real_connect( connection, dbHostName, dbUserName, dbPassword, dbSchemaName, 0, NULL, 0) == NULL) {
-        fprintf( stderr, "Unable to establish a connection to the database. Host: [%s], User: [%s], Schema: [%s].\n", dbHostName, dbUserName, dbSchemaName );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
+        Logger_LogError( "Unable to establish a connection to the database. Host: [%s], User: [%s], Schema: [%s].\n", dbHostName, dbUserName, dbSchemaName );
+        Logger_LogError( "%s\n", mysql_error( connection ));
         if (dbFailOnErrors) {
             mysql_close( connection );
             exit( 1 );
@@ -263,7 +265,7 @@ void    Database_initialize (Database_Parameters_t dbParameters)
         Database_setFailOnDatabaseErrors( 1 );
         
         if (!Database_openDatabase()) {
-            fprintf( stderr, "Unable to open the database -- continuing\n" );
+            Logger_LogWarning( "Unable to open the database -- continuing\n" );
             return;
         }
         
@@ -300,13 +302,27 @@ void    Database_updateDeviceTables (HomeHeartBeatDevice_t *deviceRecPtr)
         return;
     
     if (logAlarms) {
-        if (deviceRecPtr->deviceInAlarm)
+        //
+        // "deviceInAlarm" is NOT the derived field that I came up - it's set by the HHB if the device state is set.
+        //  For example:
+        //      Motions Sensor:  (Alarm on Motion and Motion Detected) or (Alarm on No Motion and No Motion Detected)
+        //      Open / Close Sensor: (Open and Alarm on Open) or (Closed and Alarm on Close)
+        //
+        //  So far the only device that seems to give me trouble is the Motion Sensor.  I haven't quite figured out how they
+        //  clear themselves.  Because I poll the HHB, I'll find a "(Alarm on Motion and Motion Detected)" condition every time I poll.
+        //  That's not what I want for motions sensors.  But it may be a good thing for Water Leak sensors!
+        //  
+        //  So I have a derived field 'deviceRecPtr->stateHasChanged' which only gets set once each state change.
+        //     
+        
+        if (deviceRecPtr->deviceInAlarm && deviceRecPtr->stateHasChanged)
             insertAlarmRecord( deviceRecPtr );
         else
             //
             //  I need to put some thought into the definition of an Alarm.  It should probably mirror what's been
             //  defined by the Base Station.  But, in MQTT, I'm sending actually state change events...
-            debug_print( "POSSIBLE PROGRAMMER FAUX PAUS: - logAlarms is TRUE but deviceInAlarm is FALSE\n", 0 );
+            // Logger_LogDebug( "POSSIBLE PROGRAMMER FAUX PAUS: - logAlarms is TRUE but deviceInAlarm is FALSE\n", 0 );
+            ;
     }
     
     if (logStatus)
@@ -330,9 +346,9 @@ int     createAlarmTable()
     snprintf( buffer, sizeof buffer, "CREATE TABLE `%s`.`%s` ( %s", dbSchemaName, alarmTableName, createAlarmTableSQL );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to create the alarm table.\n" );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
-        fprintf( stderr, "SQL [%s]\n", buffer );
+        Logger_LogError( "Unable to create the alarm table.\n" );
+        Logger_LogError( "MySQL Error Message [%s]\n", mysql_error( connection ));
+        Logger_LogError( "SQL [%s]\n", buffer );
         return FALSE;
     }
     
@@ -352,9 +368,9 @@ void   dropAlarmTable ()
     snprintf( buffer, sizeof buffer, "DROP TABLE `%s`.`%s` ", dbSchemaName, alarmTableName );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to drop the alarm table.\n" );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
-        fprintf( stderr, "SQL [%s]\n", buffer );
+        Logger_LogError( "Unable to drop the alarm table.\n" );
+        Logger_LogError( "MySQL Error Message [%s]\n", mysql_error( connection ));
+        Logger_LogError( "SQL [%s]\n", buffer );
         if (dbFailOnErrors) {
             //mysql_close( connection );
             //exit( 1 );
@@ -406,9 +422,9 @@ void    insertAlarmRecord (HomeHeartBeatDevice_t *recPtr)
     
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to insert the record into the alarm table.\n" );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
-        fprintf( stderr, "SQL: [%s]\n", buffer );
+        Logger_LogError( "Unable to insert the record into the alarm table.\n" );
+        Logger_LogError( "%s\n", mysql_error( connection ));
+        Logger_LogError( "SQL: [%s]\n", buffer );
         if (dbFailOnErrors) {
             mysql_close( connection );
             exit( 1 );
@@ -429,9 +445,9 @@ int     createHistoryTable()
     snprintf( buffer, sizeof buffer, "CREATE TABLE `%s`.`%s` ( %s", dbSchemaName, historyTableName, createHistoryTableSQL );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to create the history table.\n" );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
-        fprintf( stderr, "SQL [%s]\n", buffer );
+        Logger_LogError( "Unable to create the history table.\n" );
+        Logger_LogError( "%s\n", mysql_error( connection ));
+        Logger_LogError( "SQL [%s]\n", buffer );
         return FALSE;
     }
     
@@ -451,9 +467,9 @@ void   dropHistoryTable ()
     snprintf( buffer, sizeof buffer, "DROP TABLE `%s`.`%s` ", dbSchemaName, historyTableName );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to drop the history table.\n" );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
-        fprintf( stderr, "SQL [%s]\n", buffer );
+        Logger_LogError( "Unable to drop the history table.\n" );
+        Logger_LogError( "%s\n", mysql_error( connection ));
+        Logger_LogError( "SQL [%s]\n", buffer );
         if (dbFailOnErrors) {
             //mysql_close( connection );
             //exit( 1 );
@@ -505,9 +521,9 @@ void    insertHistoryRecord (HomeHeartBeatDevice_t *recPtr)
     
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to insert the record into the history table.\n" );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
-        fprintf( stderr, "SQL: [%s]\n", buffer );
+        Logger_LogError( "Unable to insert the record into the history table.\n" );
+        Logger_LogError( "%s\n", mysql_error( connection ));
+        Logger_LogError( "SQL: [%s]\n", buffer );
         if (dbFailOnErrors) {
             mysql_close( connection );
             exit( 1 );
@@ -529,16 +545,16 @@ void    deleteHistoryRecords (void)
     snprintf( buffer, sizeof buffer, deleteRecordsSQL, dbSchemaName, historyTableName, maxMinutesOfHistoryStored );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to delete all but the last %d minutes of history stored in the table.\n", maxMinutesOfHistoryStored );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
-        fprintf( stderr, "SQL [%s]\n", buffer );
+        Logger_LogError( "Unable to delete all but the last %d minutes of history stored in the table.\n", maxMinutesOfHistoryStored );
+        Logger_LogError( "%s\n", mysql_error( connection ));
+        Logger_LogError( "SQL [%s]\n", buffer );
         if (dbFailOnErrors) {
             //mysql_close( connection );
             //exit( 1 );
         }
     }
     
-    debug_print( "History records deleted!\n", 0 );
+    Logger_LogDebug( "History records deleted!\n", 0 );
 }
 // -----------------------------------------------------------------------------
 static
@@ -554,8 +570,8 @@ int     createStatusTable(void)
                                 dbSchemaName, statusTableName, createStatusTableSQL );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to create the status table.\n" );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
+        Logger_LogError( "Unable to create the status table.\n" );
+        Logger_LogError( "%s\n", mysql_error( connection ));
         return FALSE;
     }
     return TRUE;
@@ -572,8 +588,8 @@ void    dropStatusTable (void)
     snprintf( buffer, sizeof buffer, "DROP TABLE `%s`.`%s` ", dbSchemaName, statusTableName );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to drop the status table.\n" );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
+        Logger_LogError( "Unable to drop the status table.\n" );
+        Logger_LogError( "%s\n", mysql_error( connection ));
         if (dbFailOnErrors) {
             //mysql_close( connection );
             //exit( 1 );
@@ -596,9 +612,9 @@ int     statusRecordExists (char *macAddress)
                             macAddress );
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to see if the record is already in the status table.\n" );
-        fprintf( stderr, "SQL: [%s]\n", buffer );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
+        Logger_LogError( "Unable to see if the record is already in the status table.\n" );
+        Logger_LogError( "SQL: [%s]\n", buffer );
+        Logger_LogError( "%s\n", mysql_error( connection ));
         if (dbFailOnErrors) {
             mysql_close( connection );
             exit( 1 );
@@ -609,7 +625,7 @@ int     statusRecordExists (char *macAddress)
     //  Is the device already there?
     MYSQL_RES *result = mysql_store_result( connection );
     if (result == NULL)  {
-        fprintf( stderr, "%s\n", mysql_error( connection ));
+        Logger_LogError( "%s\n", mysql_error( connection ));
     }
 
     int         num_fields = mysql_num_fields( result );
@@ -690,9 +706,9 @@ void    updateStatusRecord (HomeHeartBeatDevice_t *recPtr)
     
     
     if (mysql_query( connection, buffer ) != 0) {
-        fprintf( stderr, "Unable to insert or update the record into the device table.\n" );
-        fprintf( stderr, "SQL: [%s]\n", buffer );
-        fprintf( stderr, "%s\n", mysql_error( connection ));
+        Logger_LogError( "Unable to insert or update the record into the device table.\n" );
+        Logger_LogError( "%s\n", mysql_error( connection ));
+        Logger_LogError( "SQL: [%s]\n", buffer );
         if (dbFailOnErrors) {
             mysql_close( connection );
             exit( 1 );

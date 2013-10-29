@@ -19,8 +19,8 @@
 #include <assert.h>
 
 #include "device.h"
+#include "logger.h"
 #include "helpers.h"
-// #include "utlist.h"
 
 
 //
@@ -60,7 +60,7 @@ HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress)
 {
     HomeHeartBeatDevice_t   *recPtr = NULL;
     
-    // debug_print( "===================================== MALLOC [%s] =============================\n", macAddress );
+    // Logger_LogDebug( "===================================== MALLOC [%s] =============================\n", macAddress );
     //
     //  We've discovered a new Open/Close Sensor attached to our system. After we allocate
     //  a record for the O/C Sensor, we call this function which allocates space for
@@ -100,7 +100,7 @@ HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceLis
     int                         numDevices = 0;
     HomeHeartBeatDevice_t       *elementPtr = NULL;
     LL_COUNT( deviceListHead, elementPtr, numDevices );             // numDevices is not passed by reference here
-    debug_print( "Looking for [%s]. here are %d devices in the device list.\n", macAddress, numDevices );
+    Logger_LogDebug( "Looking for [%s]. here are %d devices in the device list.\n", macAddress, numDevices );
             
     //
     // The top call was just for fun.  Iterate over the list looking for a macAdress Match
@@ -111,7 +111,7 @@ HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceLis
             HomeHeartBeatDevice_t   *tmpPtr = elementPtr;
             
             if (1) {
-            debug_print( "Found a matching device matching this MAC address [%s]. State Record ID: %d\n", 
+            Logger_LogDebug( "Found a matching device matching this MAC address [%s]. State Record ID: %d\n", 
                     tmpPtr->macAddress,
                     tmpPtr->stateRecordID );
             }
@@ -121,7 +121,7 @@ HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceLis
     
     //
     // If we made it here - we didn't find it...
-    debug_print( "No matching Device was found. macAddress [%s] -must be a new device!\n", macAddress );
+    Logger_LogDebug( "No matching Device was found. macAddress [%s] -must be a new device!\n", macAddress );
     return NULL;
 }
 
@@ -180,7 +180,7 @@ int     Device_parseTokens (HomeHeartBeatDevice_t *deviceRecPtr, char token[NUM_
 int     Device_parseStateRecordID (char *token)
 {
     assert( token != NULL );
-    //debug_print( "Entering. Token [%s]\n", token );
+    //Logger_LogDebug( "Entering. Token [%s]\n", token );
     
     
     //
@@ -197,7 +197,7 @@ int     Device_parseStateRecordID (char *token)
 int Device_parseZigbeeBindingID (char *token)
 {
     assert( token != NULL );
-    debug_print( "Entering. Token [%s]\n", token );
+    // Logger_LogDebug( "Entering. Token [%s]\n", token );
     
     int zigbeeID = hexStringToInt( token );
     return zigbeeID;
@@ -207,7 +207,7 @@ int Device_parseZigbeeBindingID (char *token)
 int Device_parseDeviceState (char *token)
 {
     assert( token != NULL );
-    //debug_print( "Entering. Token [%s]\n", token );
+    //Logger_LogDebug( "Entering. Token [%s]\n", token );
     
     int deviceState = hexStringToInt( token );
     return deviceState;
@@ -217,7 +217,7 @@ int Device_parseDeviceState (char *token)
 int     Device_parseDeviceCapabilties (char *token)
 {
     assert( token != NULL );
-    //debug_print( "Entering. Token [%s]\n", token );
+    //Logger_LogDebug( "Entering. Token [%s]\n", token );
 
     int capFlags = hexStringToInt( token );
     /* from Kolinahr
@@ -237,10 +237,10 @@ int     Device_parseDeviceCapabilties (char *token)
     int isHomeKey       = (capFlags & 0x40);
     int isACPowered     = (capFlags & 0x80);
 
-    //debug_print( "Token [%s], value: %d\n", &token[ len - 2 ], capFlags );
-    //debug_print( "isSensor: %s isSensor(2): %s isHomeKey: %s\n",
+    //Logger_LogDebug( "Token [%s], value: %d\n", &token[ len - 2 ], capFlags );
+    //Logger_LogDebug( "isSensor: %s isSensor(2): %s isHomeKey: %s\n",
     //             (isSensor ? "YES" : "NO"), (isSensor2 ? "YES" : "NO"), (isHomeKey ? "YES" : "NO") );
-    //debug_print( "isBaseStation: %s canReceive: %s isACPowered: %s\n",
+    //Logger_LogDebug( "isBaseStation: %s canReceive: %s isACPowered: %s\n",
     //            (isBaseStaton ? "YES" : "NO"), (canReceive ? "YES" : "NO"), (isACPowered ? "YES" : "NO") );
 
     return capFlags;
@@ -250,7 +250,7 @@ int     Device_parseDeviceCapabilties (char *token)
 int     Device_parseDeviceType (char *token)
 {
     assert( token != NULL );
-    //debug_print( "Entering. Token [%s]\n", token );
+    //Logger_LogDebug( "Entering. Token [%s]\n", token );
 
     int deviceType = hexStringToInt( token );
 
@@ -470,7 +470,7 @@ char    *Device_parseMacAddress (char *token)
     // [00 0D 6F   00 00 01 02 28]
     long  macValue = strtol( &token[ 6 ], NULL, 16 );
     
-    //debug_print( "MAC value [%s] %lx\n", &token[ 6 ], macValue );
+    //Logger_LogDebug( "MAC value [%s] %lx\n", &token[ 6 ], macValue );
     
     return ( &token[ 6 ] );
 }
@@ -553,7 +553,7 @@ int     Device_parseAnyTimerValue (char *token)
                  (minutes * 60L) +
                  seconds;
     
-    //debug_print( "----------totalSeconds: %ld    days %d , hours %d, minutes: %d, seconds: %d\n", timerValue, days, hours, minutes, seconds );
+    //Logger_LogDebug( "----------totalSeconds: %ld    days %d , hours %d, minutes: %d, seconds: %d\n", timerValue, days, hours, minutes, seconds );
     
     return timerValue;
 }

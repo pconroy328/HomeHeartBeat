@@ -16,7 +16,7 @@
 #include "database.h"
 #include "device.h"
 #include "mqtt.h"
-#include "helpers.h"
+#include "logger.h"
 #include "serialport.h"
 
 
@@ -33,7 +33,6 @@ extern      void IniFile_readIniFile( HomeHeartBeatSystem_t *aSystem );
 // Forward declarations
 static  int                     getOneStateRecord( char *, int );
 static  HomeHeartBeatDevice_t   *parseOneStateRecord( char *receiveBuf, int numRead );
-//static  HomeHeartBeatDevice_t   *parseOneStateRecordA( char *receiveBuf, int numRead );
 static  HomeHeartBeatDevice_t   *parseOneStateRecord( char *receiveBuf, int numRead );
 static  int                     tokenizeStateData( char *receiveBuf, int numRead, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH] );
 static  void                    releaseMemory( void );
@@ -49,13 +48,14 @@ static  HomeHeartBeatSystem_t   *aSystem;
 // -----------------------------------------------------------------------------
 void    HomeHeartBeatSystem_initialize ()
 {
-    debug_print( "entering\n", 0 );
+    // log4c_category_debug( log, "entering\n", 0 );
     
     //
     //  We're bringing up a whole new system - initialize everything
     aSystem = malloc( sizeof( HomeHeartBeatSystem_t ) );            // grab some space
-    if (aSystem == NULL)
-        haltAndCatchFire( "Out of memory trying to initialize the system" );
+    if (aSystem == NULL) {
+        Logger_LogFatal( "Out of memory trying to initialize the system. We must exit.\n" );
+    }
     
     //
     // Initialize some necessary fields.
@@ -98,12 +98,15 @@ void    HomeHeartBeatSystem_initialize ()
         MQTT_setDefaults( aSystem, aSystem->MQTTParameters.mqttBrokerHost );
         MQTT_initialize( aSystem );
     }    
+    
+    //
+    // Log4C initialization
+    Logger_LogInfo( "HomeHeartBeat System initialized. Starting up.\n" );
 }
 
 // -----------------------------------------------------------------------------
 void    HomeHeartBeatSystem_shutdown ()
 {
-    debug_print( "entering\n", 0 );
     SerialPort_Close( aSystem->hhbFD );
     aSystem->portOpen = FALSE;
 
@@ -111,21 +114,24 @@ void    HomeHeartBeatSystem_shutdown ()
         MQTT_teardown();
     }
     
-    Database_closeDatabase();    
+    Database_closeDatabase();
     releaseMemory();
+    Logger_LogInfo( "HomeHeartBeat System shut down complete.\n" );
 }
 
 // -----------------------------------------------------------------------------
 void    HomeHeartBeatSystem_setPortName (char *portName)
 {
-    debug_print( "entering. portName: %s\n", portName );
+    Logger_FunctionStart( portName );
+    Logger_LogDebug( "portName ; [%s]\n", portName );
     strncpy( aSystem->portName, portName, sizeof aSystem->portName );
 }
 
 // -----------------------------------------------------------------------------
 void    HomeHeartBeatSystem_openPort (char *portName)
 {
-    debug_print( "entering. portName: %s\n", portName );
+    Logger_FunctionStart( portName );
+    Logger_LogDebug( "portName ; [%s]\n", portName );
     
     if (portName != NULL)
         HomeHeartBeatSystem_setPortName( portName );
@@ -160,12 +166,10 @@ void    HomeHeartBeatSystem_eventLoop ()
     //
     char    rawStateRecord[ 256 ];                  // should be 4x bigger than what we need for one state record
     
-    
-    
-    debug_print( "entering\n", 0 );
+    Logger_FunctionStart();
 
     if (!aSystem->portOpen) {
-        fprintf( stderr, "HHB Port is not open - cannot start event loop" );
+        Logger_LogError( "HHB Port is not open - cannot start event loop\n" );
         return;
     }
     
@@ -176,7 +180,7 @@ void    HomeHeartBeatSystem_eventLoop ()
         //
         // Sometimes we pick up the STATE=NEW message from the Base Station - we can ignore that
         if (strstr( rawStateRecord, "NEW" ) != NULL) {
-            debug_print( "Detected STATE=NEW message from device.  Ignoring!", 0 );
+            Logger_LogDebug( "Detected STATE=NEW message from device.  Ignoring!", 0 );
             continue;
         }
         
@@ -224,7 +228,7 @@ void    HomeHeartBeatSystem_eventLoop ()
 static
 void    turnOffModem ()
 {
-    debug_print( "Attempting to turn off the HHBsystem modem.\n", 0 );
+    Logger_LogDebug( "Attempting to turn off the HHB System modem.\n", 0 );
     //
     //  No Modem - send 'M' until we get "MODEM=0
     //
@@ -244,7 +248,7 @@ void    turnOffModem ()
         // Get the data back from the HHB
         memset( resultBuf, '\0', sizeof resultBuf );
         numRead = SerialPort_ReadLine( aSystem->hhbFD, resultBuf, sizeof resultBuf );
-        // debug_print( "read returned %d bytes. Data [%s]\n", numRead, rawStateRecord );
+        // log4c_category_debug( log, "read returned %d bytes. Data [%s]\n", numRead, rawStateRecord );
         
         if (numRead > 0 && strstr( resultBuf, "MODEM=0" ) != NULL)
             modemOn = FALSE;
@@ -253,14 +257,14 @@ void    turnOffModem ()
     }
     
     if (modemOn)
-        warnAndKeepGoing( "WARNING - Unable to turn off HHB Modem!\n" );
+        Logger_LogWarning( "WARNING - Unable to turn off HHB System Modem!\n" );
 }
 
 // -----------------------------------------------------------------------------
 static
 void    turnOffDebug ()
 {
-    debug_print( "Attempting to turn off the HHBsystem debug mode.\n", 0 );
+    Logger_LogDebug( "Attempting to turn off the HHB System debug mode.\n", 0 );
     //
     //  Debug Off - send 'a' until we get DBG=0
     //
@@ -280,7 +284,7 @@ void    turnOffDebug ()
         // Get the data back from the HHB
         memset( resultBuf, '\0', sizeof resultBuf );
         numRead = SerialPort_ReadLine( aSystem->hhbFD, resultBuf, sizeof resultBuf );
-        // debug_print( "read returned %d bytes. Data [%s]\n", numRead, rawStateRecord );
+        // log4c_category_debug( log, "read returned %d bytes. Data [%s]\n", numRead, rawStateRecord );
         
         if (numRead > 0 && strstr( resultBuf, "DBG=0" ) != NULL)
             debugOn = FALSE;
@@ -289,7 +293,7 @@ void    turnOffDebug ()
     }
     
     if (debugOn)
-        warnAndKeepGoing( "WARNING - Unable to turn off HHB Debug Mode!\n" );
+        Logger_LogWarning( "WARNING - Unable to turn off HHB System Debug Mode!\n" );
 }
 
 // ----------------------------------------------------------------------------
@@ -300,7 +304,7 @@ static int  getOneStateRecord (char *rawStateRecord, int bufSize)
 
     assert( rawStateRecord != NULL );
     assert( bufSize > 0 );
-    // debug_print( "entering\n", 0 );
+    Logger_FunctionStart();
     
     //
     // Be good - zero things out
@@ -318,7 +322,7 @@ static int  getOneStateRecord (char *rawStateRecord, int bufSize)
     //
     // Get the data back from the HHB
     numRead = SerialPort_ReadLine( aSystem->hhbFD, rawStateRecord, bufSize );
-    // debug_print( "read returned %d bytes. Data [%s]\n", numRead, rawStateRecord );
+    Logger_LogDebug( "SerialPort_ReadLine returned %d bytes. Data [%s]\n", numRead, rawStateRecord );
     
     return numRead;
 }   // getOneStateRecord
@@ -328,7 +332,7 @@ static int  getOneStateRecord (char *rawStateRecord, int bufSize)
 static
 void    releaseMemory()
 {
-    debug_print( "entering\n", 0 );
+    Logger_FunctionStart();
     
     HomeHeartBeatDevice_t   *elementPtr1;
     HomeHeartBeatDevice_t   *elementPtr2;
@@ -336,7 +340,7 @@ void    releaseMemory()
     LL_FOREACH_SAFE( aSystem->deviceListHead, elementPtr1, elementPtr2 ) {
         
         int deviceType = elementPtr1->deviceType;
-        debug_print( "Freeing memory for device [%s] [%s]\n", elementPtr1->deviceName, elementPtr1->macAddress );
+        Logger_LogDebug( "Freeing memory for device [%s] [%s]\n", elementPtr1->deviceName, elementPtr1->macAddress );
         
         switch (deviceType) {
             case DT_BASE_STATION:       /* nothing needed */ ;  break;
@@ -356,10 +360,11 @@ void    releaseMemory()
         LL_DELETE( aSystem->deviceListHead, elementPtr1 );
     }
     
-    debug_print( "Freeing memory for HHB System\n", 0 );
+    Logger_LogDebug( "Freeing memory for HHB System\n", 0 );
     free( aSystem );
 } 
 
+#if 0
 // -----------------------------------------------------------------------------
 static
 HomeHeartBeatDevice_t   *addNewDevice (HomeHeartBeatDevice_t *deviceRecPtr)
@@ -381,7 +386,7 @@ int     updateExistingDevice (int indexPosition, char token[NUM_TOKENS_PER_STATE
 {
     //
     //
-    debug_print( "Updating device at position [%d]\n", indexPosition );
+    Logger_LogDebug( "Updating device at position [%d]\n", indexPosition );
     return Device_parseTokens( &(aSystem->deviceArray[ indexPosition ]), token );     // fill in the fields!
 }
 
@@ -397,21 +402,24 @@ HomeHeartBeatDevice_t   *findDevice (char *macAddress, int *indexPosition)
         
         if (strncmp( macAddress, aSystem->deviceArray[ i ].macAddress, MAX_MAC_ADDRESS_SIZE ) == 0) {
             *indexPosition = i;
-            debug_print( "Found matching device at position [%d]\n", *indexPosition );
+            Logger_LogDebug( "Found matching device at position [%d]\n", *indexPosition );
             return &(aSystem->deviceArray[ i ]);
         }
         
     }
     
-    debug_print( "Not found!\n", 0 );
+    Logger_LogDebug( "Not found!\n", 0 );
     return NULL;            
 }
+#endif 
 
 // -----------------------------------------------------------------------------
 static
 HomeHeartBeatDevice_t   *findDeviceInList (char *macAddress)
 {
-    debug_print( "Looking for a device with a MAC address of [%s]\n", macAddress );
+    Logger_FunctionStart();
+    
+    Logger_LogDebug( "Looking for a device in out list with a MAC address of [%s]\n", macAddress );
     //
     //
     int                     i = 0;
@@ -422,19 +430,19 @@ HomeHeartBeatDevice_t   *findDeviceInList (char *macAddress)
     LL_FOREACH( aSystem->deviceListHead, elementPtr ) {
         char    *listMac = &(elementPtr->macAddress[ 0 ]);
         
-        debug_print( "   [%d] List has: [%s], looking for: [%s]\n", i, listMac, macAddress );
+        Logger_LogDebug( "   [%d] Element in List has: [%s], looking for: [%s]\n", i, listMac, macAddress );
         
         if (strncmp( listMac, macAddress, MAX_MAC_ADDRESS_SIZE ) == 0) {
-            debug_print( " == FOUND!\n", 0 );
+            Logger_LogDebug( "       FOUND!\n" );
             return elementPtr;
         } else {
-            debug_print( "\n", 0 );
+            ;
         }
         
         i += 1;
     }
     
-    debug_print( "Not found! Must be a new device!\n", 0 );
+    Logger_LogDebug( "Not found! Must be a new device!\n", 0 );
     return NULL;            
 }
 
@@ -444,7 +452,10 @@ HomeHeartBeatDevice_t   *addNewDeviceToList (HomeHeartBeatDevice_t *deviceRecPtr
 {
     //
     //
-    debug_print( "Adding a new device to the list. Mac :[%s]\n", deviceRecPtr->macAddress );
+    Logger_LogInfo( "New HHB Device Detected. Name : [%s], MAC Address : [%s], Type : %d\n", 
+            deviceRecPtr->deviceName, 
+            deviceRecPtr->macAddress,
+            deviceRecPtr->deviceType );
     
     LL_APPEND( aSystem->deviceListHead, deviceRecPtr );
     return NULL;
@@ -456,7 +467,10 @@ int     updateExistingDeviceInList (HomeHeartBeatDevice_t *deviceRecPtr, char to
 {
     //
     //
-    debug_print( "Updating device in the list\n", 0 );
+    Logger_LogDebug( "Updating existing HHB Device. Name : [%s], MAC Address : [%s], Type : %d\n", 
+            deviceRecPtr->deviceName, 
+            deviceRecPtr->macAddress,
+            deviceRecPtr->deviceType );
     return Device_parseTokens( deviceRecPtr, token );     // fill in the fields!
 }
 
@@ -469,7 +483,7 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
     char                    token[ NUM_TOKENS_PER_STATE_CMD ][ MAX_TOKEN_LENGTH ];           
     HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
     
-    debug_print( "entering -----------------------------------------------------------\n", 0 );
+    Logger_FunctionStart();
 
     //
     //  Convert serial port stream into tokens! We know the device sends NUM_TOKENS_PER_STATE_CMD!
@@ -480,8 +494,10 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
     memset( token, '\0', sizeof token );
     
     int numTokensParsed = tokenizeStateData( receiveBuf, numRead, token );
-    if (numTokensParsed != NUM_TOKENS_PER_STATE_CMD)
+    if (numTokensParsed != NUM_TOKENS_PER_STATE_CMD) {
+        Logger_LogWarning( "Data error. Did not parse correct number of tokens from HHB System." );
         return NULL;
+    }
     
  
     //
@@ -493,7 +509,7 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
     char    *macAddress = Device_parseMacAddress( token[ 15 ] );
     
     if (deviceType == 1 || deviceType == 16) {
-        debug_print( "Received a state record for the Base Station or Modem. Ignoring.\n", 0 );
+        Logger_LogDebug( "Received a state record for the Base Station or Modem. Ignoring.\n" );
         return NULL;
     }
    
@@ -537,20 +553,19 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
             break;
         case DT_WATER_LEAK_SENSOR:  WaterLeak_parseOneStateRecord( deviceRecPtr );
                                     break;
-        case DT_REMINDER_DEVICE:
-        case DT_ATTENTION_DEVICE:
-        case DT_MODEM:
+        case DT_REMINDER_DEVICE:    break;
+        case DT_ATTENTION_DEVICE:   break;
+        case DT_MODEM:              break;
         case DT_MOTION_SENSOR:      Motion_parseOneStateRecord( deviceRecPtr );
                                     break;
         case DT_TILT_SENSOR:
             break;
 
         default:
-            warnAndKeepGoing( "Unrecognized device type just came through" );
+            Logger_LogWarning( "Unrecognized device type just came through. Type : %d\n", deviceRecPtr->deviceType );
             break;
     }
 
-    debug_print( "exiting -----------------------------------------------------\n\n\n", 0 );
     return deviceRecPtr;
 }
 
@@ -558,7 +573,8 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
 static
 int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH])
 {
-   debug_print( "entering. receiveBuf[%s], numRead: %d\n", receiveBuf, numRead );
+    Logger_FunctionStart();
+    Logger_LogDebug( "Tokenizing receiveBuf : [%s], numRead : %d\n", receiveBuf, numRead );
     
     /*
      *  A retrieved state record has the following format:
@@ -613,6 +629,43 @@ int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_P
     
     //for (int j = 0; j < NUM_TOKENS_PER_STATE_CMD; j +=1)
     //    printf( ">>>>>>>>> [%s]\n", token[ j ] );
+    
+    //
+    //  Well - that's a new one - I dropped a character in the middle of the stream.
+    //  A four byte field had only three.  I guess I should verify that the tokens are the
+    //  appropriate length...
+    
+    //  Looking at a state record:
+    //  Token #     Length
+    //      0       2
+    //      1       2
+    //      2       4
+    //      3       4
+    //      4       2
+    //      5       2
+    //      6       2
+    //      7       2
+    //      8       4
+    //      9       2
+    //     10       4 
+    //     11       2
+    //     12       2
+    //     13       8
+    //     14       2
+    //     15       Varies (mac address
+    //     16       Varies (dev name)
+    //
+    int tokenLengths[ 15 ] = { 2, 2, 4, 4, 2, 2, 2, 2, 4, 2, 4, 2, 2, 8, 2 };
+    
+    for (int j = 0; j < 15; j += 1)
+        if (strlen( token[ j ] ) != tokenLengths[ j ]) {
+            Logger_LogDebug( "Warning - token[%d] is [%s]. Actual length: %d, should be: %d\n",
+                    j, token[ j ], strlen( token[ j ] ), tokenLengths[ j ] );
+            //
+            // return a value that should cause the whole line to be discarded
+            return 0;       
+        }
+    
     return NUM_TOKENS_PER_STATE_CMD;
 }
 

@@ -6,6 +6,7 @@
 #include <configIO.h>
 #include "hhb_structures.h"
 #include "helpers.h"
+#include "homeheartbeat.h"
 
 static  char    *INIFileName;
 

@@ -1,6 +1,6 @@
 /* 
  * File:   device.c
- * Author: pconroy
+ * Author: patrick conroy
  *
  * Created on September 9, 2013, 10:28 AM
  * 
@@ -11,6 +11,7 @@
  * 
  *  All of these devices have some things in common and that will be captured 
  *  here
+ *  * (C) 2013 Patrick Conroy
  */
 
 #include <stdio.h>

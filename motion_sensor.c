@@ -1,3 +1,14 @@
+/* 
+ * File:   motion_sensor.c
+ * Author: patrick conroy
+ *
+ * Created on September 17, 2013, 10:03 AM
+ * 
+ * Routines related to a Eaton Home Heartbeat Motion Sensor device
+ * (C) 2013 Patrick Conroy
+ */
+
+
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>

@@ -3,6 +3,7 @@
  * Author: patrick.conroy
  *
  * Created on August 27, 2013, 8:50 AM
+ * (C) 2013 Patrick Conroy
  */
 
 #include <stdio.h>

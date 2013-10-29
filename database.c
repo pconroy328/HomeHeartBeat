@@ -1,3 +1,12 @@
+/* 
+ * File:   database.c
+ * Author: patrick.conroy
+ *
+ * Created on September 3, 2013, 2:01 PM
+ * (C) 2013 Patrick Conroy
+ */
+
+
 // -----------------------------------------------------------------------------
 //
 //

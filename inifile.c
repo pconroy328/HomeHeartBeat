@@ -1,3 +1,14 @@
+/* 
+ * File:   inifile.c
+ * Author: patrick conroy
+ *
+ * Created on September 17, 2013, 10:03 AM
+ * 
+ * NB:  This relies on a inifile reader library I built some time ago.
+ *  Just comment out calls to IniFile_readIniFile().
+ * 
+ * (C) 2013 Patrick Conroy
+ */
 
 
 #include <stdio.h>

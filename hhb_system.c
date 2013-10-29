@@ -1,3 +1,12 @@
+/* 
+ * File:   hhb_structures.c
+ * Author: patrick conroy
+ *
+ * Created on September 17, 2013, 10:03 AM
+ * (C) 2013 Patrick Conroy
+ */
+
+
 //------------------------------------------------------------------------------
 //
 // The "System" is a collection of sensors

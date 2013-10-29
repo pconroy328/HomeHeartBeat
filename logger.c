@@ -1,3 +1,14 @@
+/* 
+ * File:   logger.c
+ * Author: patrick conroy
+ *
+ * Created on September 17, 2013, 10:03 AM
+ * 
+ *  Get things ready for a real logging framework.
+ * (C) 2013 Patrick Conroy
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,9 +21,8 @@ static  int    Logger_Log (char *format, char *level, ...);
 // ----------------------------------------------------------------------------
 void    Logger_Initialize ()
 {
-     // logCat = log4c_category_get( "homeheartbeat" );
+    // logCat = log4c_category_get( "homeheartbeat" );
     // (void) log4c_init();
-  
 }
 
 // ----------------------------------------------------------------------------
@@ -84,18 +94,6 @@ void    Logger_LogInfo (char *format, ... )
     
     fflush( stderr );
 }
-
-#if 0
-void    Logger_LogFunctionStart (char *format, ...)
-{
-    
-}
-
-void    Logger_LogFunctionEnd (char *format, ...)
-{
-    Logger_LogDebug( 
-}
-#endif
 
 // ----------------------------------------------------------------------------
 static  int    Logger_Log (char *level, char *format, ...)

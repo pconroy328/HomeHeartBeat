@@ -1,3 +1,14 @@
+/* 
+ * File:   serialport.c
+ * Author: patrick conroy
+ *
+ * Created on September 17, 2013, 10:03 AM
+ * 
+ * Routines that do Serial Port stuff
+ * (C) 2013 Patrick Conroy
+ */
+
+
 // -----------------------------------------------------------------------------
 //
 //  The Eaton Home Heartbeat (HHB) system has a USB port on the side of it for a
@@ -467,8 +478,3 @@ int     SerialPort_ReadLine (int portID, char *dataBuffer, int bufSize)
     return totalRead;
 }   // SerialPort_ReadLine
 
-
-
-
-
-//---------------------------------------------

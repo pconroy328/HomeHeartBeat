@@ -1,3 +1,12 @@
+/* 
+ * File:   mqtt.c
+ * Author: patrick conroy
+ *
+ * Created on September 17, 2013, 10:03 AM
+ * (C) 2013 Patrick Conroy
+ */
+
+
 // ----------------------------------------------------------------------------
 //
 //  mqtt.c      code to connect to a MQTT broker and send off events

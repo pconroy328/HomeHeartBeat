@@ -32,6 +32,8 @@
 #include "openclose_sensor.h"
 #include "waterleak_sensor.h"
 #include "motion_sensor.h"
+#include "tiltsensor.h"
+#include "powersensor.h"
 #include "utlist.h"
 
 //
@@ -357,12 +359,12 @@ void    releaseMemory()
             
             case DT_HOME_KEY:           /* free( elementPtr1->hkDevice ) */ ;  break;
             case DT_OPEN_CLOSE_SENSOR:  free( elementPtr1->ocSensor );      break;
-            case DT_POWER_SENSOR:       /* free( elementPtr1->powSensor ) */ ;  break;
+            case DT_POWER_SENSOR:       free( elementPtr1->psSensor );  break;
             case DT_WATER_LEAK_SENSOR:  free( elementPtr1->wlSensor );      break;
-            case DT_REMINDER_DEVICE:    /* free( elementPtr1->powSensor ) */ ;  break;
-            case DT_ATTENTION_DEVICE:   /* free( elementPtr1->powSensor ) */ ;  break;
+            case DT_REMINDER_DEVICE:    /* free( elementPtr1->remSensor ) */ ;  break;
+            case DT_ATTENTION_DEVICE:   /* free( elementPtr1->atSensor ) */ ;  break;
             case DT_MOTION_SENSOR:      free( elementPtr1->motSensor );      break;
-            case DT_TILT_SENSOR:        /* free( elementPtr1->powSensor ) */ ;  break;
+            case DT_TILT_SENSOR:        free( elementPtr1->tsSensor );      break;
         
         }
         
@@ -372,55 +374,6 @@ void    releaseMemory()
     Logger_LogDebug( "Freeing memory for HHB System\n", 0 );
     free( aSystem );
 } 
-
-#if 0
-// -----------------------------------------------------------------------------
-static
-HomeHeartBeatDevice_t   *addNewDevice (HomeHeartBeatDevice_t *deviceRecPtr)
-{
-    //
-    //
-    if (aSystem->deviceArrayIndex >= 0 && aSystem->deviceArrayIndex < MAX_DEVICES_IN_SYSTEM) {
-        aSystem->deviceArray[ aSystem->deviceArrayIndex ] = *deviceRecPtr;
-        aSystem->deviceArrayIndex += 1;
-        return deviceRecPtr;
-    }
-    
-    return NULL;
-}
-
-// -----------------------------------------------------------------------------
-static
-int     updateExistingDevice (int indexPosition, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH])
-{
-    //
-    //
-    Logger_LogDebug( "Updating device at position [%d]\n", indexPosition );
-    return Device_parseTokens( &(aSystem->deviceArray[ indexPosition ]), token );     // fill in the fields!
-}
-
-// -----------------------------------------------------------------------------
-static
-HomeHeartBeatDevice_t   *findDevice (char *macAddress, int *indexPosition)
-{
-    //
-    //
-    *indexPosition = -1;
-    int     i = 0;
-    for (i = 0; i < aSystem->deviceArrayIndex; i += 1) {
-        
-        if (strncmp( macAddress, aSystem->deviceArray[ i ].macAddress, MAX_MAC_ADDRESS_SIZE ) == 0) {
-            *indexPosition = i;
-            Logger_LogDebug( "Found matching device at position [%d]\n", *indexPosition );
-            return &(aSystem->deviceArray[ i ]);
-        }
-        
-    }
-    
-    Logger_LogDebug( "Not found!\n", 0 );
-    return NULL;            
-}
-#endif 
 
 // -----------------------------------------------------------------------------
 static
@@ -558,8 +511,8 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
             break; 
         case DT_OPEN_CLOSE_SENSOR:  OpenClose_parseOneStateRecord( deviceRecPtr );
                                     break;
-        case DT_POWER_SENSOR:     
-            break;
+        case DT_POWER_SENSOR:       PowerSensor_parseOneStateRecord( deviceRecPtr );
+                                    break;
         case DT_WATER_LEAK_SENSOR:  WaterLeak_parseOneStateRecord( deviceRecPtr );
                                     break;
         case DT_REMINDER_DEVICE:    break;
@@ -567,8 +520,8 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
         case DT_MODEM:              break;
         case DT_MOTION_SENSOR:      Motion_parseOneStateRecord( deviceRecPtr );
                                     break;
-        case DT_TILT_SENSOR:
-            break;
+        case DT_TILT_SENSOR:        TiltSensor_parseOneStateRecord( deviceRecPtr );
+                                    break;
 
         default:
             Logger_LogWarning( "Unrecognized device type just came through. Type : %d\n", deviceRecPtr->deviceType );

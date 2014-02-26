@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="89">
+<configurationDescriptor version="90">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
@@ -13,7 +13,9 @@
       <itemPath>motion_sensor.h</itemPath>
       <itemPath>mqtt.h</itemPath>
       <itemPath>openclose_sensor.h</itemPath>
+      <itemPath>/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.h</itemPath>
       <itemPath>serialport.h</itemPath>
+      <itemPath>tiltsensor.h</itemPath>
       <itemPath>utlist.h</itemPath>
       <itemPath>waterleak_sensor.h</itemPath>
     </logicalFolder>
@@ -34,7 +36,9 @@
       <itemPath>motion_sensor.c</itemPath>
       <itemPath>mqtt.c</itemPath>
       <itemPath>openclose_sensor.c</itemPath>
+      <itemPath>/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.c</itemPath>
       <itemPath>serialport.c</itemPath>
+      <itemPath>tiltsensor.c</itemPath>
       <itemPath>waterleak_sensor.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -53,32 +57,29 @@
   <confs>
     <conf name="Debug" type="1">
       <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>GNU_C99|GNU</compilerSet>
+        <compilerSet>C99|GNU</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibLibItem>mosquitto</linkerLibLibItem>
-            <linkerLibProjectItem>
-              <makeArtifact PL="../IniFiler"
-                            CT="3"
-                            CN="Debug"
-                            AC="false"
-                            BL="true"
-                            WD="../IniFiler"
-                            BC="${MAKE}  -f Makefile CONF=Debug"
-                            CC="${MAKE}  -f Makefile CONF=Debug clean"
-                            OP="${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libinifiler.a">
-              </makeArtifact>
-            </linkerLibProjectItem>
             <linkerLibLibItem>mysqlclient</linkerLibLibItem>
-            <linkerLibFileItem>/usr/lib/liblog4c.so</linkerLibFileItem>
+            <linkerLibLibItem>inifiler</linkerLibLibItem>
+            <linkerLibLibItem>mosquitto</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="database.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="database.h" ex="false" tool="3" flavor2="0">
@@ -121,6 +122,10 @@
       </item>
       <item path="serialport.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="tiltsensor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="tiltsensor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="utlist.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="waterleak_sensor.c" ex="false" tool="0" flavor2="0">
@@ -130,7 +135,6 @@
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
@@ -149,6 +153,16 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="database.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="database.h" ex="false" tool="3" flavor2="0">
@@ -190,6 +204,10 @@
       <item path="serialport.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="serialport.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tiltsensor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="tiltsensor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="utlist.h" ex="false" tool="3" flavor2="0">
       </item>

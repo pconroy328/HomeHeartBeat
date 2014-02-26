@@ -21,7 +21,7 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU_C99-Linux-x86
+CND_PLATFORM=C99-Linux-x86
 CND_DLIB_EXT=so
 CND_CONF=Debug
 CND_DISTDIR=dist
@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/1104725590/powersensor.o \
 	${OBJECTDIR}/database.o \
 	${OBJECTDIR}/device.o \
 	${OBJECTDIR}/helpers.o \
@@ -46,6 +47,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/mqtt.o \
 	${OBJECTDIR}/openclose_sensor.o \
 	${OBJECTDIR}/serialport.o \
+	${OBJECTDIR}/tiltsensor.o \
 	${OBJECTDIR}/waterleak_sensor.o
 
 
@@ -63,83 +65,88 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lmosquitto ../IniFiler/dist/Debug/GNU_C99-Linux-x86/libinifiler.a -lmysqlclient /usr/lib/liblog4c.so
+LDLIBSOPTIONS=-lmysqlclient -linifiler -lmosquitto
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
 	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: ../IniFiler/dist/Debug/GNU_C99-Linux-x86/libinifiler.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: /usr/lib/liblog4c.so
-
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
+${OBJECTDIR}/_ext/1104725590/powersensor.o: /home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.c 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1104725590
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1104725590/powersensor.o /home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.c
+
 ${OBJECTDIR}/database.o: database.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/database.o database.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/database.o database.c
 
 ${OBJECTDIR}/device.o: device.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/device.o device.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/device.o device.c
 
 ${OBJECTDIR}/helpers.o: helpers.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/helpers.o helpers.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/helpers.o helpers.c
 
 ${OBJECTDIR}/hhb_system.o: hhb_system.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/hhb_system.o hhb_system.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hhb_system.o hhb_system.c
 
 ${OBJECTDIR}/inifile.o: inifile.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/inifile.o inifile.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/inifile.o inifile.c
 
 ${OBJECTDIR}/logger.o: logger.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/logger.o logger.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/logger.o logger.c
 
 ${OBJECTDIR}/main.o: main.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
 
 ${OBJECTDIR}/motion_sensor.o: motion_sensor.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/motion_sensor.o motion_sensor.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/motion_sensor.o motion_sensor.c
 
 ${OBJECTDIR}/mqtt.o: mqtt.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/mqtt.o mqtt.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mqtt.o mqtt.c
 
 ${OBJECTDIR}/openclose_sensor.o: openclose_sensor.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/openclose_sensor.o openclose_sensor.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/openclose_sensor.o openclose_sensor.c
 
 ${OBJECTDIR}/serialport.o: serialport.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/serialport.o serialport.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/serialport.o serialport.c
+
+${OBJECTDIR}/tiltsensor.o: tiltsensor.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/tiltsensor.o tiltsensor.c
 
 ${OBJECTDIR}/waterleak_sensor.o: waterleak_sensor.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/waterleak_sensor.o waterleak_sensor.c
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/waterleak_sensor.o waterleak_sensor.c
 
 # Subprojects
 .build-subprojects:
-	cd ../IniFiler && ${MAKE}  -f Makefile CONF=Debug
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
@@ -148,7 +155,6 @@ ${OBJECTDIR}/waterleak_sensor.o: waterleak_sensor.c
 
 # Subprojects
 .clean-subprojects:
-	cd ../IniFiler && ${MAKE}  -f Makefile CONF=Debug clean
 
 # Enable dependency checking
 .dep.inc: .depcheck-impl

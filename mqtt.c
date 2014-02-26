@@ -15,6 +15,12 @@
 //      get the older versioN!  (I did). Follow the instructions on mosquitto.org
 //      to install the latest version
 //
+
+//
+// Don't forget to download and build mosquitto from source!
+//      Don't forget you'll need libssl-dev from Synaptic
+//      And g++ (sudo apt-get install g++)
+
 #include <mosquitto.h>
 #include <stdio.h>
 #include <string.h>
@@ -250,6 +256,22 @@ int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
         if (deviceRecPtr->ocSensor->isOpen && deviceRecPtr->ocSensor->alarmOnClose)
             return 0;
         
+    } else if (deviceRecPtr->deviceType == DT_TILT_SENSOR) {
+        sensorType = "TILT SENSOR";
+        state = "???";
+        
+        if (deviceRecPtr->tsSensor->isOpen && deviceRecPtr->tsSensor->alarmOnOpen)
+            state = "OPEN";
+        if (!deviceRecPtr->tsSensor->isOpen && deviceRecPtr->tsSensor->alarmOnClose)
+            state = "CLOSE";
+
+        //
+        // Early exit conditions - transitioned to close but we alarm on open - ignore
+        if (!deviceRecPtr->tsSensor->isOpen && deviceRecPtr->tsSensor->alarmOnOpen)
+            return 0;
+        // transitioned to open but we alarm on close - ignore
+        if (deviceRecPtr->tsSensor->isOpen && deviceRecPtr->tsSensor->alarmOnClose)
+            return 0;
         
     } else if (deviceRecPtr->deviceType == DT_MOTION_SENSOR) {
         sensorType = "MOTION SENSOR";
@@ -284,6 +306,23 @@ int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
             return 0;
         // transitioned to WET but we alarm on DRY - ignore
         if (deviceRecPtr->wlSensor->wetnessDetected && deviceRecPtr->wlSensor->alarmOnDry)
+            return 0;
+
+    } else if (deviceRecPtr->deviceType == DT_POWER_SENSOR) {
+        sensorType = "POWER SENSOR";
+        state = "???";
+        
+        if (deviceRecPtr->psSensor->isPowerOn && deviceRecPtr->psSensor->alarmOnPowerOn)
+            state = "ON";
+        if (!deviceRecPtr->psSensor->isPowerOn && deviceRecPtr->psSensor->alarmOnPowerOff)
+            state = "DRY";
+
+        //
+        // Early exit conditions - transitioned to OFF but we alarm on ON - ignore
+        if (!deviceRecPtr->psSensor->isPowerOn && deviceRecPtr->psSensor->alarmOnPowerOn)
+            return 0;
+        // transitioned to ON but we alarm on OGG - ignore
+        if (deviceRecPtr->psSensor->isPowerOn && deviceRecPtr->psSensor->alarmOnPowerOff)
             return 0;
 
         
@@ -394,6 +433,15 @@ int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
         condition2 = (deviceRecPtr->ocSensor->alarmOnClose ? "ALARM ON CLOSE" : "NO ALARM ON CLOSE" );
         condition3 = (deviceRecPtr->ocSensor->callOnOpen ? "CALL ON OPEN" : "DO NOT CALL ON OPEN" );
         condition4 = (deviceRecPtr->ocSensor->callOnClose ? "CALL ON CLOSE" : "DO NOT CALL ON CLOSE" );
+
+    } else if (deviceRecPtr->deviceType == DT_TILT_SENSOR) {
+        sensorType = "TILT SENSOR";
+        
+        state = (deviceRecPtr->tsSensor->isOpen ? "OPEN" : "CLOSED");
+        condition1 = (deviceRecPtr->tsSensor->alarmOnOpen ? "ALARM ON OPEN" : "NO ALARM ON OPEN" );
+        condition2 = (deviceRecPtr->tsSensor->alarmOnClose ? "ALARM ON CLOSE" : "NO ALARM ON CLOSE" );
+        condition3 = (deviceRecPtr->tsSensor->callOnOpen ? "CALL ON OPEN" : "DO NOT CALL ON OPEN" );
+        condition4 = (deviceRecPtr->tsSensor->callOnClose ? "CALL ON CLOSE" : "DO NOT CALL ON CLOSE" );
         
     } else if (deviceRecPtr->deviceType == DT_MOTION_SENSOR) {
         sensorType = "MOTION SENSOR";
@@ -407,11 +455,19 @@ int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
     } else if (deviceRecPtr->deviceType == DT_WATER_LEAK_SENSOR) {
         sensorType = "WATER LEAK SENSOR";
         state = (deviceRecPtr->wlSensor->wetnessDetected ? "WET" : "DRY");
-        condition1 = (deviceRecPtr->motSensor->alarmOnMotion ? "ALARM ON WET" : "NO ALARM ON WET" );
-        condition2 = (deviceRecPtr->motSensor->alarmOnNoMotion ? "ALARM ON DRY" : "NO ALARM ON DRY" );
-        condition3 = (deviceRecPtr->motSensor->callOnMotion ? "CALL ON WET" : "DO NOT CALL ON WET" );
-        condition4 = (deviceRecPtr->motSensor->callOnNoMotion ? "CALL ON DRY" : "DO NOT CALL ON DRY" );
+        condition1 = (deviceRecPtr->wlSensor->alarmOnWet ? "ALARM ON WET" : "NO ALARM ON WET" );
+        condition2 = (deviceRecPtr->wlSensor->alarmOnDry ? "ALARM ON DRY" : "NO ALARM ON DRY" );
+        condition3 = (deviceRecPtr->wlSensor->callOnWet ? "CALL ON WET" : "DO NOT CALL ON WET" );
+        condition4 = (deviceRecPtr->wlSensor->callOnDry ? "CALL ON DRY" : "DO NOT CALL ON DRY" );
         
+    } else if (deviceRecPtr->deviceType == DT_POWER_SENSOR) {
+        sensorType = "POWER SENSOR";
+        state = (deviceRecPtr->psSensor->isPowerOn ? "ON" : "OFF");
+        condition1 = (deviceRecPtr->psSensor->alarmOnPowerOn ? "ALARM ON ON" : "NO ALARM ON ON" );
+        condition2 = (deviceRecPtr->psSensor->alarmOnPowerOff ? "ALARM ON OFF" : "NO ALARM ON OFF" );
+        condition3 = (deviceRecPtr->psSensor->callOnPowerOn ? "CALL ON ON" : "DO NOT CALL ON ON" );
+        condition4 = (deviceRecPtr->psSensor->callOnPowerOff ? "CALL ON OFF" : "DO NOT CALL ON OFF" );
+
     } else {
         sensorType = "UNKNOWN";
         state = "UNKNOWN";

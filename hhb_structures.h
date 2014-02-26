@@ -187,6 +187,56 @@ typedef struct  WaterLeakSensor {
 
 
 
+// ============================================================================
+//
+//  Next - the Tilt Sensor (aka Garage Door Sensor)!
+
+// ----------------------------------------------------------------------------
+//  Device State (Field 5) values specific to an Tilt Sensor
+//
+#define     ISOPEN_BITMASK      (0x02)
+#define     ISCLOSED_BITMASK    (0x01)
+typedef enum  tsDeviceState { tsOpen, tsClosed, tsUnknown } tsDeviceState_t;
+    
+
+typedef struct  TiltSensor {
+    tsDeviceState_t currentState;               // Field 5
+    int             isOpen;                     // derived
+    
+    int             alarmOnOpen;                // Field 9
+    int             alarmOnClose;               // Field 9
+    int             callOnOpen;                 // Field 9
+    int             callOnClose;                // Field 9
+                                                    // ....5....0....5.
+    char            usersDeviceName[ MAX_DEVICE_NAME_LEN ];        // Field 17
+} TiltSensor_t;
+
+
+// ============================================================================
+//
+//  Next - the Power Sensor 
+
+// ----------------------------------------------------------------------------
+//
+#define     ISON_BITMASK        (0x02)
+#define     ISOFF_BITMASK       (0x01)
+typedef enum  psDeviceState { psPowerOn, psPowerOff, psUnknown } psDeviceState_t;
+    
+
+typedef struct  PowerSensor {
+    psDeviceState_t currentState;               // Field 5
+    int             isPowerOn;                  // derived
+    
+    int             alarmOnPowerOn;             // Field 9
+    int             alarmOnPowerOff;            // Field 9
+    int             callOnPowerOn;              // Field 9
+    int             callOnPowerOff;             // Field 9
+                                                    // ....5....0....5.
+    char            usersDeviceName[ MAX_DEVICE_NAME_LEN ];        // Field 17
+} PowerSensor_t;
+
+
+
 typedef  struct  HomeHeartBeatDevice {
     int         deviceType;                             // tell me which union member to use
 
@@ -234,6 +284,8 @@ typedef  struct  HomeHeartBeatDevice {
         OpenCloseSensor_t   *ocSensor;
         WaterLeakSensor_t   *wlSensor;
         MotionSensor_t      *motSensor;
+        TiltSensor_t        *tsSensor;
+        PowerSensor_t       *psSensor;                  // redundant, but pSensor would be a ptr
     };
     
 

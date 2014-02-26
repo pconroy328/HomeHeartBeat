@@ -403,12 +403,22 @@ void    insertAlarmRecord (HomeHeartBeatDevice_t *recPtr)
     stateString = "?unknown?";
     if (recPtr->deviceType == DT_OPEN_CLOSE_SENSOR) {
         stateString = (recPtr->ocSensor->isOpen ? "OPEN" : "CLOSED" );
+
+    } else if (recPtr->deviceType == DT_TILT_SENSOR) {
+        stateString = (recPtr->tsSensor->isOpen ? "OPEN" : "CLOSED" );
+
     } else if (recPtr->deviceType == DT_MOTION_SENSOR) {
         stateString = (recPtr->motSensor->motionDetected ? "MOTION" : "NO MOTION" );
+    
     } else if (recPtr->deviceType == DT_WATER_LEAK_SENSOR) {
         stateString = (recPtr->wlSensor->wetnessDetected ? "WET" : "DRY" );
+    
+    } else if (recPtr->deviceType == DT_POWER_SENSOR) {
+        stateString = (recPtr->psSensor->isPowerOn ? "ON" : "OFF" );
+
     } else if (recPtr->deviceType == DT_HOME_KEY) {
         return;
+    
     }
     
         

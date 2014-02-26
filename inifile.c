@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
+//
+// Don't forget to copy IniFilers/configIO.h to /usr/local/include!
 #include <configIO.h>
 #include "hhb_structures.h"
 #include "helpers.h"

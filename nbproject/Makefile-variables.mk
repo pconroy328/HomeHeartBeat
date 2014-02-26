@@ -7,13 +7,13 @@ CND_BASEDIR=`pwd`
 CND_BUILDDIR=build
 CND_DISTDIR=dist
 # Debug configuration
-CND_PLATFORM_Debug=GNU_C99-Linux-x86
-CND_ARTIFACT_DIR_Debug=dist/Debug/GNU_C99-Linux-x86
+CND_PLATFORM_Debug=C99-Linux-x86
+CND_ARTIFACT_DIR_Debug=dist/Debug/C99-Linux-x86
 CND_ARTIFACT_NAME_Debug=homeheartbeat_1
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU_C99-Linux-x86/homeheartbeat_1
-CND_PACKAGE_DIR_Debug=dist/Debug/GNU_C99-Linux-x86/package
+CND_ARTIFACT_PATH_Debug=dist/Debug/C99-Linux-x86/homeheartbeat_1
+CND_PACKAGE_DIR_Debug=dist/Debug/C99-Linux-x86/package
 CND_PACKAGE_NAME_Debug=homeheartbeat1.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU_C99-Linux-x86/package/homeheartbeat1.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/C99-Linux-x86/package/homeheartbeat1.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux-x86
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux-x86

@@ -44,7 +44,7 @@ extern      void IniFile_readIniFile( HomeHeartBeatSystem_t *aSystem );
 // Forward declarations
 static  int                     getOneStateRecord( char *, int );
 static  HomeHeartBeatDevice_t   *parseOneStateRecord( char *receiveBuf, int numRead );
-static  HomeHeartBeatDevice_t   *parseOneStateRecord( char *receiveBuf, int numRead );
+//static  HomeHeartBeatDevice_t   *parseOneStateRecord( char *receiveBuf, int numRead );
 static  int                     tokenizeStateData( char *receiveBuf, int numRead, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH] );
 static  void                    releaseMemory( void );
 static  void                    turnOffModem( void );
@@ -98,7 +98,17 @@ void    HomeHeartBeatSystem_initialize ()
     //  Read in data from an IniFile if it exists
     // readIniFileValues( aSystem );
     //
-    IniFile_readIniFile( aSystem );    
+    IniFile_readIniFile( aSystem );   
+    
+    //
+    // Let's initialize the logging system
+    // printf( "Checking debugging value [%d]\n", aSystem->debugValue );
+    // printf( "Checking debugging filename [%s]\n", aSystem->debugFileName );
+    // fflush( stdout );
+
+    if (aSystem->debugValue > 0) {
+        Logger_Initialize( aSystem->debugFileName, aSystem->debugValue );
+    }
     
     //
     // Now Database Stuff
@@ -128,6 +138,7 @@ void    HomeHeartBeatSystem_shutdown ()
     Database_closeDatabase();
     releaseMemory();
     Logger_LogInfo( "HomeHeartBeat System shut down complete.\n" );
+    Logger_Terminate();
 }
 
 // -----------------------------------------------------------------------------
@@ -191,7 +202,7 @@ void    HomeHeartBeatSystem_eventLoop ()
         //
         // Sometimes we pick up the STATE=NEW message from the Base Station - we can ignore that
         if (strstr( rawStateRecord, "NEW" ) != NULL) {
-            Logger_LogDebug( "Detected STATE=NEW message from device.  Ignoring!", 0 );
+            Logger_LogDebug( "Detected STATE=NEW message from device.  Ignoring!\n", 0 );
             continue;
         }
         
@@ -232,6 +243,7 @@ void    HomeHeartBeatSystem_eventLoop ()
         //
         // Reload the INI file each time thru to pick up new values!
         IniFile_readIniFile( aSystem );
+        // TO-DO - now that the new values are in, we need to reinitialize things!
     }
 }
 
@@ -239,7 +251,8 @@ void    HomeHeartBeatSystem_eventLoop ()
 static
 void    turnOffModem ()
 {
-    Logger_LogDebug( "Attempting to turn off the HHB System modem.\n", 0 );
+    Logger_LogInfo( "Attempting to turn off the HHB System modem.\n", 0 );
+    
     //
     //  No Modem - send 'M' until we get "MODEM=0
     //
@@ -275,7 +288,8 @@ void    turnOffModem ()
 static
 void    turnOffDebug ()
 {
-    Logger_LogDebug( "Attempting to turn off the HHB System debug mode.\n", 0 );
+    Logger_LogInfo( "Attempting to turn off the HHB System debug mode.\n", 0 );
+    
     //
     //  Debug Off - send 'a' until we get DBG=0
     //
@@ -315,7 +329,6 @@ static int  getOneStateRecord (char *rawStateRecord, int bufSize)
 
     assert( rawStateRecord != NULL );
     assert( bufSize > 0 );
-    Logger_FunctionStart();
     
     //
     // Be good - zero things out
@@ -343,8 +356,6 @@ static int  getOneStateRecord (char *rawStateRecord, int bufSize)
 static
 void    releaseMemory()
 {
-    Logger_FunctionStart();
-    
     HomeHeartBeatDevice_t   *elementPtr1;
     HomeHeartBeatDevice_t   *elementPtr2;
     
@@ -379,9 +390,8 @@ void    releaseMemory()
 static
 HomeHeartBeatDevice_t   *findDeviceInList (char *macAddress)
 {
-    Logger_FunctionStart();
-    
-    Logger_LogDebug( "Looking for a device in out list with a MAC address of [%s]\n", macAddress );
+   
+    Logger_LogInfo( "Looking for a device in out list with a MAC address of [%s]\n", macAddress );
     //
     //
     int                     i = 0;
@@ -392,10 +402,10 @@ HomeHeartBeatDevice_t   *findDeviceInList (char *macAddress)
     LL_FOREACH( aSystem->deviceListHead, elementPtr ) {
         char    *listMac = &(elementPtr->macAddress[ 0 ]);
         
-        Logger_LogDebug( "   [%d] Element in List has: [%s], looking for: [%s]\n", i, listMac, macAddress );
+        Logger_LogInfo( "   [%d] Element in List has: [%s], looking for: [%s]\n", i, listMac, macAddress );
         
         if (strncmp( listMac, macAddress, MAX_MAC_ADDRESS_SIZE ) == 0) {
-            Logger_LogDebug( "       FOUND!\n" );
+            Logger_LogInfo( "       FOUND!\n" );
             return elementPtr;
         } else {
             ;
@@ -404,7 +414,7 @@ HomeHeartBeatDevice_t   *findDeviceInList (char *macAddress)
         i += 1;
     }
     
-    Logger_LogDebug( "Not found! Must be a new device!\n", 0 );
+    Logger_LogInfo( "Not found! Must be a new device!\n", 0 );
     return NULL;            
 }
 
@@ -429,7 +439,7 @@ int     updateExistingDeviceInList (HomeHeartBeatDevice_t *deviceRecPtr, char to
 {
     //
     //
-    Logger_LogDebug( "Updating existing HHB Device. Name : [%s], MAC Address : [%s], Type : %d\n", 
+    Logger_LogInfo( "Updating existing HHB Device. Name : [%s], MAC Address : [%s], Type : %d\n", 
             deviceRecPtr->deviceName, 
             deviceRecPtr->macAddress,
             deviceRecPtr->deviceType );
@@ -445,8 +455,6 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
     char                    token[ NUM_TOKENS_PER_STATE_CMD ][ MAX_TOKEN_LENGTH ];           
     HomeHeartBeatDevice_t   *deviceRecPtr = NULL;
     
-    Logger_FunctionStart();
-
     //
     //  Convert serial port stream into tokens! We know the device sends NUM_TOKENS_PER_STATE_CMD!
     assert( receiveBuf != NULL );
@@ -457,7 +465,8 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
     
     int numTokensParsed = tokenizeStateData( receiveBuf, numRead, token );
     if (numTokensParsed != NUM_TOKENS_PER_STATE_CMD) {
-        Logger_LogWarning( "Data error. Did not parse correct number of tokens from HHB System." );
+        Logger_LogWarning( "Data error. Did not parse correct number of tokens from HHB System.\n" );
+        Logger_LogWarning( "Num Tokens Parsed: [%d], Num Chars Read: [%d], Rcv Buf[%s]\n", numTokensParsed, numRead, receiveBuf );
         return NULL;
     }
     
@@ -471,7 +480,7 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
     char    *macAddress = Device_parseMacAddress( token[ 15 ] );
     
     if (deviceType == 1 || deviceType == 16) {
-        Logger_LogDebug( "Received a state record for the Base Station or Modem. Ignoring.\n" );
+        Logger_LogInfo( "Received a state record for the Base Station or Modem. Ignoring.\n" );
         return NULL;
     }
    
@@ -513,7 +522,10 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
                                     break;
         case DT_POWER_SENSOR:       PowerSensor_parseOneStateRecord( deviceRecPtr );
                                     break;
-        case DT_WATER_LEAK_SENSOR:  WaterLeak_parseOneStateRecord( deviceRecPtr );
+        case DT_WATER_LEAK_SENSOR:  
+                                    // Temp debug - look at raw device state timer data
+                                    // Logger_LogError( "Water Leak token[5]=[%s] dStateTimer: [%d]\n", token[5], deviceRecPtr->deviceStateTimer );
+                                    WaterLeak_parseOneStateRecord( deviceRecPtr );
                                     break;
         case DT_REMINDER_DEVICE:    break;
         case DT_ATTENTION_DEVICE:   break;
@@ -524,7 +536,7 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
                                     break;
 
         default:
-            Logger_LogWarning( "Unrecognized device type just came through. Type : %d\n", deviceRecPtr->deviceType );
+            Logger_LogWarning( "Unrecognized device type just came through. Type: [%d]\n", deviceRecPtr->deviceType );
             break;
     }
 
@@ -535,7 +547,6 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
 static
 int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH])
 {
-    Logger_FunctionStart();
     Logger_LogDebug( "Tokenizing receiveBuf : [%s], numRead : %d\n", receiveBuf, numRead );
     
     /*
@@ -621,7 +632,7 @@ int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_P
     
     for (int j = 0; j < 15; j += 1)
         if (strlen( token[ j ] ) != tokenLengths[ j ]) {
-            Logger_LogDebug( "Warning - token[%d] is [%s]. Actual length: %d, should be: %d\n",
+            Logger_LogWarning( "Warning - token[%d] is [%s]. Actual length: %d, should be: %d\n",
                     j, token[ j ], strlen( token[ j ] ), tokenLengths[ j ] );
             //
             // return a value that should cause the whole line to be discarded

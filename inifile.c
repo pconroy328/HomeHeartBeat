@@ -64,10 +64,15 @@ void    IniFile_readIniFile (HomeHeartBeatSystem_t *aSystem)
     IniFile_findIniFile();
 
     result = IniFiler_SearchCfg( INIFileName, "SYSTEM", "ID", &(aSystem->systemID), Cfg_Ushort );
-    if (!result)
+    if (!result) {
         fprintf( stderr, "Warning ! Could not open the INIFile [%s]\n", INIFileName );
-
-    (void) IniFiler_SearchCfg( INIFileName, "SYSTEM", "debug", &(aSystem->debugValue), Cfg_Boolean );    
+        return;
+    }
+    
+    
+    (void) IniFiler_SearchCfg( INIFileName, "Debugging", "debugValue", &(aSystem->debugValue), Cfg_Ushort );   
+    (void) IniFiler_SearchCfg( INIFileName, "Debugging", "LogFile", &(aSystem->debugFileName[ 0 ]), Cfg_String );   
+    
 
 
     (void) IniFiler_SearchCfg( INIFileName, "SYSTEM", "Name", &(aSystem->name[ 0 ]), Cfg_String );

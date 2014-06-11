@@ -35,7 +35,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1104725590/powersensor.o \
 	${OBJECTDIR}/database.o \
 	${OBJECTDIR}/device.o \
 	${OBJECTDIR}/helpers.o \
@@ -46,6 +45,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/motion_sensor.o \
 	${OBJECTDIR}/mqtt.o \
 	${OBJECTDIR}/openclose_sensor.o \
+	${OBJECTDIR}/powersensor.o \
 	${OBJECTDIR}/serialport.o \
 	${OBJECTDIR}/tiltsensor.o \
 	${OBJECTDIR}/waterleak_sensor.o
@@ -74,11 +74,6 @@ LDLIBSOPTIONS=-lmysqlclient -linifiler -lmosquitto
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1 ${OBJECTFILES} ${LDLIBSOPTIONS}
-
-${OBJECTDIR}/_ext/1104725590/powersensor.o: /home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.c 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1104725590
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1104725590/powersensor.o /home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.c
 
 ${OBJECTDIR}/database.o: database.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -129,6 +124,11 @@ ${OBJECTDIR}/openclose_sensor.o: openclose_sensor.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/openclose_sensor.o openclose_sensor.c
+
+${OBJECTDIR}/powersensor.o: powersensor.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/powersensor.o powersensor.c
 
 ${OBJECTDIR}/serialport.o: serialport.c 
 	${MKDIR} -p ${OBJECTDIR}

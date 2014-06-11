@@ -12,7 +12,13 @@
 extern "C" {
 #endif
     
-extern  void    Logger_Initialize();
+#ifndef  FALSE
+# define FALSE 0
+# define TRUE  (!FALSE)
+#endif
+    
+    
+extern  void    Logger_Initialize( char *fileName, int debugValue );
 extern  void    Logger_Terminate();
 extern  void    Logger_LogInfo( char *format, ... );
 extern  void    Logger_LogDebug( char *format, ... );

@@ -36,7 +36,7 @@
       <itemPath>motion_sensor.c</itemPath>
       <itemPath>mqtt.c</itemPath>
       <itemPath>openclose_sensor.c</itemPath>
-      <itemPath>/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.c</itemPath>
+      <itemPath>powersensor.c</itemPath>
       <itemPath>serialport.c</itemPath>
       <itemPath>tiltsensor.c</itemPath>
       <itemPath>waterleak_sensor.c</itemPath>
@@ -70,11 +70,6 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.c"
-            ex="false"
-            tool="0"
-            flavor2="0">
-      </item>
       <item path="/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.h"
             ex="false"
             tool="3"
@@ -117,6 +112,8 @@
       <item path="openclose_sensor.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="openclose_sensor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="powersensor.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="serialport.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -153,11 +150,6 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.c"
-            ex="false"
-            tool="0"
-            flavor2="0">
-      </item>
       <item path="/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/powersensor.h"
             ex="false"
             tool="3"
@@ -200,6 +192,8 @@
       <item path="openclose_sensor.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="openclose_sensor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="powersensor.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="serialport.c" ex="false" tool="0" flavor2="0">
       </item>

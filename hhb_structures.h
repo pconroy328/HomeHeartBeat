@@ -322,7 +322,8 @@ typedef struct  HomeHeartBeatSystem {
     double  longitude;
     int     TZOffsetMins;                               // difference in minutes between UTC and *here*
 
-    int     debugValue; 
+    int     debugValue;                                 // if non-zero write debug data
+    char    debugFileName[ 255 ];                       // to this file
     
     //
     // Now the collection of devices is a linked list, so we need a 'head' pointer

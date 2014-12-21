@@ -110,13 +110,19 @@ void    IniFile_readIniFile (HomeHeartBeatSystem_t *aSystem)
     //
     // MQTT Specific Information
     (void) IniFiler_SearchCfg( INIFileName, "MQTT", "logEventsToMQTT", &(aSystem->logEventsToMQTT), Cfg_Boolean ); 
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "HostName", &(aSystem->MQTTParameters.mqttBrokerHost[ 0 ]), Cfg_String );
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "PortNumber", &(aSystem->MQTTParameters.mqttPortNumber), Cfg_Ushort );
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "KeepAliveValue", &(aSystem->MQTTParameters.mqttKeepAliveValue), Cfg_Ushort );
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "QoS", &(aSystem->MQTTParameters.mqttKeepAliveValue), Cfg_Ushort );
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "StatusTopic", &(aSystem->MQTTParameters.mqttStatusTopic[ 0 ]), Cfg_String );
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "AlarmTopic", &(aSystem->MQTTParameters.mqttAlarmTopic[ 0 ]), Cfg_String );
-    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "retainMsgs", &(aSystem->MQTTParameters.mqttRetainMsgs), Cfg_Boolean ); 
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "HostName", &(aSystem->MQTTParameters.brokerHostName[0]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "PortNumber", &(aSystem->MQTTParameters.portNumber), Cfg_Ushort );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "KeepAliveValue", &(aSystem->MQTTParameters.keepAliveValue), Cfg_Ushort );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "QoS", &(aSystem->MQTTParameters.QoS), Cfg_Ushort );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "StatusTopic", &(aSystem->MQTTParameters.statusTopic[0]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "AlarmTopic", &(aSystem->MQTTParameters.alarmTopic), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "RetainMsgs", &(aSystem->MQTTParameters.retainMsgs), Cfg_Boolean ); 
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "CleanSession", &(aSystem->MQTTParameters.cleanSession), Cfg_Boolean ); 
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "ClientID", &(aSystem->MQTTParameters.clientID[0]), Cfg_String );
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "EnableMQTTLoggingCallback", &(aSystem->MQTTParameters.enableMQTTLoggingCallback), Cfg_Boolean ); 
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "ExitOnTooManyErrors", &(aSystem->MQTTParameters.exitOnTooManyErrors), Cfg_Boolean ); 
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "MaxReconnectAttempts", &(aSystem->MQTTParameters.maxReconnectAttempts), Cfg_Ushort );
+    
 }
 
 

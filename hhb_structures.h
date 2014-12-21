@@ -86,18 +86,27 @@ typedef struct  Database_Parameters {
     int     maxMinutesOfHistoryStored;
 } Database_Parameters_t;    
     
-   
+
+#define     MQTT_BROKERHOSTNAME_LEN 256
+#define     MQTT_TOPIC_LEN          256
+#define     MQTT_CLIENTID_LEN       30
+
 typedef struct  MQTT_Parameters {
     //
     // MQTT Specific Information
     int     logEventsToMQTT;
-    char    mqttBrokerHost[ 256 ];
-    int     mqttPortNumber;
-    int     mqttKeepAliveValue;
-    int     mqttQoS;
-    char    mqttStatusTopic[ 256 ];
-    char    mqttAlarmTopic[ 256 ];
-    int     mqttRetainMsgs;
+    char    brokerHostName[ MQTT_BROKERHOSTNAME_LEN ];
+    char    clientID[ MQTT_CLIENTID_LEN ];
+    int     portNumber;
+    int     keepAliveValue;
+    int     cleanSession;
+    int     QoS;
+    char    statusTopic[ MQTT_TOPIC_LEN ];
+    char    alarmTopic[ MQTT_TOPIC_LEN ];
+    int     retainMsgs;
+    int     enableMQTTLoggingCallback;
+    int     exitOnTooManyErrors;
+    int     maxReconnectAttempts;
 } MQTT_Parameters_t;
 
 

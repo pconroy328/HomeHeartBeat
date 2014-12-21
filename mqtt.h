@@ -13,17 +13,27 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include "hhb_structures.h"
+    
+    
+#ifndef FALSE
+# define FALSE  0
+# define TRUE (!FALSE)
+#endif
     
 #define MQTT_NOT_CONNECTED      (-1)
     
-    
-extern  void    MQTT_setDefaults( HomeHeartBeatSystem_t *aSystem, char *brokerHostName );
-extern  void    MQTT_initialize (HomeHeartBeatSystem_t *aSystem );
-extern  void    MQTT_teardown(  void );
-extern  int     MQTT_sendReceive( void );
-extern  int     MQTT_createDeviceAlarm( HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr );
-extern  int     MQTT_createDeviceEvent( HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr );
-extern  int     MQTT_handleError( HomeHeartBeatSystem_t *aSystem, int errorCode );
+
+extern  void    MQTT_SetDefaults( MQTT_Parameters_t *mqttParams );
+extern  int     MQTT_Initialize( MQTT_Parameters_t *mqttParams );
+extern  void    MQTT_Teardown( void );
+extern  int     MQTT_SendReceive( int * );
+extern  int     MQTT_HandleError( MQTT_Parameters_t *mqttParams, int errorCode );
+extern  int     MQTT_Publish( char *topic, char *payload, int payloadLength );
+
+extern  int     MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr);
+extern  int     MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr);
 
 
 #ifdef	__cplusplus

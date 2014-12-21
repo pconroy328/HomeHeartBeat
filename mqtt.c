@@ -7,6 +7,41 @@
  * 
  * 12Mar2104    Adding MAC address to MQTT Payload
  */
+#define _POSIX_C_SOURCE     200112L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <unistd.h>
+#include <time.h>
+
+#include "mqtt.h"
+#include "logger.h"
+#include "mosquitto.h"
+
+
+static  int                     MQTT_Connected = FALSE;
+static  int                     enableMQTTLoggingCallback = FALSE;
+static  int                     exitOnTooManyErrors = FALSE;
+static  int                     maxReconnectAttempts = 100;
+static  int                     mqttQoS = 0;
+static  int                     mqttRetainMessages = FALSE;
+
+static  struct  mosquitto       *mosquittoInstance = NULL;
+
+#define MAX_ERRORSTRING_LEN 256
+static  char    errorStringBuffer[ MAX_ERRORSTRING_LEN ];
+
+
+
+//
+// Forward declarations
+static  void    subscribedMessageCallback( struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message );
+static  void    brokerConnectionCallback( struct mosquitto *mosq, void *userdata, int result );
+static  void    mqttLoggingCallback( struct mosquitto *mosq, void *userdata, int level, const char *str );
+static  char    *getCurrentDateTime( void );
+
 
 
 // ----------------------------------------------------------------------------
@@ -23,44 +58,19 @@
 //      Don't forget you'll need libssl-dev from Synaptic
 //      And g++ (sudo apt-get install g++)
 
-#include <mosquitto.h>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include <errno.h>
-#include <time.h>
-#include <unistd.h>
 
-#include "homeheartbeat.h"
-
-#include "helpers.h"
-#include "logger.h"
-#include "hhb_structures.h"
-#include "mqtt.h"
-
-static  int                     MQTT_Connected;
-static  struct  mosquitto       *mosq = NULL;
-
-
-
-//
-// Forward declarations
-static  void    my_message_callback( struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message );
-static  void    my_connect_callback( struct mosquitto *mosq, void *userdata, int result );
-static  void    my_log_callback( struct mosquitto *mosq, void *userdata, int level, const char *str );
-static  char    *getCurrentDateTime( void );
 
 
 // ------------------------------------------------------------------------------
 static
-void my_message_callback (struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message)
+void subscribedMessageCallback (struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message)
 {
-    Logger_LogDebug ( "MQTT Message Callback. Payload length: %d\n", message->payloadlen );
+    Logger_LogInfo( "MQTT subscribedMessageCallback():: Payload length: %d\n", message->payloadlen );
     if (message->payloadlen > 0) {
-        Logger_LogDebug( "Topic [%s] Data [%s]\n", (char *) message->topic, (char *) message->payload);
+        Logger_LogDebug( "MQTT subscribedMessageCallback():: Topic [%s] Data [%s]\n", (char *) message->topic, (char *) message->payload);
         
     } else {
-        Logger_LogDebug(" MQTT Topic [%s] with no payload\n", message->topic );
+        Logger_LogWarning("MQTT subscribedMessageCallback():: MQTT Topic [%s] with no payload\n", message->topic );
     }
 }
 
@@ -71,144 +81,175 @@ void my_message_callback (struct mosquitto *mosq, void *userdata, const struct m
  
 // ------------------------------------------------------------------------------
 static
-void my_connect_callback (struct mosquitto *mosq, void *userdata, int result)
+void brokerConnectionCallback (struct mosquitto *mosq, void *userdata, int result)
 {
+    // Parameters:  
+    //      mosq	the mosquitto instance making the callback.
+    //      obj	the user data provided in mosquitto_new
+    //      rc	the return code of the connection response, one of:
+    //          0 - success
+    //          1 - connection refused (unacceptable protocol version)
+    //          2 - connection refused (identifier rejected)
+    //          3 - connection refused (broker unavailable)
+    //          4-255 - reserved for future use
     //
     // This guy doesn't get called right away - you need to let Mosquitto run for a bit
     //  Thus don't rely on setting a boolean "Connected" only in here
     //
-    Logger_LogError( "my_connect_callback():: MQTT Connection Callback. Result: %d\n", result );
+    Logger_LogInfo( "MQTT brokerConnectionCallback():: MQTT Connection Callback. Result: %d\n", result );
 
-    if(!result) {
+    if (result == 0) {
         /* Subscribe to broker information topics on successful connect. */
         //mosquitto_subscribe( mosq, NULL, "$SYS/#", 2 );
         MQTT_Connected = TRUE;
         
     } else {
-        Logger_LogError( "my_connect_callback():: MQTT Connection failed\n" );
+        Logger_LogError( "brokerConnectionCallback():: MQTT Connection failed. Result: %d\n", result );
+        switch (result) {
+            case    1:  Logger_LogError( "MQTT brokerConnectionCallback():: connection refused (unacceptable protocol version)\n" );
+            case    2:  Logger_LogError( "MQTT brokerConnectionCallback():: connection refused (identifier rejected)\n" );
+            case    3:  Logger_LogError( "MQTT brokerConnectionCallback():: connection refused (broker unavailable)\n" );
+        }
+              
         MQTT_Connected = FALSE;
     }
 }
 
 // ------------------------------------------------------------------------------
-void my_subscribe_callback(struct mosquitto *mosq, void *userdata, int mid, int qos_count, const int *granted_qos)
-{
-    int i;
-
-    Logger_LogDebug( "MQTT Subscriber Callback (mid: %d): %d", mid, granted_qos[ 0 ] );
-    for(i = 1; i < qos_count; i++) {
-        Logger_LogDebug( ", %d", granted_qos[ i ] );
-    }
-    
-    Logger_LogDebug( "\n", 0 );
-}
-
-// ------------------------------------------------------------------------------
 static
-void my_log_callback(struct mosquitto *mosq, void *userdata, int level, const char *str)
+void mqttLoggingCallback (struct mosquitto *mosq, void *userdata, int level, const char *str)
 {
     /* Print all log messages regardless of level. */
-    // debug_print("MQTT Logging: [%s]\n", str );
+    if (enableMQTTLoggingCallback)
+        Logger_LogInfo( "MQTT mqttLoggingCallback():: [%s] %d\n", str );    
 }
 
 
 
 // ---------------------------------------------------------------------------
-void    MQTT_setDefaults (HomeHeartBeatSystem_t *aSystem, char *brokerHostName)
+void    MQTT_SetDefaults (MQTT_Parameters_t *mqttParams)
 {
-    assert( brokerHostName != NULL );
-    strncpy( &(aSystem->MQTTParameters.mqttBrokerHost[ 0 ]), 
-             brokerHostName, 
-            sizeof aSystem->MQTTParameters.mqttBrokerHost );
-    
-    aSystem->MQTTParameters.mqttPortNumber = (aSystem->MQTTParameters.mqttPortNumber == 0 ? 1883 : aSystem->MQTTParameters.mqttPortNumber);
-    aSystem->MQTTParameters.mqttKeepAliveValue = (aSystem->MQTTParameters.mqttKeepAliveValue == 0 ? 60 : aSystem->MQTTParameters.mqttKeepAliveValue);
-    
-    aSystem->MQTTParameters.mqttRetainMsgs = false;
-    // QoS of zero is ok
+    mqttParams->enableMQTTLoggingCallback = FALSE;
+    mqttParams->QoS = 0;
+    mqttParams->portNumber = 1883;
+    mqttParams->cleanSession = TRUE;
+    mqttParams->clientID[0] = '\0';
+    mqttParams->keepAliveValue = 60;
+    strncpy( &(mqttParams->brokerHostName[0]), "192.168.1.11", MQTT_BROKERHOSTNAME_LEN );
+    mqttParams->exitOnTooManyErrors = TRUE;
+    mqttParams->maxReconnectAttempts = 100;
 }
+
 // ----------------------------------------------------------------------------
-void    MQTT_initialize (HomeHeartBeatSystem_t *aSystem)
+int    MQTT_Initialize (MQTT_Parameters_t *mqttParams)
 {
-    char    id[30];
-    int     i;
-    bool    clean_session = true;
+    char    id[ 30 ];
+    int     major, minor, revision;
+    int     errorNo, result;
 
     MQTT_Connected = FALSE;
-    
-    if (!aSystem->logEventsToMQTT)
-        return;
-    
-      
+          
     //
-    // If you get errors complaining about aruguments and mismatched prototypes
+    // If you get errors complaining about arguments and mismatched prototypes
     //      odds are you're not pulling down the latest version of mosquitto
     //
-    Logger_LogError( "MQTT_initialize():: Initialization starting.\n" );
+    Logger_LogInfo( "MQTT_initialize():: Initialization starting.\n" );
+    
+    //
+    // Copy off our parameters so we've got them cached...
+    enableMQTTLoggingCallback = mqttParams->enableMQTTLoggingCallback;
+    exitOnTooManyErrors = mqttParams->exitOnTooManyErrors;
+    maxReconnectAttempts = mqttParams->maxReconnectAttempts;
+    mqttQoS = mqttParams->QoS;
+    mqttRetainMessages = mqttParams->retainMsgs;
+    
+    //
+    // Now fire up Mosquitto
+    mosquitto_lib_version( &major, &minor, &revision );
+    Logger_LogInfo( "MQTT Mosquitto Library Version info. Major: %d, Minor: %d, Revision: %d\n", major, minor, revision );
     mosquitto_lib_init();
     
     //
     // Example code shows the first parameter is "id" - but I'm getting EINVAL so I
-    // switched it to NULL and it's working     
-    mosq = mosquitto_new( NULL, clean_session, NULL );
-    
-    if(!mosq) {
-        Logger_LogWarning( "MQTT_initialize()::new -- Unable to instantiate an MQTT instance!" );
-        Logger_LogWarning( "MQTT_initialize()::new -- MQTT Broker Host: [%s], Port: %d, KeepAlive: %d\n", 
-                            aSystem->MQTTParameters.mqttBrokerHost,
-                            aSystem->MQTTParameters.mqttPortNumber,
-                            aSystem->MQTTParameters.mqttKeepAliveValue );
-
-        aSystem->logEventsToMQTT = FALSE;
-        return;
-    }
-    
-    mosquitto_log_callback_set( mosq, my_log_callback );
-    mosquitto_connect_callback_set( mosq, my_connect_callback );
-    mosquitto_message_callback_set( mosq, my_message_callback );
-    mosquitto_subscribe_callback_set( mosq, my_subscribe_callback );
-
-    if (mosquitto_connect(  mosq, 
-                            aSystem->MQTTParameters.mqttBrokerHost,
-                            aSystem->MQTTParameters.mqttPortNumber,
-                            aSystem->MQTTParameters.mqttKeepAliveValue ) ) {
-        Logger_LogWarning( "MQTT_initialize()::connect -- Unable to connect MQTT to broker!\n" );
-        Logger_LogWarning( "MQTT_initialize()::connect -- MQTT Broker Host: [%s], Port: %d, KeepAlive: %d\n", 
-                            aSystem->MQTTParameters.mqttBrokerHost,
-                            aSystem->MQTTParameters.mqttPortNumber,
-                            aSystem->MQTTParameters.mqttKeepAliveValue );
-        
-        aSystem->logEventsToMQTT = FALSE;
-        return;
-    }
-    
-    Logger_LogWarning( "MQTT_initialize():: mosquitto new and connect successful.\n" );
-    MQTT_Connected = TRUE;
-}
-
-// ----------------------------------------------------------------------------
-void    MQTT_teardown ()
-{
-    if (MQTT_Connected) {
-        Logger_LogError( "MQTT_teardown() -- Calling mosquitto termination routines\n" );
-        mosquitto_destroy( mosq );
-        mosquitto_lib_cleanup();
-    }
-    Logger_LogError( "MQTT_teardown() -- MQTT Terminated.\n" );
-}
-
-// ----------------------------------------------------------------------------
-int MQTT_sendReceive ()
-{
-    if (!MQTT_Connected)
-        return MQTT_NOT_CONNECTED;
-    
+    // switched it to NULL and it's working. If first param is NULL, CleanSession must be true
     //
-    // Last parmeter cannot be ZERO!
-    int error = mosquitto_loop( mosq, -1, 10 );
-    if (error != MOSQ_ERR_SUCCESS) {
-        Logger_LogError( "MQTT sendReceive - error Code : %d\n", error  );
-        switch (error) {
+    Logger_LogInfo( "MQTT_initialize():: Calling mosquitto_new\n" );
+    mosquittoInstance = mosquitto_new( &(mqttParams->clientID[0]), mqttParams->cleanSession, NULL );
+    
+    if (mosquittoInstance == NULL) {
+        errorNo = errno;
+        memset( errorStringBuffer, '\0', MAX_ERRORSTRING_LEN );
+        strerror_r( errorNo, errorStringBuffer, MAX_ERRORSTRING_LEN );
+        
+        Logger_LogWarning( "MQTT_initialize()::new -- Unable to instantiate an MQTT instance! ErrNo: %d [%s]\n", errorNo, errorStringBuffer );
+        return FALSE;
+    }
+    
+    Logger_LogInfo( "MQTT_initialize():: Setting callbacks.\n" );
+    mosquitto_log_callback_set( mosquittoInstance, mqttLoggingCallback );
+    mosquitto_connect_callback_set( mosquittoInstance, brokerConnectionCallback );
+    mosquitto_message_callback_set( mosquittoInstance, subscribedMessageCallback );
+    // mosquitto_subscribe_callback_set( mosquittoInstance, my_subscribe_callback );
+
+    Logger_LogInfo( "MQTT_initialize():: Calling mosquitto_connect(%s, %d, %d )\n", mqttParams->brokerHostName, mqttParams->portNumber, mqttParams->keepAliveValue );
+    result = mosquitto_connect(  mosquittoInstance, 
+                            mqttParams->brokerHostName,
+                            mqttParams->portNumber,
+                            mqttParams->keepAliveValue );
+    
+    if (result != MOSQ_ERR_SUCCESS) {
+        errorNo = errno;
+        memset( errorStringBuffer, '\0', MAX_ERRORSTRING_LEN );
+        strerror_r( errorNo, errorStringBuffer, MAX_ERRORSTRING_LEN );
+        
+        Logger_LogError( "MQTT_initialize()::connect -- Unable to connect MQTT to broker!. Result: %d. ErrNo; %d [%s]\n", result, errorNo, errorStringBuffer );
+        return FALSE;
+    }
+    
+    Logger_LogInfo( "MQTT_initialize():: mosquitto_new() and connect() successful. MQTT Broker Online.\n" );
+    MQTT_Connected = TRUE;
+    
+    return MQTT_Connected;
+}
+
+// ----------------------------------------------------------------------------
+void    MQTT_Teardown ()
+{
+    int result = 0;
+    
+    if (MQTT_Connected) {
+        Logger_LogInfo( "MQTT_teardown() -- Calling mosquitto termination routines\n" );
+        result = mosquitto_disconnect( mosquittoInstance );
+        if (result != MOSQ_ERR_SUCCESS)
+            Logger_LogWarning( "MQTT_teardown() -- mosquitto_disconnected returned error: %d. Continuing teardown.\n", result );
+        
+        mosquitto_destroy( mosquittoInstance );
+        (void) mosquitto_lib_cleanup();
+        Logger_LogInfo( "MQTT_teardown() -- Broker disconnected, Instance destroyed, Library Cleaned up.\n" );
+        
+        MQTT_Connected = FALSE;
+        // enableMQTTLoggingCallback = FALSE;
+    } else {
+        Logger_LogWarning( "MQTT_teardown() -- Calling teardown on a DISCONNECTED broker. Nothing happens.\n" );
+    }
+}
+
+// ----------------------------------------------------------------------------
+int MQTT_SendReceive (int *error)
+{
+    if (!MQTT_Connected) {
+        Logger_LogWarning( "MQTT_SendReceive() -- Calling sendReceive() on a DISCONNECTED broker. Nothing happens.\n" );
+        return MQTT_NOT_CONNECTED;
+    }
+    
+   
+    //
+    //
+    int result = mosquitto_loop( mosquittoInstance, 1000, 10 );
+    if (result != MOSQ_ERR_SUCCESS) {
+        
+        Logger_LogError( "MQTT SendReceive - error Code : %d\n", result  );
+        switch (result) {
             case    MOSQ_ERR_INVAL:     Logger_LogError( "mosquitto_loop() says INVAL\n", 0 ); break;
             case    MOSQ_ERR_NOMEM:     Logger_LogError( "mosquitto_loop() says NOMEM\n", 0 ); break;
             case    MOSQ_ERR_NO_CONN:   Logger_LogError( "mosquitto_loop() says NO CONN\n", 0 ); break;
@@ -216,11 +257,77 @@ int MQTT_sendReceive ()
             case    MOSQ_ERR_PROTOCOL:  Logger_LogError( "mosquitto_loop() says PROTOCOL\n", 0 ); break;
             case    MOSQ_ERR_ERRNO:     Logger_LogError( "mosquitto_loop() says ERRNO\n", 0 ); break;
                 
-        }
+        }        
     }
-    return error;
+    
+    //
+    // Return TRUE if no errors
+    *error = result;
+    return (result == MOSQ_ERR_SUCCESS);
 }
 
+// -----------------------------------------------------------------------------
+int MQTT_HandleError (MQTT_Parameters_t *mqttParams, int errorCode) 
+{
+    int numAttempts = 0;
+
+    MQTT_Connected = FALSE;                             // Set ourselves to offline
+    
+    while (!MQTT_Connected && (numAttempts < maxReconnectAttempts)) {
+        numAttempts += 1;
+        
+        Logger_LogError( "MQTT_handleError:: ERROR detected in MQTT [%d]\n", errorCode );
+        Logger_LogError( "MQTT_handleError:: Disconnecting...\n" );
+        MQTT_Teardown();
+        Logger_LogError( "MQTT_handleError:: Reconnecting...\n" );
+        MQTT_Initialize( mqttParams );
+
+        if (MQTT_Connected) {
+            Logger_LogError( "MQTT_handleError:: MQTT has been reinitialized and is back online.\n" );
+        } else {
+            //
+            // Let's not spin at CPU speed - let's give another program a chance at
+            // the CPU and we'll see if the Broker comes back
+            Logger_LogError( "MQTT_handleError:: MQTT has NOT been reinitialized. Sleeping and then retrying.\n" );
+            sleep( 1 );
+        }
+    }
+    
+    //
+    // Do we just give up?
+    if (!MQTT_Connected && exitOnTooManyErrors) {
+        Logger_LogFatal( "MQTT_handleError:: MQTT cannot been reinitialized. System is exiting.\n" );
+        exit( 1 );
+    }
+}
+
+// -----------------------------------------------------------------------------
+int MQTT_Publish (char *topic, char *payload, int payloadLength)
+{
+    int     result;
+    int     messageID;
+    
+    if (!MQTT_Connected) {
+        Logger_LogWarning( "MQTT_Publish() -- Calling publish() on a DISCONNECTED broker. Nothing happens.\n" );
+        return MQTT_NOT_CONNECTED;
+    }
+    
+    result = mosquitto_publish( mosquittoInstance, 
+                            &messageID, 
+                            topic,
+                            payloadLength, 
+                            payload, 
+                            mqttQoS,
+                            mqttRetainMessages );
+    
+    if (result != 0) {
+        Logger_LogError( "MQTT_publish:: - Failure. Result: %\n", result );
+    } else {
+        Logger_LogInfo( "MQTT_publish:: - Success. Message [%d]:[%s]\n", messageID, payload );
+    }
+    
+    return result;    
+}
 // -----------------------------------------------------------------------------
 int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr)
 {
@@ -342,7 +449,7 @@ int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
 
     
     length = snprintf( payload, sizeof payload, alarmFormatString,
-                    aSystem->MQTTParameters.mqttAlarmTopic,
+                    aSystem->MQTTParameters.alarmTopic,
                     getCurrentDateTime(),
                     deviceRecPtr->deviceType,
                     sensorType,
@@ -350,22 +457,9 @@ int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
                     state,
                     deviceRecPtr->deviceStateTimer,
                     deviceRecPtr->macAddress );
-      
-    int     messageID;
-    int result = mosquitto_publish( mosq, &messageID, 
-                                    aSystem->MQTTParameters.mqttAlarmTopic, 
-                                    length, 
-                                    payload, 
-                                    aSystem->MQTTParameters.mqttQoS, 
-                                    aSystem->MQTTParameters.mqttRetainMsgs );
-    
-    if (result != 0) {
-        Logger_LogWarning( "MQTT Create Device Alarm - attempt to publish an alarm failed. Result: %d  Message: [%s]\n", result, payload );
-    }
-    
-    return result;
+          
+    return MQTT_Publish( aSystem->MQTTParameters.alarmTopic, payload, length );
 }
-
 
 // -----------------------------------------------------------------------------
 int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevice_t *deviceRecPtr)
@@ -489,7 +583,7 @@ int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
 
     
     length = snprintf( payload, sizeof payload, statusFormatString,
-                    aSystem->MQTTParameters.mqttStatusTopic,
+                    aSystem->MQTTParameters.statusTopic,
                     getCurrentDateTime(),
                     deviceRecPtr->deviceType,
                     sensorType,
@@ -500,36 +594,9 @@ int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
                     offLine, lowBattery, inAlarmState,
                     deviceRecPtr->macAddress );
             
-   
-    //
-    //   MQTT defines three levels of Quality of Service (QoS). The QoS defines how hard the broker/client will try 
-    //  to ensure that a message is received. Messages may be sent at any QoS level, and clients may attempt to subscribe 
-    //  to topics at any QoS level. This means that the client chooses the maximum QoS it will receive. For example, 
-    //  if a message is published at QoS 2 and a client is subscribed with QoS 0, the message will be delivered 
-    //  to that client with QoS 0. If a second client is also subscribed to the same topic, but with QoS 2, 
-    //  then it will receive the same message but with QoS 2. For a second example, if a client is subscribed with QoS 2 
-    //  and a message is published on QoS 0, the client will receive it on QoS 0.
-    //  
-    //  Higher levels of QoS are more reliable, but involve higher latency and have higher bandwidth requirements.
-    //      0: The broker/client will deliver the message once, with no confirmation.
-    //      1: The broker/client will deliver the message at least once, with confirmation required.
-    //      2: The broker/client will deliver the message exactly once by using a four step handshake.
     
-    int result = mosquitto_publish( mosq, 
-                                    &messageID, 
-                                    aSystem->MQTTParameters.mqttStatusTopic,
-                                    length, 
-                                    payload, 
-                                    aSystem->MQTTParameters.mqttQoS,
-                                    aSystem->MQTTParameters.mqttRetainMsgs );
-    
-    if (result != 0) {
-        Logger_LogWarning( "MQTT Create Device Event - attempt to publish an event failed. Result: %d  Message: [%s]\n", result, payload );
-    }
-    
-    return result;
+    return MQTT_Publish( aSystem->MQTTParameters.statusTopic, payload, length );
 }
-
 
 // -----------------------------------------------------------------------------
 static  char    currentDateTimeBuffer[ 80 ];
@@ -561,21 +628,3 @@ char    *getCurrentDateTime (void)
     return &currentDateTimeBuffer[ 0 ];
 }
 
-// -----------------------------------------------------------------------------
-int MQTT_handleError (HomeHeartBeatSystem_t *aSystem, int errorCode) 
-{
-    Logger_LogError( "MQTT_handleError:: ERROR detected in MQTT [%d]\n", errorCode );
-    Logger_LogError( "MQTT_handleError:: Disconnecting...\n" );
-    MQTT_teardown();
-    Logger_LogError( "MQTT_handleError:: Reconnecting...\n" );
-    MQTT_initialize( aSystem );
-    
-    if (MQTT_Connected)
-        Logger_LogError( "MQTT_handleError:: MQTT has been reinitialized and is back online.\n" );
-    else {
-        //
-        // Let's not spin at CPU speed - let's give another program a chance at
-        // the CPU and we'll see if the Broker comes back
-        sleep( 5 );
-    }
-}

@@ -185,7 +185,7 @@ int     PowerSensor_getPowerOnPowerOffStateFromInt (int sensorState)
 
     // They'd better not BOTH be on!
     if (isPowerOff && isPowerOn) {
-        Logger_LogWarning( "Power Sensor reporting both open and closed!\n" );
+        Logger_LogWarning( "Power Sensor reporting both On and Off!\n" );
         
     } else {
 

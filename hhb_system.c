@@ -92,6 +92,7 @@ void    HomeHeartBeatSystem_initialize ()
     aSystem->logEventsToMQTT = FALSE;
     
     Database_setDefaults( aSystem );
+    MQTT_SetDefaults( &(aSystem->MQTTParameters) );
 
     
     //
@@ -116,9 +117,13 @@ void    HomeHeartBeatSystem_initialize ()
     
     
     if (aSystem->logEventsToMQTT) {
-        MQTT_setDefaults( aSystem, aSystem->MQTTParameters.mqttBrokerHost );
-        MQTT_initialize( aSystem );
-    }    
+        if (!MQTT_Initialize( &(aSystem->MQTTParameters) )) {
+            Logger_LogFatal( "Cannot initialize MQTT system - exiting...\n" );
+            exit( 1 );
+        }
+    } else {
+        Logger_LogWarning( "MQTT Event Sending is Disabled! Check 'logEventsToMQTT' in the INI file!" );
+    }
     
     //
     // Log4C initialization
@@ -132,7 +137,7 @@ void    HomeHeartBeatSystem_shutdown ()
     aSystem->portOpen = FALSE;
 
     if (aSystem->logEventsToMQTT) {
-        MQTT_teardown();
+        MQTT_Teardown();
     }
     
     Database_closeDatabase();
@@ -228,13 +233,11 @@ void    HomeHeartBeatSystem_eventLoop ()
                 if (deviceRecPtr->stateHasChanged)
                     mqttResult = MQTT_createDeviceAlarm( aSystem, deviceRecPtr );
                 
-                mqttResult = MQTT_createDeviceEvent( aSystem, deviceRecPtr );
-                mqttResult = MQTT_sendReceive();
-                
-                //
-                // Need to check for MQTT broker errors and reestablish connections
-                if (mqttResult != 0)
-                    MQTT_handleError( aSystem, mqttResult );
+                MQTT_createDeviceEvent( aSystem, deviceRecPtr );
+                if (!MQTT_SendReceive( &mqttResult )) {
+                    Logger_LogError( "HomeHeartBeatSystem_eventLoop():: MQTT_SendRecieve Failed - trying to recover.\n" );
+                    MQTT_HandleError( &(aSystem->MQTTParameters), mqttResult );
+                }
             }
         }
         

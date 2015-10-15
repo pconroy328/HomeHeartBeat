@@ -71,7 +71,7 @@ void    HomeHeartBeatSystem_initialize ()
     //
     // Initialize some necessary fields.
     aSystem->deviceListHead = NULL;                 // utlist says always set this to NULL
-    aSystem->deviceArrayIndex = 0;
+    // aSystem->deviceArrayIndex = 0;
     
     aSystem->systemID = 0;
     strncpy( aSystem->name, "UNNAMED SYSTEM", sizeof aSystem->name );
@@ -84,6 +84,7 @@ void    HomeHeartBeatSystem_initialize ()
     
     aSystem->latitude = 0.0;
     aSystem->longitude = 0.0;
+    aSystem->deviceInfoFileName[ 0 ] = '\0';
     
     aSystem->sleepSecsBetweenEventLoops = 1;           // seconds
     
@@ -103,10 +104,6 @@ void    HomeHeartBeatSystem_initialize ()
     
     //
     // Let's initialize the logging system
-    // printf( "Checking debugging value [%d]\n", aSystem->debugValue );
-    // printf( "Checking debugging filename [%s]\n", aSystem->debugFileName );
-    // fflush( stdout );
-
     if (aSystem->debugValue > 0) {
         Logger_Initialize( aSystem->debugFileName, aSystem->debugValue );
     }
@@ -128,6 +125,11 @@ void    HomeHeartBeatSystem_initialize ()
     //
     // Log4C initialization
     Logger_LogInfo( "HomeHeartBeat System initialized. Starting up.\n" );
+    
+    //
+    // Let's read in any extra info on the devices we've got
+    if (aSystem->deviceInfoFileName[ 0 ] != '\0')
+        Device_readDeviceInfoFromFile( aSystem->deviceInfoFileName );
 }
 
 // -----------------------------------------------------------------------------

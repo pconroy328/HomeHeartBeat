@@ -20,10 +20,10 @@ extern "C" {
 // What's a good maximum value for the length of a device name?
 #define MAX_DEVICE_NAME_LEN     80              // Just taking a conservative guess
 #define MAX_MAC_ADDRESS_SIZE    18              // sixteen plus room for nulls
-#define MAX_DEVICES_IN_SYSTEM   32
+//#define MAX_DEVICES_IN_SYSTEM   32
 
 //
-//  When we issus an ''s command 17 tokens of data come back. Most are small but the
+//  When we issus an 's' command 17 tokens of data come back. Most are small but the
 //  MAC address and Device Name look pretty good sized
 #define NUM_TOKENS_PER_STATE_CMD    17
 #define MAX_TOKEN_LENGTH            30
@@ -176,7 +176,6 @@ typedef struct  OpenCloseSensor {
 //  Next - the Water Leak Sensor!
 // ----------------------------------------------------------------------------
 //
-//
 #define     ISWET_BITMASK      (0x01)
 #define     ISDRY_BITMASK      (0x02)
 typedef enum  wlDeviceState { wlWet, wlDry, wlUnknown } wlDeviceState_t;
@@ -245,7 +244,9 @@ typedef struct  PowerSensor {
 } PowerSensor_t;
 
 
-
+// -----------------------------------------------------------------------------
+//
+// Now the definition of any HHB device
 typedef  struct  HomeHeartBeatDevice {
     int         deviceType;                             // tell me which union member to use
 
@@ -275,6 +276,11 @@ typedef  struct  HomeHeartBeatDevice {
     int         deviceBatteryCharging;              // valid only for Home Key
     int         deviceOnBatteryBackup;              // valid only for Base Station
 
+    
+    //
+    // Extra attributes that aren't coming from the HHB System but we'll find useful
+    char        roomName[ MAX_DEVICE_NAME_LEN ];    // room where device is located
+    char        alternateDeviceName[ MAX_DEVICE_NAME_LEN ];     // if you don't like the HHB names
     
     
     //
@@ -333,12 +339,14 @@ typedef struct  HomeHeartBeatSystem {
 
     int     debugValue;                                 // if non-zero write debug data
     char    debugFileName[ 255 ];                       // to this file
+    char    deviceInfoFileName[ 255 ];                  // file name with extra info on our devices
     
     //
     // Now the collection of devices is a linked list, so we need a 'head' pointer
     HomeHeartBeatDevice_t   *deviceListHead;
-    HomeHeartBeatDevice_t   deviceArray[ MAX_DEVICES_IN_SYSTEM ];
-    int                     deviceArrayIndex;
+    // We tried an array before a LinkedList
+    // HomeHeartBeatDevice_t   deviceArray[ MAX_DEVICES_IN_SYSTEM ];
+    // int                     deviceArrayIndex;
     
     //
     // Port specifics

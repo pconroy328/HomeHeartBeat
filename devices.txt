@@ -1,0 +1,11 @@
+MAC Address,	Sensor Type,	Description
+0000011957, 	WaterLeak,  	"Basement Floor"
+000007AAAF, 	Motion,  		"Family Room"
+0000010228, 	OpenClose,  	"Front Door"
+0000011480, 	HomeKey,  		"Dads Key"
+000000B357, 	Tilt,  			"Garage Door"
+0000012467, 	OpenClose,  	"Door To Garage"
+000000F450, 	OpenClose,  	"Sliding Door"
+000000E7E3, 	Power,  		"Computer Power"
+000000F5FE, 	OpenClose, 		"Sliding Door"
+

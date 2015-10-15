@@ -7,21 +7,6 @@
 #include "homeheartbeat.h"
 #include "helpers.h"
 
-#if 0
-// -----------------------------------------------------------------------------
-void    haltAndCatchFire (char *message)
-{
-    fputs( message, stderr );
-    exit( 1 );
-}
-
-// -----------------------------------------------------------------------------
-void    warnAndKeepGoing (char *message)
-{
-    fputs( message, stderr );
-}
-#endif
-
 // -----------------------------------------------------------------------------
 int     hexStringToInt (char *hexChars)
 {

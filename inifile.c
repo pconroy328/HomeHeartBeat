@@ -86,7 +86,10 @@ void    IniFile_readIniFile (HomeHeartBeatSystem_t *aSystem)
     (void) IniFiler_SearchCfg( INIFileName, "SYSTEM", "TZOffsetMins", &(aSystem->TZOffsetMins), Cfg_Short );
     (void) IniFiler_SearchCfg( INIFileName, "SYSTEM", "PortName", &(aSystem->portName[ 0 ]), Cfg_String );
     (void) IniFiler_SearchCfg( INIFileName, "SYSTEM", "sleepSecsBetweenEventLoops", &(aSystem->sleepSecsBetweenEventLoops), Cfg_Ushort );
-    
+
+    //
+    //  The file that has more information about our devices
+    (void) IniFiler_SearchCfg( INIFileName, "Devices", "deviceInfoFile", &(aSystem->deviceInfoFileName[ 0 ]), Cfg_String );
 
     //
     // Now the database stuff

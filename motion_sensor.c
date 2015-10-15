@@ -176,7 +176,9 @@ int     Motion_getMotionStateFromInt (int sensorState)
 
     // They'd better not BOTH be on!
     if (isNoMotion && isMotion)
-        Logger_LogWarning( "Motion sensor reporting both motion and no motion!\n" );
+        // Logger_LogWarning( "Motion sensor reporting both motion and no motion!\n" );
+        ;
+    
     else {
 
         if (isNoMotion) {

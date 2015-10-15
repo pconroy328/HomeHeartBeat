@@ -199,7 +199,8 @@ int     OpenClose_getOpenCloseStateFromInt (int sensorState)
 
     // They'd better not BOTH be on!
     if (isClosed && isOpen) {
-        Logger_LogWarning( "OpenClose Sensor reporting both open and closed!\n" );
+        // Logger_LogWarning( "OpenClose Sensor reporting both open and closed!\n" );
+        ;
         
     } else {
 

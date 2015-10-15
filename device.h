@@ -57,7 +57,6 @@ extern  int     Device_parseDeviceOffline( char *token );
 extern  int     Device_parseDeviceLowBattery( char *token );
 extern  int     Device_parseDeviceBatteryCharing( char *token );
 extern  int     Device_parseDeviceOnBatteryBackup( char *token );
-// extern  int     Device_parseDeviceAlerts (char *token);
 extern  int     Device_parseDeviceNameIndex( char * );
 extern  int     Device_parseDeviceConfiguration( char *token );
 extern  int     Device_parseAliveUpdateTimer( char * );
@@ -69,8 +68,7 @@ extern  int     Device_parsePendingUpdateTimer( char * );
 extern  char    *Device_parseMacAddress( char *token );
 extern  char    *Device_parseDeviceName( char *token );
 
-// extern  HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress);
-// extern  HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceListHead, char *macAddress);
+extern  void    Device_readDeviceInfoFromFile( char *fileName );
 
 
 #ifdef	__cplusplus

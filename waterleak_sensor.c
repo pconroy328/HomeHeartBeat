@@ -173,7 +173,8 @@ int     WaterLeak_getWaterLeakStateFromInt (int sensorState)
 
     // They'd better not BOTH be on!
     if (isWet && isDry)
-        Logger_LogWarning( "WaterLeak sensor reporting both wet and dry!\n" );
+        // Logger_LogWarning( "WaterLeak sensor reporting both wet and dry!\n" );
+        ;
     else {
 
         if (isWet) {

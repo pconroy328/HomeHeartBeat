@@ -4,6 +4,11 @@
  *
  * Created on August 27, 2013, 8:50 AM
  * (C) 2013 Patrick Conroy
+ * 
+ * 
+ * 
+ * To Do: when a sensor is off-line, ignore the warning that it is reporting both states
+ * 
  */
 
 #include <stdio.h>
@@ -18,7 +23,8 @@
 
 //
 // V3.0 - Better recovery from MQTT errors (I hope)
-static  char                *version = "v3.0";
+//  V3.0.1  -   have sensors ignore both states set warning if they're offline
+static  char                *version = "v3.0.1";
 
 
 

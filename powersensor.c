@@ -183,9 +183,12 @@ int     PowerSensor_getPowerOnPowerOffStateFromInt (int sensorState)
     int isPowerOff     = (sensorState & ISOFF_BITMASK);
     int isPowerOn      = (sensorState & ISON_BITMASK);
 
-    // They'd better not BOTH be on!
+    //  
+    // They'd better not BOTH be on! - but if the device is offline, they could be
+    //
     if (isPowerOff && isPowerOn) {
-        Logger_LogWarning( "Power Sensor reporting both On and Off!\n" );
+        // Logger_LogWarning( "Power Sensor reporting both On and Off!\n" );
+        ;
         
     } else {
 

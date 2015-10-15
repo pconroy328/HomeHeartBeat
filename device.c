@@ -559,3 +559,27 @@ int     Device_parseAnyTimerValue (char *token)
     return timerValue;
 }
 
+
+// -----------------------------------------------------------------------------
+void    Device_readDeviceInfoFromFile (char *fileName)
+{
+    //
+    //  We can store extra info about devices in a file. This is info that we think
+    //  is useful but is not sent from the HHB system.
+    //
+    // File Format: TXT. Lines starting with '#' are ignored.  Device info format will be:
+    //  MAC ADDR, ALTERNATE DEVICE NAME, ROOM NAME
+    
+    FILE    *fp = NULL;
+    
+    if ( (fp = fopen( fileName, "r" ) ) != (FILE *) 0) {
+        Logger_LogDebug( "Device info file [%s] opened and ready for reading\n", fileName );
+        while (!feof ( fp ) ) {
+            
+        }
+        
+        fclose( fp );
+    } else {
+        Logger_LogWarning( "Unable to open the device info file [%s]\n", fileName );
+    }
+}

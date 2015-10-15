@@ -207,7 +207,8 @@ int     TiltSensor_getOpenCloseStateFromInt (int sensorState)
 
     // They'd better not BOTH be on!
     if (isClosed && isOpen) {
-        Logger_LogWarning( "Tilt Sensor reporting both open and closed!\n" );
+        // Logger_LogWarning( "Tilt Sensor reporting both open and closed!\n" );
+        ;
         
     } else {
 

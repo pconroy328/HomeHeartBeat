@@ -138,6 +138,7 @@ void    MQTT_SetDefaults (MQTT_Parameters_t *mqttParams)
     strncpy( &(mqttParams->brokerHostName[0]), "192.168.1.11", MQTT_BROKERHOSTNAME_LEN );
     mqttParams->exitOnTooManyErrors = TRUE;
     mqttParams->maxReconnectAttempts = 100;
+    mqttParams->useJSON = TRUE;
 }
 
 // ----------------------------------------------------------------------------
@@ -338,6 +339,7 @@ int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
     // We've noticed that the state has changed on one of our devices - send a new message!
     
     char    *alarmFormatString ="%s | %s | %02d | %s | %s | %s | %d | %s |";
+    char    *alarmFormatStringJSON ="{ \"alarmTopic\" : \"%s\" , \"datetime\" : \"%s\" , \"deviceType\" : %02d , \"type\" : \"%s\" , \"name\" : \"%s\" , \"state\" : \"%s\" , \"duration\" : %d, \"MACAddress\" : \"%s\" }";
     char    *sensorType = NULL;
     char    *sensorName = NULL;
     char    *state = NULL;
@@ -447,8 +449,10 @@ int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
         state = "UNKNOWN";
     }
 
-    
-    length = snprintf( payload, sizeof payload, alarmFormatString,
+    //
+    // Now some hackalicious stuff - are we using JSON?
+    if (!aSystem->MQTTParameters.useJSON) {
+        length = snprintf( payload, sizeof payload, alarmFormatString,
                     aSystem->MQTTParameters.alarmTopic,
                     getCurrentDateTime(),
                     deviceRecPtr->deviceType,
@@ -457,7 +461,21 @@ int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
                     state,
                     deviceRecPtr->deviceStateTimer,
                     deviceRecPtr->macAddress );
-          
+    } else {
+        //
+        // Yes - we are using JSON! :)
+        length = snprintf( payload, sizeof payload, 
+                    alarmFormatStringJSON,
+                    aSystem->MQTTParameters.alarmTopic,
+                    getCurrentDateTime(),
+                    deviceRecPtr->deviceType,
+                    sensorType,
+                    deviceRecPtr->deviceName,
+                    state,
+                    deviceRecPtr->deviceStateTimer,
+                    deviceRecPtr->macAddress );        
+    }  
+    
     return MQTT_Publish( aSystem->MQTTParameters.alarmTopic, payload, length );
 }
 
@@ -493,10 +511,22 @@ int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
      
             qos     integer value 0, 1 or 2 indicating the Quality of Service to be used for the message.
             retain    set to true to make the message retained.
+     *                     aSystem->MQTTParameters.statusTopic,
+                    getCurrentDateTime(),
+                    deviceRecPtr->deviceType,
+                    sensorType,
+                    deviceRecPtr->deviceName,
+                    state,
+                    deviceRecPtr->deviceStateTimer,
+                    condition1, condition2, condition3, condition4, 
+                    offLine, lowBattery, inAlarmState,
+                    deviceRecPtr->macAddress );
+
      */
     
     int     messageID;
     char    *statusFormatString ="%s | %s | %02d | %s | %s | %s | %d | %s | %s | %s | %s | %s | %s | %s | %s |";
+    char    *statusFormatStringJSON ="{ \"statusTopic\" : \"%s\" , \"datetime\" : \"%s\" , \"deviceType\" : %02d , \type\" : \"%s\" , \"name\" : \"%s\" , \"state\" : \"%s\" , \"duration\" : %d , \"setAlarmAction\" : \"%s\" , \"unsetAlarmAction\" : \"%s\" , \"setCallAction\" : \"%s\" , \"unsetCallAction\" : \"%s\" , \"online\" : \"%s\" , \"battery\" : \"%s\" , \"triggered\" : \"%s\" , \"MACAddress\" : \"%s\" }";
     char    *sensorType = NULL;
     char    *sensorName = NULL;
     char    *condition1 = NULL;
@@ -581,8 +611,8 @@ int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
         condition4 = "";
     }
 
-    
-    length = snprintf( payload, sizeof payload, statusFormatString,
+    if (!aSystem->MQTTParameters.useJSON) {
+        length = snprintf( payload, sizeof payload, statusFormatString,
                     aSystem->MQTTParameters.statusTopic,
                     getCurrentDateTime(),
                     deviceRecPtr->deviceType,
@@ -593,7 +623,20 @@ int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
                     condition1, condition2, condition3, condition4, 
                     offLine, lowBattery, inAlarmState,
                     deviceRecPtr->macAddress );
-            
+    } else {
+        length = snprintf( payload, sizeof payload, 
+                    statusFormatStringJSON,
+                    aSystem->MQTTParameters.statusTopic,
+                    getCurrentDateTime(),
+                    deviceRecPtr->deviceType,
+                    sensorType,
+                    deviceRecPtr->deviceName,
+                    state,
+                    deviceRecPtr->deviceStateTimer,
+                    condition1, condition2, condition3, condition4, 
+                    offLine, lowBattery, inAlarmState,
+                    deviceRecPtr->macAddress );        
+    }        
     
     return MQTT_Publish( aSystem->MQTTParameters.statusTopic, payload, length );
 }
@@ -619,9 +662,8 @@ char    *getCurrentDateTime (void)
         if (tmPtr != NULL) {
             strftime( currentDateTimeBuffer,
                     sizeof currentDateTimeBuffer,
-                    "%F %T %z",
+                    "%FT%T%z",                           // ISO 8601 Format
                     tmPtr );
-            
         }
     }
     

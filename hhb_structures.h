@@ -107,6 +107,8 @@ typedef struct  MQTT_Parameters {
     int     enableMQTTLoggingCallback;
     int     exitOnTooManyErrors;
     int     maxReconnectAttempts;
+    
+    int     useJSON;                // if true, format MQTT messages as JSON packets
 } MQTT_Parameters_t;
 
 

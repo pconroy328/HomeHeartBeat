@@ -126,6 +126,7 @@ void    IniFile_readIniFile (HomeHeartBeatSystem_t *aSystem)
     (void) IniFiler_SearchCfg( INIFileName, "MQTT", "ExitOnTooManyErrors", &(aSystem->MQTTParameters.exitOnTooManyErrors), Cfg_Boolean ); 
     (void) IniFiler_SearchCfg( INIFileName, "MQTT", "MaxReconnectAttempts", &(aSystem->MQTTParameters.maxReconnectAttempts), Cfg_Ushort );
     
+    (void) IniFiler_SearchCfg( INIFileName, "MQTT", "UseJSON", &(aSystem->MQTTParameters.useJSON), Cfg_Boolean ); 
 }
 
 

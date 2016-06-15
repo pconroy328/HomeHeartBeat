@@ -1,0 +1,7 @@
+ # Rules for hotplugging Eaton Home Heartbest with FTDI (0x0403 0xDE29) Serial Adapter
+SUBSYSTEM=="usb", ATTR{idVendor}=="0403", ATTR{idProduct}=="de29", RUN="/etc/hhb_ftdi.sh"
+#
+# These may be necessary to setup the correct permissions
+KERNEL=="ttyUSB0", SYMLINK="hhb", GROUP="dialout", MODE="0660"
+# KERNEL=="ttyUSB1", GROUP="dialout", MODE="0660"
+

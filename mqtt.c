@@ -339,7 +339,7 @@ int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
     // We've noticed that the state has changed on one of our devices - send a new message!
     
     char    *alarmFormatString ="%s | %s | %02d | %s | %s | %s | %d | %s |";
-    char    *alarmFormatStringJSON ="%s { \"datetime\" : \"%s\" , \"deviceType\" : %02d , \"type\" : \"%s\" , \"name\" : \"%s\" , \"state\" : \"%s\" , \"duration\" : %d, \"MACAddress\" : \"%s\" }";
+    char    *alarmFormatStringJSON ="%s { \"datetime\" : \"%s\" , \"deviceType\" : %2d , \"type\" : \"%s\" , \"name\" : \"%s\" , \"state\" : \"%s\" , \"duration\" : %d, \"MACAddress\" : \"%s\" }";
     char    *sensorType = NULL;
     char    *sensorName = NULL;
     char    *state = NULL;
@@ -526,7 +526,7 @@ int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
     
     int     messageID;
     char    *statusFormatString ="%s | %s | %02d | %s | %s | %s | %d | %s | %s | %s | %s | %s | %s | %s | %s |";
-    char    *statusFormatStringJSON ="%s { \"datetime\" : \"%s\" , \"deviceType\" : %02d , \"type\" : \"%s\" , \"name\" : \"%s\" , \"state\" : \"%s\" , \"duration\" : %d , \"setAlarmAction\" : \"%s\" , \"unsetAlarmAction\" : \"%s\" , \"setCallAction\" : \"%s\" , \"unsetCallAction\" : \"%s\" , \"online\" : \"%s\" , \"battery\" : \"%s\" , \"triggered\" : \"%s\" , \"MACAddress\" : \"%s\" }";
+    char    *statusFormatStringJSON ="%s { \"datetime\" : \"%s\" , \"deviceType\" : %2d , \"type\" : \"%s\" , \"name\" : \"%s\" , \"state\" : \"%s\" , \"duration\" : %d , \"setAlarmAction\" : \"%s\" , \"unsetAlarmAction\" : \"%s\" , \"setCallAction\" : \"%s\" , \"unsetCallAction\" : \"%s\" , \"online\" : \"%s\" , \"battery\" : \"%s\" , \"triggered\" : \"%s\" , \"MACAddress\" : \"%s\" }";
     char    *sensorType = NULL;
     char    *sensorName = NULL;
     char    *condition1 = NULL;

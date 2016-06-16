@@ -526,7 +526,7 @@ int    MQTT_createDeviceEvent (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
     
     int     messageID;
     char    *statusFormatString ="%s | %s | %02d | %s | %s | %s | %d | %s | %s | %s | %s | %s | %s | %s | %s |";
-    char    *statusFormatStringJSON ="{ \"statusTopic\" : \"%s\" , \"datetime\" : \"%s\" , \"deviceType\" : %02d , \type\" : \"%s\" , \"name\" : \"%s\" , \"state\" : \"%s\" , \"duration\" : %d , \"setAlarmAction\" : \"%s\" , \"unsetAlarmAction\" : \"%s\" , \"setCallAction\" : \"%s\" , \"unsetCallAction\" : \"%s\" , \"online\" : \"%s\" , \"battery\" : \"%s\" , \"triggered\" : \"%s\" , \"MACAddress\" : \"%s\" }";
+    char    *statusFormatStringJSON ="{ \"statusTopic\" : \"%s\" , \"datetime\" : \"%s\" , \"deviceType\" : %02d , \"type\" : \"%s\" , \"name\" : \"%s\" , \"state\" : \"%s\" , \"duration\" : %d , \"setAlarmAction\" : \"%s\" , \"unsetAlarmAction\" : \"%s\" , \"setCallAction\" : \"%s\" , \"unsetCallAction\" : \"%s\" , \"online\" : \"%s\" , \"battery\" : \"%s\" , \"triggered\" : \"%s\" , \"MACAddress\" : \"%s\" }";
     char    *sensorType = NULL;
     char    *sensorName = NULL;
     char    *condition1 = NULL;

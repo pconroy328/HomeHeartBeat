@@ -588,6 +588,7 @@ void    Device_readDeviceInfoFromFile (HomeHeartBeatSystem_t *aSystem)
         while (!feof ( fp ) ) {
             memset( buffer, '\0', sizeof buffer );
             fgets( buffer, sizeof buffer, fp );
+            Logger_LogDebug( "Read this line in from the file [%s]\n", buffer );
             
             if (buffer[ 0 ] == '#')
                 continue;                   // skip over comments
@@ -604,6 +605,7 @@ void    Device_readDeviceInfoFromFile (HomeHeartBeatSystem_t *aSystem)
             auxDeviceInfo->altDeviceName = altDeviceName;
             auxDeviceInfo->roomName = roomName;
             
+            Logger_LogDebug( "Supplemental info read in for a device [%s] [%s] [%s]\n", macAddress, altDeviceName, roomName );
             LL_APPEND( aSystem->auxDataListHead, auxDeviceInfo );
         }
         

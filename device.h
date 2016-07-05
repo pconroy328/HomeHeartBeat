@@ -68,7 +68,7 @@ extern  int     Device_parsePendingUpdateTimer( char * );
 extern  char    *Device_parseMacAddress( char *token );
 extern  char    *Device_parseDeviceName( char *token );
 
-extern  void    Device_readDeviceInfoFromFile( char *fileName );
+extern  void    Device_readDeviceInfoFromFile( HomeHeartBeatSystem_t *aSystem );
 
 
 #ifdef	__cplusplus

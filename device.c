@@ -14,6 +14,9 @@
  *  * (C) 2013 Patrick Conroy
  */
 
+// I need strtok_r()
+#define _POSIX_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,6 +25,8 @@
 #include "device.h"
 #include "logger.h"
 #include "helpers.h"
+#include "utlist.h"
+
 
 
 //
@@ -561,7 +566,7 @@ int     Device_parseAnyTimerValue (char *token)
 
 
 // -----------------------------------------------------------------------------
-void    Device_readDeviceInfoFromFile (char *fileName)
+void    Device_readDeviceInfoFromFile (HomeHeartBeatSystem_t *aSystem)
 {
     //
     //  We can store extra info about devices in a file. This is info that we think
@@ -571,15 +576,54 @@ void    Device_readDeviceInfoFromFile (char *fileName)
     //  MAC ADDR, ALTERNATE DEVICE NAME, ROOM NAME
     
     FILE    *fp = NULL;
+    char    buffer[ 1024 ];
+
+    //
+    //  The Head of a List always has to be initialized to NULL to use UT List functions
+    aSystem->auxDataListHead = NULL;
     
-    if ( (fp = fopen( fileName, "r" ) ) != (FILE *) 0) {
-        Logger_LogDebug( "Device info file [%s] opened and ready for reading\n", fileName );
+    
+    if ( (fp = fopen( aSystem->deviceInfoFileName, "r" ) ) != (FILE *) 0) {
+        Logger_LogDebug( "Device info file [%s] opened and ready for reading\n", aSystem->deviceInfoFileName );
         while (!feof ( fp ) ) {
+            memset( buffer, '\0', sizeof buffer );
+            fgets( buffer, sizeof buffer, fp );
             
+            if (buffer[ 0 ] == '#')
+                continue;                   // skip over comments
+            
+            //
+            // Let's do this without much error checking
+            char    *savePtr = NULL;
+            char    *macAddress  = strtok_r( buffer, ",", &savePtr );
+            char    *altDeviceName = strtok_r( NULL, ",", &savePtr );
+            char    *roomName = strtok_r( NULL, ",", &savePtr );
+            
+            HHB_AuxDeviceInfo_t     *auxDeviceInfo = malloc( sizeof( HHB_AuxDeviceInfo_t ) );
+            auxDeviceInfo->macAddress = macAddress;
+            auxDeviceInfo->altDeviceName = altDeviceName;
+            auxDeviceInfo->roomName = roomName;
+            
+            LL_APPEND( aSystem->auxDataListHead, auxDeviceInfo );
         }
         
+        //
+        // Now log what we've pulled in
+        Logger_LogDebug( "Supplemental device information loaded\n" );
+        int i = 0;
+        
+        HHB_AuxDeviceInfo_t     *listElement1;
+        HHB_AuxDeviceInfo_t     *listElement2;
+        
+        LL_FOREACH_SAFE( aSystem->auxDataListHead, listElement1, listElement2 ) {
+            i += 1;
+            Logger_LogDebug( " [%-3d]   %-10.10s, %s, %s\n", i, listElement1->macAddress, listElement1->altDeviceName, listElement1->roomName );
+        }
         fclose( fp );
+        
+        //
+        // To Do - deallocate memory
     } else {
-        Logger_LogWarning( "Unable to open the device info file [%s]\n", fileName );
+        Logger_LogWarning( "Unable to open the device info file [%s]\n", aSystem->deviceInfoFileName );
     }
 }

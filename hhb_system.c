@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <strings.h>
 #include <assert.h>
 #include <unistd.h>
 
@@ -71,7 +72,7 @@ void    HomeHeartBeatSystem_initialize ()
     //
     // Initialize some necessary fields.
     aSystem->deviceListHead = NULL;                 // utlist says always set this to NULL
-    // aSystem->deviceArrayIndex = 0;
+    aSystem->auxDataListHead = NULL;
     
     aSystem->systemID = 0;
     strncpy( aSystem->name, "UNNAMED SYSTEM", sizeof aSystem->name );
@@ -129,7 +130,7 @@ void    HomeHeartBeatSystem_initialize ()
     //
     // Let's read in any extra info on the devices we've got
     if (aSystem->deviceInfoFileName[ 0 ] != '\0')
-        Device_readDeviceInfoFromFile( aSystem->deviceInfoFileName );
+        Device_readDeviceInfoFromFile( aSystem );
 }
 
 // -----------------------------------------------------------------------------
@@ -387,6 +388,15 @@ void    releaseMemory()
         LL_DELETE( aSystem->deviceListHead, elementPtr1 );
     }
     
+    
+    Logger_LogDebug( "Freeing supplemental device information.\n" );
+    HHB_AuxDeviceInfo_t     *listElement1;
+    HHB_AuxDeviceInfo_t     *listElement2;
+        
+    LL_FOREACH_SAFE( aSystem->auxDataListHead, listElement1, listElement2 ) {
+        LL_DELETE( aSystem->auxDataListHead, listElement1 );
+    }
+
     Logger_LogDebug( "Freeing memory for HHB System\n", 0 );
     free( aSystem );
 } 
@@ -545,6 +555,25 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
             break;
     }
 
+    
+    //
+    //  Ok, - there's no really good place to override the Device Name that comes in from the HHB System.
+    //  And we need to decide, if we replace the system one or just augment it with an alternate name?]
+    //  If we replace it, we lose the original data from the HHB System but it sure makes all of the downstream reporting
+    //  System impacts go away...
+    //
+    //  Ugh - I think we'll hack it in here.
+    HHB_AuxDeviceInfo_t     *listElement1;
+    HHB_AuxDeviceInfo_t     *listElement2;
+        
+    LL_FOREACH_SAFE( aSystem->auxDataListHead, listElement1, listElement2 ) {
+        //
+        // Does *this* device's MAC Address match some device we have in our list?
+        if (strncasecmp( deviceRecPtr->macAddress, listElement1->macAddress, MAX_DEVICE_NAME_LEN ) == 0) {
+            strncpy( deviceRecPtr->deviceName, listElement1->altDeviceName, MAX_DEVICE_NAME_LEN );
+            break;
+        }
+    }
     return deviceRecPtr;
 }
 

@@ -24,7 +24,8 @@
 //
 // V3.0 - Better recovery from MQTT errors (I hope)
 //  V3.0.1  -   have sensors ignore both states set warning if they're offline
-static  char                *version = "v3.0.1";
+//  V4.0.0  -   Use Alternate Device Names from TXT file
+static  char                *version = "v4.0.0 [ Alt Device Names ]";
 
 
 

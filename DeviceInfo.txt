@@ -1,0 +1,14 @@
+##
+## This is a file that will allow us to override and add some extra information
+## about our devices.  One use is to let us assign more meaningful device names
+##
+## Format of the file is
+## MAC ADDRESS, ALTERNATE DEVICE NAME, ROOM LOCATION
+##
+## For example
+## 000000F5FE, Strong Box and Gun Safe, Basement
+##
+000007AAAF,Family Room Motion,Family Room
+000000B357,Garage,Garage
+000000F9DE,Sliding Glass Door,Kitchen
+0000093BF5,Dining Room Motion,Dining Room

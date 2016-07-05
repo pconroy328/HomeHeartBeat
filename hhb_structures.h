@@ -138,13 +138,18 @@ typedef struct  MotionSensor {
     motDeviceState_t    currentState;
     int             motionDetected;             // derived
     
-    int             alarmOnMotion;
-    int             alarmOnNoMotion;
-    int             callOnMotion;  
-    int             callOnNoMotion;
+    int             alarmOnMotion;              // Field 9
+    int             alarmOnNoMotion;            // Field 9
+    int             callOnMotion;               // Field 9
+    int             callOnNoMotion;             // Field 9
     
     int             motionDelayValueSecs;       // field 13
     
+    
+    //
+    //  Note - that I've included space for the Device Name that comes in from the HHB
+    //  But, it's not used. It's just here so we all understand what comes in from the HHB
+    //  system when it's spitting out information about a device
     char            *usersDeviceName[ MAX_DEVICE_NAME_LEN ];
 } MotionSensor_t;
 
@@ -168,7 +173,11 @@ typedef struct  OpenCloseSensor {
     int             alarmOnClose;               // Field 9
     int             callOnOpen;                 // Field 9
     int             callOnClose;                // Field 9
-                                                    // ....5....0....5.
+
+    //
+    //  Note - that I've included space for the Device Name that comes in from the HHB
+    //  But, it's not used. It's just here so we all understand what comes in from the HHB
+    //  system when it's spitting out information about a device    
     char            usersDeviceName[ MAX_DEVICE_NAME_LEN ];        // Field 17
 } OpenCloseSensor_t;
 
@@ -191,7 +200,11 @@ typedef struct  WaterLeakSensor {
     int             alarmOnDry;                 // Field 9
     int             callOnWet;                  // Field 9
     int             callOnDry;                  // Field 9
-    
+
+    //
+    //  Note - that I've included space for the Device Name that comes in from the HHB
+    //  But, it's not used. It's just here so we all understand what comes in from the HHB
+    //  system when it's spitting out information about a device    
     char            *usersDeviceName[ MAX_DEVICE_NAME_LEN ];        // Field 17
 } WaterLeakSensor_t;
 
@@ -217,7 +230,11 @@ typedef struct  TiltSensor {
     int             alarmOnClose;               // Field 9
     int             callOnOpen;                 // Field 9
     int             callOnClose;                // Field 9
-                                                    // ....5....0....5.
+
+    //
+    //  Note - that I've included space for the Device Name that comes in from the HHB
+    //  But, it's not used. It's just here so we all understand what comes in from the HHB
+    //  system when it's spitting out information about a device    
     char            usersDeviceName[ MAX_DEVICE_NAME_LEN ];        // Field 17
 } TiltSensor_t;
 
@@ -241,7 +258,11 @@ typedef struct  PowerSensor {
     int             alarmOnPowerOff;            // Field 9
     int             callOnPowerOn;              // Field 9
     int             callOnPowerOff;             // Field 9
-                                                    // ....5....0....5.
+    
+    //
+    //  Note - that I've included space for the Device Name that comes in from the HHB
+    //  But, it's not used. It's just here so we all understand what comes in from the HHB
+    //  system when it's spitting out information about a device
     char            usersDeviceName[ MAX_DEVICE_NAME_LEN ];        // Field 17
 } PowerSensor_t;
 
@@ -279,11 +300,12 @@ typedef  struct  HomeHeartBeatDevice {
     int         deviceOnBatteryBackup;              // valid only for Base Station
 
     
+    /*  5-Jul-2016 - Don't need these two
     //
     // Extra attributes that aren't coming from the HHB System but we'll find useful
     char        roomName[ MAX_DEVICE_NAME_LEN ];    // room where device is located
     char        alternateDeviceName[ MAX_DEVICE_NAME_LEN ];     // if you don't like the HHB names
-    
+    */
     
     //
     //  It would help if we can just add a variable that indicates a state change
@@ -318,6 +340,22 @@ typedef  struct  HomeHeartBeatDevice {
 } HomeHeartBeatDevice_t;
 
 
+// -----------------------------------------------------------------------------
+//
+//  Admit it - the device names that come from the HHB system are pretty dumb.
+//  It would be nice to be able to change them.  This structure holds information
+//  about a device - auxillary information.  It's not mandatory - if a TXT file exists
+//  with aux data in it, it'll be read in and loaded into a Linked List of these
+//  structures.
+//  
+//  When reading in the file..
+typedef struct HHB_AuxDeviceInfo {
+    char        *macAddress;
+    char        *altDeviceName;             // a way to give our devices a more sensible name
+    char        *roomName;
+    
+    struct  HHB_AuxDeviceInfo       *next;
+} HHB_AuxDeviceInfo_t;
     
 // -----------------------------------------------------------------------------
 //
@@ -346,9 +384,6 @@ typedef struct  HomeHeartBeatSystem {
     //
     // Now the collection of devices is a linked list, so we need a 'head' pointer
     HomeHeartBeatDevice_t   *deviceListHead;
-    // We tried an array before a LinkedList
-    // HomeHeartBeatDevice_t   deviceArray[ MAX_DEVICES_IN_SYSTEM ];
-    // int                     deviceArrayIndex;
     
     //
     // Port specifics
@@ -365,6 +400,10 @@ typedef struct  HomeHeartBeatSystem {
     // MQTT Specific Information
     int     logEventsToMQTT;
     MQTT_Parameters_t   MQTTParameters;
+    
+    //
+    // Structure that holds Auxillary Data on Devices
+    HHB_AuxDeviceInfo_t *auxDataListHead;
 } HomeHeartBeatSystem_t;
 
 

@@ -394,6 +394,10 @@ void    releaseMemory()
     HHB_AuxDeviceInfo_t     *listElement2;
         
     LL_FOREACH_SAFE( aSystem->auxDataListHead, listElement1, listElement2 ) {
+        free( listElement1->altDeviceName );
+        free( listElement1->macAddress );
+        free( listElement1->roomName );
+        
         LL_DELETE( aSystem->auxDataListHead, listElement1 );
     }
 

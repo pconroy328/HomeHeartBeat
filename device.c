@@ -14,8 +14,8 @@
  *  * (C) 2013 Patrick Conroy
  */
 
-// I need strtok_r()
-#define _POSIX_SOURCE
+#define _POSIX_SOURCE                   // using strtok_r()
+#define _BSD_SOURCE                     // using strdup())
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -601,9 +601,9 @@ void    Device_readDeviceInfoFromFile (HomeHeartBeatSystem_t *aSystem)
             char    *roomName = strtok_r( NULL, ",", &savePtr );
             
             HHB_AuxDeviceInfo_t     *auxDeviceInfo = malloc( sizeof( HHB_AuxDeviceInfo_t ) );
-            auxDeviceInfo->macAddress = macAddress;
-            auxDeviceInfo->altDeviceName = altDeviceName;
-            auxDeviceInfo->roomName = roomName;
+            auxDeviceInfo->macAddress = strdup( macAddress );
+            auxDeviceInfo->altDeviceName = strdup( altDeviceName );
+            auxDeviceInfo->roomName = strdup( roomName );
             
             Logger_LogDebug( "Supplemental info read in for a device [%s] [%s] [%s]\n", macAddress, altDeviceName, roomName );
             LL_APPEND( aSystem->auxDataListHead, auxDeviceInfo );

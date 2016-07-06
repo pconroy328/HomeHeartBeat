@@ -598,7 +598,7 @@ void    Device_readDeviceInfoFromFile (HomeHeartBeatSystem_t *aSystem)
             char    *savePtr = NULL;
             char    *macAddress  = strtok_r( buffer, ",", &savePtr );
             char    *altDeviceName = strtok_r( NULL, ",", &savePtr );
-            char    *roomName = strtok_r( NULL, ",", &savePtr );
+            char    *roomName = strtok_r( NULL, "\n", &savePtr );
             
             HHB_AuxDeviceInfo_t     *auxDeviceInfo = malloc( sizeof( HHB_AuxDeviceInfo_t ) );
             auxDeviceInfo->macAddress = strdup( macAddress );

@@ -584,14 +584,19 @@ void    Device_readDeviceInfoFromFile (HomeHeartBeatSystem_t *aSystem)
     
     
     if ( (fp = fopen( aSystem->deviceInfoFileName, "r" ) ) != (FILE *) 0) {
-        Logger_LogDebug( "Device info file [%s] opened and ready for reading\n", aSystem->deviceInfoFileName );
+        Logger_LogDebug( "Device supplemental info file [%s] opened and ready for reading\n", aSystem->deviceInfoFileName );
         while (!feof ( fp ) ) {
             memset( buffer, '\0', sizeof buffer );
             fgets( buffer, sizeof buffer, fp );
-            Logger_LogDebug( "Read this line in from the file [%s]\n", buffer );
+            // Logger_LogDebug( "Read this line in from the file [%s]\n", buffer );
             
             if (buffer[ 0 ] == '#')
                 continue;                   // skip over comments
+            
+            //
+            // We need at least a MAC address!!! 
+            if (strlen( buffer ) < 10)
+                continue;
             
             //
             // Let's do this without much error checking

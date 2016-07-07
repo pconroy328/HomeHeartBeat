@@ -570,10 +570,12 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
     HHB_AuxDeviceInfo_t     *listElement1;
     HHB_AuxDeviceInfo_t     *listElement2;
         
+    Logger_LogInfo( "Searching supplemental information to see if we should override device attribution\n" );
     LL_FOREACH_SAFE( aSystem->auxDataListHead, listElement1, listElement2 ) {
         //
         // Does *this* device's MAC Address match some device we have in our list?
         if (strncasecmp( deviceRecPtr->macAddress, listElement1->macAddress, MAX_DEVICE_NAME_LEN ) == 0) {
+            Logger_LogDebug( "Overriding device MAC [%s] and name [%s] with new name [%s]\n", deviceRecPtr->macAddress, deviceRecPtr->deviceName, listElement1->altDeviceName );
             strncpy( deviceRecPtr->deviceName, listElement1->altDeviceName, MAX_DEVICE_NAME_LEN );
             break;
         }

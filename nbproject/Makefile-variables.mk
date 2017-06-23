@@ -7,21 +7,21 @@ CND_BASEDIR=`pwd`
 CND_BUILDDIR=build
 CND_DISTDIR=dist
 # Debug configuration
-CND_PLATFORM_Debug=GNU-Linux-x86
-CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux-x86
+CND_PLATFORM_Debug=GNU-Linux
+CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux
 CND_ARTIFACT_NAME_Debug=homeheartbeat_1
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/homeheartbeat_1
-CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux-x86/package
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/homeheartbeat_1
+CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux/package
 CND_PACKAGE_NAME_Debug=homeheartbeat1.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/homeheartbeat1.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/homeheartbeat1.tar
 # Release configuration
-CND_PLATFORM_Release=GNU-Linux-x86
-CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux-x86
+CND_PLATFORM_Release=GNU-Linux
+CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux
 CND_ARTIFACT_NAME_Release=homeheartbeat_1
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/homeheartbeat_1
-CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux-x86/package
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/homeheartbeat_1
+CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux/package
 CND_PACKAGE_NAME_Release=homeheartbeat1.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/homeheartbeat1.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/homeheartbeat1.tar
 #
 # include compiler specific variables
 #

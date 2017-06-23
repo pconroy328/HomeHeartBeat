@@ -1,8 +1,0 @@
-ERROR|2014-06-24 12:16:20|Unable to create the alarm table.
-ERROR|2014-06-24 12:16:20|MySQL Error Message [Table 'HHBAlarms' already exists]
-ERROR|2014-06-24 12:16:20|SQL [CREATE TABLE `HomeAutomation`.`HHBAlarms` ( `ID` INT NOT NULL AUTO_INCREMENT ,        `deviceType` INT NOT NULL ,           `deviceName` VARCHAR(80) NULL ,`status` VARCHAR( 40 ) NULL,`duration` INT NULL, `macAddress` VARCHAR(20) NULL ,`lastUpdate` TIMESTAMP NULL DEFAULT NOW() ,PRIMARY KEY (`ID`) ); ]
-ERROR|2014-06-24 12:16:20|Unable to create the status table.
-ERROR|2014-06-24 12:16:20|Table 'HHBStatus' already exists
-ERROR|2014-06-24 12:16:20|Unable to create the history table.
-ERROR|2014-06-24 12:16:20|Table 'HHBHistory' already exists
-ERROR|2014-06-24 12:16:20|SQL [CREATE TABLE `HomeAutomation`.`HHBHistory` ( `ID` INT NOT NULL AUTO_INCREMENT ,        `deviceType` INT NOT NULL ,           `stateRecordID` INT NOT NULL ,`zigbeeBindingID` INT NULL ,`deviceCapabilities` INT NULL ,`deviceState` INT NULL ,`deviceStateTimer` INT NULL ,`deviceAlerts` INT NULL ,`deviceNameIndex` INT NULL ,`deviceConfiguration` INT NULL ,`aliveUpdateTimer` INT NULL ,`updateFlags` INT NULL ,`field12` INT NULL ,`deviceParameter` INT NULL ,`field14` INT NULL ,`pendingUpdateTimer` INT NULL ,`macAddress` VARCHAR(20) NULL ,`deviceName` VARCHAR(80) NULL ,`lastUpdate` TIMESTAMP NULL DEFAULT NOW() ,PRIMARY KEY (`ID`) ); ]

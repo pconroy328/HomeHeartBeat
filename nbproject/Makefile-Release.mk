@@ -14,14 +14,14 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=c99
+CC=gcc
 CCC=g++
 CXX=g++
 FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
+CND_PLATFORM=GNU-Linux
 CND_DLIB_EXT=so
 CND_CONF=Release
 CND_DISTDIR=dist
@@ -75,72 +75,72 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/database.o: database.c 
+${OBJECTDIR}/database.o: database.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/database.o database.c
 
-${OBJECTDIR}/device.o: device.c 
+${OBJECTDIR}/device.o: device.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/device.o device.c
 
-${OBJECTDIR}/helpers.o: helpers.c 
+${OBJECTDIR}/helpers.o: helpers.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/helpers.o helpers.c
 
-${OBJECTDIR}/hhb_system.o: hhb_system.c 
+${OBJECTDIR}/hhb_system.o: hhb_system.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hhb_system.o hhb_system.c
 
-${OBJECTDIR}/inifile.o: inifile.c 
+${OBJECTDIR}/inifile.o: inifile.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/inifile.o inifile.c
 
-${OBJECTDIR}/logger.o: logger.c 
+${OBJECTDIR}/logger.o: logger.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/logger.o logger.c
 
-${OBJECTDIR}/main.o: main.c 
+${OBJECTDIR}/main.o: main.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
 
-${OBJECTDIR}/motion_sensor.o: motion_sensor.c 
+${OBJECTDIR}/motion_sensor.o: motion_sensor.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/motion_sensor.o motion_sensor.c
 
-${OBJECTDIR}/mqtt.o: mqtt.c 
+${OBJECTDIR}/mqtt.o: mqtt.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mqtt.o mqtt.c
 
-${OBJECTDIR}/openclose_sensor.o: openclose_sensor.c 
+${OBJECTDIR}/openclose_sensor.o: openclose_sensor.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/openclose_sensor.o openclose_sensor.c
 
-${OBJECTDIR}/powersensor.o: powersensor.c 
+${OBJECTDIR}/powersensor.o: powersensor.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/powersensor.o powersensor.c
 
-${OBJECTDIR}/serialport.o: serialport.c 
+${OBJECTDIR}/serialport.o: serialport.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/serialport.o serialport.c
 
-${OBJECTDIR}/tiltsensor.o: tiltsensor.c 
+${OBJECTDIR}/tiltsensor.o: tiltsensor.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/tiltsensor.o tiltsensor.c
 
-${OBJECTDIR}/waterleak_sensor.o: waterleak_sensor.c 
+${OBJECTDIR}/waterleak_sensor.o: waterleak_sensor.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/waterleak_sensor.o waterleak_sensor.c
@@ -151,7 +151,6 @@ ${OBJECTDIR}/waterleak_sensor.o: waterleak_sensor.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/homeheartbeat_1
 
 # Subprojects
 .clean-subprojects:

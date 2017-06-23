@@ -6,6 +6,9 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/mqtt.c</file>
+            <file>file:/home/pconroy/Dropbox/NetBeansProjects/Personal/HomeHeartbeat_1/hhb_system.c</file>
+        </group>
     </open-files>
 </project-private>

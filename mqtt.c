@@ -6,6 +6,7 @@
  * (C) 2013 Patrick Conroy
  * 
  * 12Mar2104    Adding MAC address to MQTT Payload
+ * sometime in 2017 - removing TOPIC from mqtt payload prequel
  */
 #define _POSIX_C_SOURCE     200112L
 

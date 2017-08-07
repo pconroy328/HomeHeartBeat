@@ -8,7 +8,7 @@
  * 
  * 
  * To Do: when a sensor is off-line, ignore the warning that it is reporting both states
- * 
+ * * sometime in 2017 - removing TOPIC from mqtt payload prequel
  */
 
 #include <stdio.h>

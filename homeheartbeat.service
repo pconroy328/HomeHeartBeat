@@ -10,6 +10,8 @@ WorkingDirectory=/home/pconroy/HomeHeartBeat/
 ExecStart=/home/pconroy/HomeHeartBeat/dist/Debug/GNU-Linux/homeheartbeat_1
 StandardOutput=syslog
 StandardError=syslog
+Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=default.target

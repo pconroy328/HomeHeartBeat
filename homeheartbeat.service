@@ -4,8 +4,8 @@ After=syslog.target
 
 [Service]
 Type=simple
-User=myname
-Group=mygroup
+User=pconroy
+Group=pconroy
 WorkingDirectory=/home/pconroy/HomeHeartBeat/
 ExecStart=/home/pconroy/HomeHeartBeat/dist/Debug/GNU-Linux/homeheartbeat_1
 StandardOutput=syslog

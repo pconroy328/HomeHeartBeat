@@ -52,6 +52,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
       <itemPath>homeheartbeat.ini</itemPath>
+      <itemPath>homeheartbeat.service</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>

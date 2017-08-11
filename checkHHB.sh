@@ -6,6 +6,6 @@ if [ $? -ne 0 ] ; then
    date >> $FNAME
    echo " --- HomeheartBeat has stopped, restarting " >> $FNAME
    cd /home/pconroy/HomeHeartBeat 
-   ./dist/Debug/GNU-Linux-x86/homeheartbeat_1 &
+   ./dist/Debug/GNU-Linux/homeheartbeat_1 &
 fi
 

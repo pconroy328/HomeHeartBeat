@@ -25,10 +25,6 @@ extern "C" {
 // #include "log4c.h"                              // we're going to use Log4C for logging
     
     
-//
-// Log4C information - yes, it's a global.
-// extern  log4c_category_t    *logCat;
-    
     
 //
 // Home Heart Beat System Function Declarations 

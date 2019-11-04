@@ -86,60 +86,10 @@ HomeHeartBeatDevice_t   *Device_newDeviceRecord (char *macAddress)
 }
 
 
-/*
-// -----------------------------------------------------------------------------
-HomeHeartBeatDevice_t   *Device_findThisDevice (HomeHeartBeatDevice_t *deviceListHead, char *macAddress)
-{
-    assert( macAddress != NULL );
-    
-    //
-    // scan thru the list of sensors and see if it's in there
-    //  if not, return null
-    if (deviceListHead == NULL)
-        return NULL;
-
-    //
-    //  Recall - we're using Troy's UTLIST code to manage our linked list
-    //  His stuff takes some getting used to.  Everything is implemented as a
-    //  'C' macro (#define) so you'll see we're not passing in a reference
-    //
-    int                         numDevices = 0;
-    HomeHeartBeatDevice_t       *elementPtr = NULL;
-    LL_COUNT( deviceListHead, elementPtr, numDevices );             // numDevices is not passed by reference here
-    Logger_LogDebug( "Looking for [%s]. here are %d devices in the device list.\n", macAddress, numDevices );
-            
-    //
-    // The top call was just for fun.  Iterate over the list looking for a macAdress Match
-    elementPtr = NULL;
-    LL_FOREACH( deviceListHead, elementPtr ) {
-        if (strncmp( elementPtr->macAddress, macAddress, sizeof elementPtr->macAddress ) == 0) {
-            
-            HomeHeartBeatDevice_t   *tmpPtr = elementPtr;
-            
-            if (1) {
-            Logger_LogDebug( "Found a matching device matching this MAC address [%s]. State Record ID: %d\n", 
-                    tmpPtr->macAddress,
-                    tmpPtr->stateRecordID );
-            }
-            return elementPtr;
-        }
-    }
-    
-    //
-    // If we made it here - we didn't find it...
-    Logger_LogDebug( "No matching Device was found. macAddress [%s] -must be a new device!\n", macAddress );
-    return NULL;
-}
-
-*/
-
 // -----------------------------------------------------------------------------
 int     Device_parseTokens (HomeHeartBeatDevice_t *deviceRecPtr, char token[NUM_TOKENS_PER_STATE_CMD][MAX_TOKEN_LENGTH])
 {
     assert( deviceRecPtr != NULL );
-    //int j;
-    //for (j = 0; j < 17; j +=1)
-    //    printf( ">>>>*** >[%d] [%s]\n", j+1, token[j] );
 
     //
     // Now let's parse the tokens we've got 
@@ -189,11 +139,6 @@ int     Device_parseStateRecordID (char *token)
     //Logger_LogDebug( "Entering. Token [%s]\n", token );
     
     
-    //
-    // This comes into us with "STATExx=" prepended.  Let's whack that off
-    // char  *cPtr = strchr( token, '=' );
-    // cPtr++;                                     // skip over "="
-    // cPtr++;                                     // skip over double quote mark
     int recordID = hexStringToInt( token );
     return recordID;
 }

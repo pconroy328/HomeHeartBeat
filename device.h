@@ -34,7 +34,7 @@ typedef enum    deviceAlert { AlarmTriggered, DeviceOffline, LowBattery, daUnkno
 // -----------------------------------------------------------------------------
 //
 //  There are times when you really wish you could do some OO things in 'C' easier.
-//  This is the Device Superclaass.  All Eaton Home Heartbeat devices are of this
+//  This is the Device Superclass.  All Eaton Home Heartbeat devices are of this
 //  type.
 //
 

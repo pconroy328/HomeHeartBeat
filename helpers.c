@@ -11,12 +11,10 @@
 int     hexStringToInt (char *hexChars)
 {
     assert( hexChars != NULL );
-    //debug_print( "entering [%s]\n", hexChars );
+
     int len = strlen( hexChars );
     assert( (len == 2) || (len == 4) );
     
-    //if (len != 2 && len != 4)
-    //    printf( "!!!!!!!!! LENGHT %d [%s]\n", len, hexChars );
     
     int intValue = -1;
     
@@ -26,7 +24,6 @@ int     hexStringToInt (char *hexChars)
             //
             // strtol can parse hex strings!
             intValue = (int) strtol( &hexChars[ len - 2 ], NULL, 16 );
-            //debug_print( "Token [%s], value: %d\n", &token[ len - 2 ], recordID );
         }
         
     } else if (len == 4) {
@@ -36,7 +33,6 @@ int     hexStringToInt (char *hexChars)
             //
             // strtol can parse hex strings!
             intValue = (int) strtol( &hexChars[ len - 4 ], NULL, 16 );
-            //debug_print( "Token [%s], value: %d\n", &token[ len - 2 ], recordID );
         }
     }
     

@@ -493,8 +493,8 @@ HomeHeartBeatDevice_t *parseOneStateRecord (char *receiveBuf, int numRead)
     //
     //  We are going to use a device's MAC address to uniquely identify it.  That's fine
     //  except the Base Station (Type 1, Record ID = 0) and the Modem (Type 16, Record ID= 2)
-    //  don't have MAC Addresses!  So - I could add alot of checking for device type of 1 or 16
-    //  or I could jus6t create a MAC address for them. :)
+    //  don't have MAC Addresses!  So - I could add a lot of checking for device type of 1 or 16
+    //  or I could just create a MAC address for them. :)
     int     deviceType = Device_parseDeviceType( token[ 3 ] );
     char    *macAddress = Device_parseMacAddress( token[ 15 ] );
     
@@ -640,14 +640,8 @@ int    tokenizeStateData (char *receiveBuf, int numRead, char token[NUM_TOKENS_P
     numBytes = (endPtr - startPtr) - 1;                 // -1 to not include trailing '"'
     memcpy( token[ 16 ], startPtr, numBytes );
     
-    //for (int j = 0; j < NUM_TOKENS_PER_STATE_CMD; j +=1)
-    //    printf( ">>>>>>>>> [%s]\n", token[ j ] );
     
-    //
-    //  Well - that's a new one - I dropped a character in the middle of the stream.
-    //  A four byte field had only three.  I guess I should verify that the tokens are the
-    //  appropriate length...
-    
+    //  Verify that the tokens are the appropriate length...
     //  Looking at a state record:
     //  Token #     Length
     //      0       2

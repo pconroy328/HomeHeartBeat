@@ -434,7 +434,7 @@ int    MQTT_createDeviceAlarm (HomeHeartBeatSystem_t *aSystem, HomeHeartBeatDevi
         if (deviceRecPtr->psSensor->isPowerOn && deviceRecPtr->psSensor->alarmOnPowerOn)
             state = "ON";
         if (!deviceRecPtr->psSensor->isPowerOn && deviceRecPtr->psSensor->alarmOnPowerOff)
-            state = "DRY";
+            state = "OFF";
 
         //
         // Early exit conditions - transitioned to OFF but we alarm on ON - ignore
